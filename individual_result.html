@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBSE রেজাল্ট কার্ড - A4 সাইজ</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* রিসেট স্টাইল */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', 'Helvetica', sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* সার্চ সেকশন */
+        .search-section {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+        }
+
+        .search-title {
+            text-align: center;
+            color: #1a5f7a;
+            margin-bottom: 25px;
+            font-size: 24px;
+            border-bottom: 2px solid #1a5f7a;
+            padding-bottom: 10px;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            align-items: end;
+        }
+
+        @media (max-width: 768px) {
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #444;
+        }
+
+        .form-group select,
+        .form-group input {
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            background: #f9f9f9;
+        }
+
+        .search-btn {
+            background: #1a5f7a;
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            grid-column: span 3;
+        }
+
+        @media (max-width: 768px) {
+            .search-btn {
+                grid-column: span 1;
+            }
+        }
+
+        .search-btn:hover {
+            background: #164e63;
+        }
+
+        /* A4 সাইজ রেজাল্ট কার্ড */
+        .a4-result-card {
+            background: white;
+            width: 21cm;
+            min-height: 29.7cm;
+            margin: 20px auto;
+            padding: 1.5cm;
+            border: 2px solid #333;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            display: none;
+            position: relative;
+            page-break-after: always;
+        }
+
+        /* হেডার সেকশন */
+        .header-section {
+            text-align: center;
+            border-bottom: 3px solid #1a5f7a;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .school-name {
+            font-size: 28px;
+            font-weight: 800;
+            color: #1a5f7a;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .affiliation {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .contact-info {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .report-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #d35400;
+            margin: 10px 0;
+            text-decoration: underline;
+        }
+
+        /* স্টুডেন্ট ইনফো (ছবি ডান পাশে) */
+        .student-info-section {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .student-details {
+            flex: 1;
+            padding-right: 30px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .info-value {
+            color: #000;
+            font-weight: 500;
+            font-size: 15px;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* ছবি সেকশন (ডান পাশে) */
+        .photo-section {
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .student-photo-frame {
+            width: 150px;
+            height: 180px;
+            border: 3px solid #1a5f7a;
+            background: white;
+            padding: 5px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .student-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .photo-label {
+            font-weight: 600;
+            color: #444;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* একাডেমিক টেবিল */
+        .marks-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 14px;
+        }
+
+        .marks-table th {
+            background: #1a5f7a;
+            color: white;
+            padding: 12px 8px;
+            border: 1px solid #333;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .marks-table td {
+            padding: 10px 8px;
+            border: 1px solid #333;
+            text-align: center;
+        }
+
+        .marks-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .subject-col {
+            text-align: left !important;
+            font-weight: 600;
+            padding-left: 15px !important;
+            width: 40%;
+        }
+
+        /* রেজাল্ট সারমারী */
+        .result-summary {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+            background: #e8f4fc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        @media print {
+            .result-summary {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .summary-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        /* কো-কারিকুলার */
+        .co-curricular-section {
+            margin: 25px 0;
+            border: 2px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .co-curricular-header {
+            background: #2c3e50;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .co-curricular-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .co-curricular-table th {
+            background: #34495e;
+            color: white;
+            padding: 10px;
+            border: 1px solid #333;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .co-curricular-table td {
+            padding: 10px;
+            border: 1px solid #333;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* গ্রেডিং গাইড */
+        .grading-guide {
+            margin: 25px 0;
+            border: 2px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .guide-header {
+            background: #27ae60;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .guide-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .guide-table th {
+            background: #2ecc71;
+            color: white;
+            padding: 10px;
+            border: 1px solid #333;
+            text-align: center;
+        }
+
+        .guide-table td {
+            padding: 8px;
+            border: 1px solid #333;
+            text-align: center;
+        }
+
+        /* সিগনেচার সেকশন */
+        .signature-section {
+            margin: 30px 0 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            text-align: center;
+        }
+
+        .signature-box {
+            padding: 15px;
+            border-top: 2px solid #333;
+        }
+
+        .signature-line {
+            width: 150px;
+            height: 1px;
+            background: #000;
+            margin: 40px auto 10px;
+        }
+
+        .signature-name {
+            font-weight: bold;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .signature-title {
+            color: #555;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        /* ফুটার */
+        .result-footer {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid #ddd;
+            color: #666;
+            font-size: 13px;
+        }
+
+        /* অ্যাকশন বাটন */
+        .action-buttons {
+            text-align: center;
+            margin: 30px 0;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            display: none;
+        }
+
+        .action-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+
+        .print-btn {
+            background: #27ae60;
+            color: white;
+        }
+
+        .print-btn:hover {
+            background: #219653;
+        }
+
+        .new-search-btn {
+            background: #7f8c8d;
+            color: white;
+        }
+
+        .new-search-btn:hover {
+            background: #6c7b7d;
+        }
+
+        /* লোডিং এবং এরর */
+        .loading, .no-result {
+            text-align: center;
+            padding: 50px;
+            display: none;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+        }
+
+        /* প্রিন্ট স্টাইল */
+        @media print {
+            @page {
+                size: A4;
+                margin: 0.5cm;
+            }
+            
+            body {
+                margin: 0;
+                padding: 0;
+                background: white;
+            }
+            
+            .container {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            
+            .search-section, .action-buttons, .loading, .no-result {
+                display: none !important;
+            }
+            
+            .a4-result-card {
+                display: block !important;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 1.5cm;
+                box-shadow: none;
+                border: none;
+                page-break-after: always;
+                page-break-inside: avoid;
+            }
+            
+            /* প্রিন্টে কালার অপ্টিমাইজেশন */
+            .school-name {
+                color: black !important;
+            }
+            
+            .report-title {
+                color: black !important;
+            }
+            
+            .student-photo-frame {
+                border-color: #000 !important;
+            }
+        }
+
+        /* মোবাইল রেসপন্সিভ */
+        @media screen and (max-width: 768px) {
+            .a4-result-card {
+                width: 100%;
+                padding: 20px;
+            }
+            
+            .student-info-section {
+                flex-direction: column;
+            }
+            
+            .student-details {
+                padding-right: 0;
+                margin-bottom: 20px;
+            }
+            
+            .photo-section {
+                width: 100%;
+            }
+            
+            .result-summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .signature-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* স্ক্রীন স্টাইল */
+        @media screen {
+            .a4-result-card {
+                box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- সার্চ সেকশন -->
+        <div class="search-section">
+            <h2 class="search-title"><i class="fas fa-search"></i> CBSE রেজাল্ট কার্ড সার্চ</h2>
+            <form id="searchForm" class="search-form">
+                <div class="form-group">
+                    <label for="examSelect">পরীক্ষার নাম</label>
+                    <select id="examSelect" required>
+                        <option value="">নির্বাচন করুন</option>
+                        <!-- Firebase থেকে লোড হবে -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="classSelect">শ্রেণি</label>
+                    <select id="classSelect" required>
+                        <option value="">নির্বাচন করুন</option>
+                        <!-- Firebase থেকে লোড হবে -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="rollInput">রোল নং</label>
+                    <input type="number" id="rollInput" placeholder="রোল নং" required min="1">
+                </div>
+                
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i> রেজাল্ট কার্ড দেখুন
+                </button>
+            </form>
+        </div>
+
+        <!-- লোডিং -->
+        <div class="loading" id="loading">
+            <i class="fas fa-spinner fa-spin fa-3x" style="color: #1a5f7a;"></i>
+            <p style="margin-top: 20px; font-size: 18px;">রেজাল্ট কার্ড লোড হচ্ছে...</p>
+        </div>
+
+        <!-- নো রেজাল্ট -->
+        <div class="no-result" id="noResult">
+            <i class="fas fa-exclamation-triangle fa-3x" style="color: #e74c3c;"></i>
+            <h3 style="margin: 20px 0 10px; color: #333;">কোনো রেজাল্ট পাওয়া যায়নি</h3>
+            <p style="color: #666;">দয়া করে সঠিক পরীক্ষা, শ্রেণি এবং রোল নং প্রদান করুন</p>
+        </div>
+
+        <!-- A4 রেজাল্ট কার্ড -->
+        <div class="a4-result-card" id="a4ResultCard">
+            <!-- হেডার -->
+            <div class="header-section">
+                <div class="school-name" id="schoolName">UDAY NARAYAN SIKSHAN SANSTHAN</div>
+                <div class="affiliation" id="affiliationInfo">Affiliated To : CBSE Board / Affiliation No : 2512A45200</div>
+                <div class="contact-info" id="contactInfo">
+                    Ph +91 8808498469, Email: info@yourschoolname.com, Visit us : www.yourschoolwebsite.com
+                </div>
+                <div class="report-title">Academic Report</div>
+                <div style="font-size: 16px; font-weight: bold; color: #444;">
+                    Academic Session : <span id="academicSession">2023-2024</span> | 
+                    Class : <span id="displayClass">4</span>
+                </div>
+            </div>
+
+            <!-- স্টুডেন্ট ইনফো (ছবি ডান পাশে) -->
+            <div class="student-info-section">
+                <!-- বাম পাশে: বিবরণ -->
+                <div class="student-details">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Name of Student</div>
+                            <div class="info-value" id="studentName">SHAHVEE</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Father's Name</div>
+                            <div class="info-value" id="fatherName">MR. RABEER</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Mother's Name</div>
+                            <div class="info-value" id="motherName">MRS. HEENA</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Date of Birth</div>
+                            <div class="info-value" id="dob">01-01-2015</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Address</div>
+                            <div class="info-value" id="studentAddress">HODIA SECTOR S2, UTTAR-PRADESH</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Admission No</div>
+                            <div class="info-value" id="admissionNo">2023-001</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Roll No</div>
+                            <div class="info-value" id="studentRoll">1</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Religion</div>
+                            <div class="info-value" id="religion">Hindu</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ডান পাশে: ছবি -->
+                <div class="photo-section">
+                    <div class="student-photo-frame">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" 
+                             alt="Student Photo" 
+                             class="student-photo"
+                             id="studentPhoto">
+                    </div>
+                    <div class="photo-label">Student's Photograph</div>
+                </div>
+            </div>
+
+            <!-- একাডেমিক মার্কস টেবিল -->
+            <table class="marks-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2">Scholastic Areas</th>
+                        <th colspan="2">Term I</th>
+                        <th colspan="2">Overall</th>
+                    </tr>
+                    <tr>
+                        <th>HALF YEARLY<br>(60)</th>
+                        <th>Total</th>
+                        <th>Grand Total<br>(60)</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody id="marksTableBody">
+                    <!-- ডাইনামিকভাবে লোড হবে -->
+                </tbody>
+            </table>
+
+            <!-- রেজাল্ট সারমারী -->
+            <div class="result-summary">
+                <div class="summary-item">
+                    <div class="summary-label">Attendance</div>
+                    <div class="summary-value" id="attendance">95/100</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Total Marks</div>
+                    <div class="summary-value" id="totalMarks">303 / 360</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Percentage</div>
+                    <div class="summary-value" id="percentage">84.17%</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Overall Grade</div>
+                    <div class="summary-value" id="overallGrade">A</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Result</div>
+                    <div class="summary-value" id="resultStatus">PASS</div>
+                </div>
+            </div>
+
+            <!-- কো-কারিকুলার সেকশন -->
+            <div class="co-curricular-section">
+                <div class="co-curricular-header">
+                    CO-SCHOLASTIC : (3 POINT GRADING SCALE A,B,C)
+                </div>
+                <table class="co-curricular-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%;">Activities</th>
+                            <th style="width: 30%;">Term-I</th>
+                            <th style="width: 30%;">Term-II</th>
+                        </tr>
+                    </thead>
+                    <tbody id="coCurricularBody">
+                        <!-- ডাইনামিকভাবে লোড হবে -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- গ্রেডিং গাইড -->
+            <div class="grading-guide">
+                <div class="guide-header">Grading System</div>
+                <table class="guide-table">
+                    <thead>
+                        <tr>
+                            <th colspan="9">Scholastic Areas Grading Scale (8-Point System)</th>
+                        </tr>
+                        <tr>
+                            <th>Percentage</th>
+                            <th>91-100%</th>
+                            <th>81-90%</th>
+                            <th>71-80%</th>
+                            <th>61-70%</th>
+                            <th>51-60%</th>
+                            <th>41-50%</th>
+                            <th>33-40%</th>
+                            <th>Below 33%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Grade</strong></td>
+                            <td>A+</td>
+                            <td>A</td>
+                            <td>B+</td>
+                            <td>B</td>
+                            <td>C+</td>
+                            <td>C</td>
+                            <td>D</td>
+                            <td>E</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Grade Point</strong></td>
+                            <td>10</td>
+                            <td>9</td>
+                            <td>8</td>
+                            <td>7</td>
+                            <td>6</td>
+                            <td>5</td>
+                            <td>4</td>
+                            <td>0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- সিগনেচার সেকশন -->
+            <div class="signature-section">
+                <div class="signature-box">
+                    <div class="signature-line"></div>
+                    <div class="signature-name">Class Teacher</div>
+                    <div class="signature-title">Sign. of Class Teacher</div>
+                </div>
+                <div class="signature-box">
+                    <div class="signature-line"></div>
+                    <div class="signature-name">Principal</div>
+                    <div class="signature-title">Sign. of Principal</div>
+                </div>
+                <div class="signature-box">
+                    <div class="signature-line"></div>
+                    <div class="signature-name">Manager</div>
+                    <div class="signature-title">Sign. of Manager</div>
+                </div>
+                <div class="signature-box">
+                    <div class="signature-line"></div>
+                    <div class="signature-name">Parent/Guardian</div>
+                    <div class="signature-title">Sign. of Parent</div>
+                </div>
+            </div>
+
+            <!-- ফুটার -->
+            <div class="result-footer">
+                <p><strong>To Get This Exam Result Software Visit : www.resulthosting.net</strong></p>
+                <p style="margin-top: 8px; font-style: italic; font-size: 12px;">
+                    Note: This is a computer generated mark sheet and does not require signature in original.
+                </p>
+                <p style="margin-top: 5px; font-size: 12px;">
+                    Issued Date: <span id="issueDate">01 January, 2024</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- অ্যাকশন বাটন -->
+        <div class="action-buttons" id="actionButtons">
+            <button class="action-btn print-btn" onclick="printResultCard()">
+                <i class="fas fa-print"></i> প্রিন্ট রেজাল্ট কার্ড
+            </button>
+            <button class="action-btn new-search-btn" onclick="resetSearch()">
+                <i class="fas fa-redo"></i> নতুন অনুসন্ধান
+            </button>
+            <button class="action-btn" onclick="downloadAsPDF()" style="background: #e74c3c; color: white;">
+                <i class="fas fa-download"></i> PDF ডাউনলোড
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db, ref, onValue } from './firebase-config.js';
+
+        // DOM Elements
+        const searchForm = document.getElementById('searchForm');
+        const examSelect = document.getElementById('examSelect');
+        const classSelect = document.getElementById('classSelect');
+        const rollInput = document.getElementById('rollInput');
+        const loading = document.getElementById('loading');
+        const noResult = document.getElementById('noResult');
+        const a4ResultCard = document.getElementById('a4ResultCard');
+        const actionButtons = document.getElementById('actionButtons');
+
+        // Sample data for demonstration
+        const sampleSubjects = [
+            { name: "HINDI", term1: 50, total: 50, grade: "A" },
+            { name: "ENGLISH", term1: 48, total: 48, grade: "B+" },
+            { name: "MATHEMATICS", term1: 51, total: 51, grade: "A" },
+            { name: "SCIENCE", term1: 47, total: 47, grade: "B+" },
+            { name: "SOCIAL STUDIES", term1: 45, total: 45, grade: "B" },
+            { name: "GENERAL KNOWLEDGE", term1: 49, total: 49, grade: "B+" },
+            { name: "COMPUTER", term1: 52, total: 52, grade: "A" },
+            { name: "ART & CRAFT", term1: 55, total: 55, grade: "A" }
+        ];
+
+        const sampleCoCurricular = [
+            { activity: "UNIFORM", term1: "A+", term2: "A+" },
+            { activity: "CLASS ACTIVITIES", term1: "A+", term2: "A+" },
+            { activity: "DIGITAL CLASS", term1: "A", term2: "A" },
+            { activity: "WRITING SKILLS", term1: "B", term2: "B+" },
+            { activity: "SPEAKING SKILLS", term1: "C", term2: "B" },
+            { activity: "SPORTS", term1: "A", term2: "A+" },
+            { activity: "MUSIC", term1: "B+", term2: "A" },
+            { activity: "DANCE", term1: "A", term2: "A+" }
+        ];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadInitialData();
+            // Set today's date
+            const today = new Date();
+            document.getElementById('issueDate').textContent = formatDate(today);
+        });
+
+        // Format date
+        function formatDate(date) {
+            const options = { day: '2-digit', month: 'long', year: 'numeric' };
+            return date.toLocaleDateString('en-IN', options);
+        }
+
+        // Load initial data
+        function loadInitialData() {
+            // Load exams
+            loadExams();
+            
+            // Load classes
+            loadClasses();
+            
+            // Load school info
+            loadSchoolInfo();
+        }
+
+        // Load Exams from Firebase
+        function loadExams() {
+            onValue(ref(db, 'exams'), (snapshot) => {
+                examSelect.innerHTML = '<option value="">নির্বাচন করুন</option>';
+                if (snapshot.exists()) {
+                    const exams = Object.values(snapshot.val());
+                    exams.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+                    
+                    exams.forEach(exam => {
+                        const option = document.createElement('option');
+                        option.value = exam.examName;
+                        option.textContent = exam.examName;
+                        examSelect.appendChild(option);
+                    });
+                } else {
+                    // Add default options if no exams in Firebase
+                    const defaultExams = [
+                        "Annual Examination 2024",
+                        "Half Yearly Examination 2024",
+                        "Term I Examination 2024",
+                        "Term II Examination 2024"
+                    ];
+                    
+                    defaultExams.forEach(exam => {
+                        const option = document.createElement('option');
+                        option.value = exam;
+                        option.textContent = exam;
+                        examSelect.appendChild(option);
+                    });
+                }
+            });
+        }
+
+        // Load Classes from Firebase
+        function loadClasses() {
+            onValue(ref(db, 'classes'), (snapshot) => {
+                classSelect.innerHTML = '<option value="">নির্বাচন করুন</option>';
+                if (snapshot.exists()) {
+                    const classes = Object.values(snapshot.val());
+                    classes.sort((a, b) => a.className.localeCompare(b.className));
+                    
+                    classes.forEach(cls => {
+                        const option = document.createElement('option');
+                        option.value = cls.className;
+                        option.textContent = cls.className;
+                        classSelect.appendChild(option);
+                    });
+                } else {
+                    // Add default classes
+                    for (let i = 1; i <= 12; i++) {
+                        const option = document.createElement('option');
+                        option.value = `Class ${i}`;
+                        option.textContent = `Class ${i}`;
+                        classSelect.appendChild(option);
+                    }
+                }
+            });
+        }
+
+        // Load School Information
+        function loadSchoolInfo() {
+            onValue(ref(db, 'website_settings/general'), (snapshot) => {
+                if (snapshot.exists()) {
+                    const schoolInfo = snapshot.val();
+                    document.getElementById('schoolName').textContent = schoolInfo.schoolName || 'UDAY NARAYAN SIKSHAN SANSTHAN';
+                    document.getElementById('affiliationInfo').textContent = 
+                        `Affiliated To : ${schoolInfo.board || 'CBSE Board'} / Affiliation No : ${schoolInfo.affiliationNo || '2512A45200'}`;
+                    document.getElementById('contactInfo').textContent = 
+                        `Ph ${schoolInfo.phone || '+91 8808498469'}, Email: ${schoolInfo.email || 'info@yourschoolname.com'}, Visit us : ${schoolInfo.website || 'www.yourschoolwebsite.com'}`;
+                    
+                    // Update academic session
+                    const currentYear = new Date().getFullYear();
+                    document.getElementById('academicSession').textContent = schoolInfo.academicSession || `${currentYear-1}-${currentYear}`;
+                }
+            });
+        }
+
+        // Search Form Submission
+        searchForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const examName = examSelect.value;
+            const className = classSelect.value;
+            const roll = parseInt(rollInput.value);
+
+            if (!examName || !className || !roll || isNaN(roll)) {
+                alert('Please provide all required information');
+                return;
+            }
+
+            // Show loading
+            loading.style.display = 'block';
+            noResult.style.display = 'none';
+            a4ResultCard.style.display = 'none';
+            actionButtons.style.display = 'none';
+
+            try {
+                // Try to load student from Firebase
+                const student = await loadStudentFromFirebase(className, roll);
+                
+                // Load results
+                const results = await loadResultsFromFirebase(examName, className, student?.id);
+                
+                // Display result card
+                displayResultCard(student, examName, className, results);
+
+            } catch (error) {
+                console.error('Error:', error);
+                // Fallback to sample data
+                displaySampleResult(examName, className, roll);
+            }
+        });
+
+        // Load student from Firebase
+        async function loadStudentFromFirebase(className, roll) {
+            return new Promise((resolve) => {
+                onValue(ref(db, 'students'), (snapshot) => {
+                    if (snapshot.exists()) {
+                        const students = snapshot.val();
+                        for (const [id, student] of Object.entries(students)) {
+                            if (student.className === className && parseInt(student.roll) === roll) {
+                                resolve({ ...student, id });
+                                return;
+                            }
+                        }
+                    }
+                    resolve(null);
+                }, { onlyOnce: true });
+            });
+        }
+
+        // Load results from Firebase
+        async function loadResultsFromFirebase(examName, className, studentId) {
+            return new Promise((resolve) => {
+                if (!studentId) {
+                    resolve(null);
+                    return;
+                }
+                
+                onValue(ref(db, `results/${examName}/${className}`), (snapshot) => {
+                    resolve(snapshot.exists() ? snapshot.val() : null);
+                }, { onlyOnce: true });
+            });
+        }
+
+        // Display sample result (for demo)
+        function displaySampleResult(examName, className, roll) {
+            const sampleStudent = {
+                name: "SHAHVEE",
+                fatherName: "MR. RABEER",
+                motherName: "MRS. HEENA",
+                address: "HODIA SECTOR S2, UTTAR-PRADESH",
+                dob: "01-01-2015",
+                admissionNo: "2023-001",
+                roll: roll,
+                religion: "Hindu",
+                attendance: "95/100",
+                photo: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+            };
+            
+            displayResultCard(sampleStudent, examName, className, null);
+        }
+
+        // Display Result Card
+        function displayResultCard(student, examName, className, firebaseResults) {
+            // Hide loading
+            loading.style.display = 'none';
+
+            // Update student information
+            document.getElementById('studentName').textContent = student.name || "N/A";
+            document.getElementById('fatherName').textContent = student.fatherName || "N/A";
+            document.getElementById('motherName').textContent = student.motherName || student.mother_name || "N/A";
+            document.getElementById('studentAddress').textContent = student.address || student.full_address || "N/A";
+            document.getElementById('dob').textContent = student.dob || student.dateOfBirth || "N/A";
+            document.getElementById('admissionNo').textContent = student.admissionNo || student.admissionNumber || "N/A";
+            document.getElementById('studentRoll').textContent = student.roll || "N/A";
+            document.getElementById('religion').textContent = student.religion || "N/A";
+            document.getElementById('attendance').textContent = student.attendance || "95/100";
+
+            // Update class and exam info
+            document.getElementById('displayClass').textContent = className;
+
+            // Update student photo
+            const photoUrl = student.photo || student.image || student.profile_picture || 
+                            `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1a5f7a&color=fff&size=400&bold=true&font-size=0.5`;
+            document.getElementById('studentPhoto').src = photoUrl;
+
+            // Update academic marks table
+            updateMarksTable(firebaseResults, student.id);
+
+            // Update co-curricular activities
+            updateCoCurricularTable();
+
+            // Calculate and update summary
+            updateResultSummary();
+
+            // Show result card and action buttons
+            a4ResultCard.style.display = 'block';
+            actionButtons.style.display = 'flex';
+            
+            // Scroll to result card
+            setTimeout(() => {
+                a4ResultCard.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        // Update marks table
+        function updateMarksTable(firebaseResults, studentId) {
+            const tableBody = document.getElementById('marksTableBody');
+            tableBody.innerHTML = '';
+            
+            let totalMarks = 0;
+            let totalSubjects = 0;
+            
+            if (firebaseResults && studentId) {
+                // Use Firebase results
+                Object.entries(firebaseResults).forEach(([subjectName, subjectResults]) => {
+                    const studentResult = subjectResults[studentId];
+                    if (studentResult) {
+                        const term1 = studentResult.total || 0;
+                        const grade = studentResult.grade || calculateGrade(term1);
+                        
+                        const row = createSubjectRow(subjectName, term1, grade);
+                        tableBody.appendChild(row);
+                        
+                        totalMarks += term1;
+                        totalSubjects++;
+                    }
+                });
+            } else {
+                // Use sample data
+                sampleSubjects.forEach(subject => {
+                    const row = createSubjectRow(subject.name, subject.total, subject.grade);
+                    tableBody.appendChild(row);
+                    
+                    totalMarks += subject.total;
+                    totalSubjects++;
+                });
+            }
+            
+            // Add total row
+            const totalRow = document.createElement('tr');
+            totalRow.style.backgroundColor = '#e8f4fc';
+            totalRow.style.fontWeight = 'bold';
+            totalRow.innerHTML = `
+                <td class="subject-col" colspan="2">TOTAL</td>
+                <td>${totalMarks}</td>
+                <td>${totalMarks}</td>
+                <td></td>
+            `;
+            tableBody.appendChild(totalRow);
+            
+            // Update summary values
+            const maxMarks = totalSubjects * 60;
+            const percentage = maxMarks > 0 ? ((totalMarks / maxMarks) * 100).toFixed(2) : 0;
+            const overallGrade = calculateOverallGrade(percentage);
+            
+            document.getElementById('totalMarks').textContent = `${totalMarks} / ${maxMarks}`;
+            document.getElementById('percentage').textContent = `${percentage}%`;
+            document.getElementById('overallGrade').textContent = overallGrade;
+            document.getElementById('resultStatus').textContent = percentage >= 33 ? "PASS" : "FAIL";
+        }
+
+        // Create subject row
+        function createSubjectRow(name, marks, grade) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="subject-col">${name}</td>
+                <td>${marks}</td>
+                <td>${marks}</td>
+                <td>${marks}</td>
+                <td><strong>${grade}</strong></td>
+            `;
+            return row;
+        }
+
+        // Calculate grade from marks
+        function calculateGrade(marks) {
+            const percentage = (marks / 60) * 100;
+            
+            if (percentage >= 91) return "A+";
+            if (percentage >= 81) return "A";
+            if (percentage >= 71) return "B+";
+            if (percentage >= 61) return "B";
+            if (percentage >= 51) return "C+";
+            if (percentage >= 41) return "C";
+            if (percentage >= 33) return "D";
+            return "E";
+        }
+
+        // Calculate overall grade
+        function calculateOverallGrade(percentage) {
+            if (percentage >= 91) return "A+";
+            if (percentage >= 81) return "A";
+            if (percentage >= 71) return "B+";
+            if (percentage >= 61) return "B";
+            if (percentage >= 51) return "C+";
+            if (percentage >= 41) return "C";
+            if (percentage >= 33) return "D";
+            return "E (Needs Improvement)";
+        }
+
+        // Update co-curricular table
+        function updateCoCurricularTable() {
+            const tableBody = document.getElementById('coCurricularBody');
+            tableBody.innerHTML = '';
+            
+            sampleCoCurricular.forEach(activity => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${activity.activity}</td>
+                    <td>${activity.term1}</td>
+                    <td>${activity.term2}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Update result summary
+        function updateResultSummary() {
+            // Summary already updated in updateMarksTable
+        }
+
+        // Print result card
+        function printResultCard() {
+            window.print();
+        }
+
+        // Reset search
+        function resetSearch() {
+            searchForm.reset();
+            a4ResultCard.style.display = 'none';
+            actionButtons.style.display = 'none';
+            noResult.style.display = 'none';
+            examSelect.focus();
+        }
+
+        // Download as PDF
+        function downloadAsPDF() {
+            alert('PDF download feature will be added soon. For now, please use the Print option and save as PDF.');
+            // Implement PDF download using jsPDF or similar library
+        }
+
+        // Test function
+        window.testA4Result = function() {
+            if (examSelect.options.length > 1) {
+                examSelect.value = examSelect.options[1].value;
+            }
+            if (classSelect.options.length > 1) {
+                classSelect.value = classSelect.options[1].value;
+            }
+            rollInput.value = "1";
+            searchForm.dispatchEvent(new Event('submit'));
+        };
+    </script>
+</body>
+</html>

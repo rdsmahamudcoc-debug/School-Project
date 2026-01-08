@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>উপস্থিতি তালিকা</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="view_attendance.html" style="background: #1a252f; border-left: 4px solid #3498db; color: white;"><i class="fas fa-list-check"></i> উপস্থিত ছাত্র তালিকা</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left"><div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div><h3>উপস্থিতির রিপোর্ট</h3></div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            <div class="wrapper">
+                
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #ddd;">
+                    <h5 style="margin-bottom: 10px; color: #555;">কোন দিনের তালিকা দেখতে চান?</h5>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <input type="date" id="viewDate" style="padding: 8px; border: 1px solid #ddd;">
+                        <select id="classSelect" style="padding: 8px; border: 1px solid #ddd; min-width: 150px;">
+                            <option value="">ক্লাস লোড হচ্ছে...</option>
+                        </select>
+                        <button id="showBtn" class="submit-btn" style="margin: 0;">লিস্ট দেখুন</button>
+                    </div>
+                </div>
+
+                <div id="resultArea" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h4 style="color: green;">আজকের উপস্থিত ছাত্র-ছাত্রী (Present List)</h4>
+                        <div style="font-weight: bold; background: #e8f8f5; color: green; padding: 5px 10px; border-radius: 5px;">
+                            মোট উপস্থিত: <span id="presentCount">0</span> জন
+                        </div>
+                    </div>
+
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #eee;">
+                                    <th style="width: 80px;">রোল</th>
+                                    <th>নাম</th>
+                                    <th>স্ট্যাটাস</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attListBody"></tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button onclick="window.print()" style="padding: 10px 20px; background: #2c3e50; color: white; border: none; cursor: pointer; border-radius: 4px;"><i class="fas fa-print"></i> এই তালিকা প্রিন্ট করুন</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>function toggleSidebar(){document.getElementById('sidebar').classList.toggle('active');}</script>
+
+    <script type="module">
+        import { db, ref, onValue, get } from './firebase-config.js';
+
+        // আজকের তারিখ সেট
+        document.getElementById('viewDate').valueAsDate = new Date();
+
+        // ১. স্মার্ট ক্লাস লোডার
+        const loadClasses = async () => {
+            const classSelect = document.getElementById('classSelect');
+            const [classesSnap, studentsSnap] = await Promise.all([get(ref(db, 'classes')), get(ref(db, 'students'))]);
+            const uniqueClasses = new Set();
+            if (classesSnap.exists()) Object.values(classesSnap.val()).forEach(c => uniqueClasses.add(c.className));
+            if (studentsSnap.exists()) Object.values(studentsSnap.val()).forEach(s => { if(s.className) uniqueClasses.add(s.className); });
+            
+            classSelect.innerHTML = '<option value="">ক্লাস সিলেক্ট করুন</option>';
+            if (uniqueClasses.size > 0) {
+                Array.from(uniqueClasses).sort().forEach(cName => {
+                    const opt = document.createElement('option'); opt.value = cName; opt.textContent = cName; classSelect.appendChild(opt);
+                });
+            } else classSelect.innerHTML = '<option value="">কোনো ক্লাস পাওয়া যায়নি</option>';
+        };
+        loadClasses();
+
+        // ২. বাটন ক্লিক করলে ডাটা দেখাবে
+        document.getElementById('showBtn').addEventListener('click', () => {
+            const date = document.getElementById('viewDate').value;
+            const cl = document.getElementById('classSelect').value;
+
+            if(!date || !cl) return alert("তারিখ এবং ক্লাস সিলেক্ট করুন!");
+
+            const listBody = document.getElementById('attListBody');
+            const resultArea = document.getElementById('resultArea');
+            
+            resultArea.style.display = 'block';
+            listBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">খুঁজছি...</td></tr>';
+
+            // ওই তারিখের ও ক্লাসের এটেন্ডেন্স ফোল্ডার থেকে ডাটা আনা
+            onValue(ref(db, `attendance/${date}/${cl}`), (snapshot) => {
+                const data = snapshot.val();
+                listBody.innerHTML = "";
+                let count = 0;
+
+                if(data) {
+                    // ডাটা অ্যারেতে নিয়ে রোল অনুযায়ী সাজানো
+                    const students = Object.values(data).sort((a,b) => (parseInt(a.roll)||999) - (parseInt(b.roll)||999));
+
+                    students.forEach(st => {
+                        // শর্ত: শুধুমাত্র যারা Present তাদের দেখাব
+                        if(st.status === 'Present') {
+                            count++;
+                            listBody.innerHTML += `
+                                <tr>
+                                    <td>${st.roll}</td>
+                                    <td>${st.name}</td>
+                                    <td><span style="color: green; font-weight: bold;">✔ উপস্থিত</span></td>
+                                </tr>
+                            `;
+                        }
+                    });
+
+                    document.getElementById('presentCount').innerText = count;
+
+                    if(count === 0) {
+                        listBody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:red;">কেউ উপস্থিত ছিল না বা ডাটা নেই।</td></tr>';
+                    }
+
+                } else {
+                    listBody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:red;">এই তারিখে কোনো এটেন্ডেন্স নেওয়া হয়নি।</td></tr>';
+                    document.getElementById('presentCount').innerText = "0";
+                }
+            });
+        });
+    </script>
+</body>
+</html>

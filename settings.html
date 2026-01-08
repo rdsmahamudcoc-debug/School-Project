@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সিস্টেম সেটিংস</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="settings.html" style="background: #1a252f; border-left: 4px solid #3498db; color: white;"><i class="fas fa-cogs"></i> সেটিংস ও ইউজার</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left"><div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div><h3>সেটিংস</h3></div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            
+            <div class="wrapper" style="margin-bottom: 30px;">
+                <h4 style="margin-bottom: 15px; color: #2c3e50;">সিস্টেম ইউজার তৈরি করুন (Login Access)</h4>
+                <form id="userForm">
+                    <div class="form-grid">
+                        <div>
+                            <label>ইউজারনেম</label>
+                            <input type="text" id="uName" placeholder="ex: teacher1" required style="width: 100%; padding: 8px;">
+                        </div>
+                        <div>
+                            <label>পাসওয়ার্ড</label>
+                            <input type="text" id="uPass" placeholder="ex: 123456" required style="width: 100%; padding: 8px;">
+                        </div>
+                        <div>
+                            <label>রোল (Role)</label>
+                            <select id="uRole" style="width: 100%; padding: 8px;">
+                                <option value="Admin">Admin (সব এক্সেস)</option>
+                                <option value="Teacher">Teacher (একাডেমিক + রেজাল্ট)</option>
+                                <option value="Cashier">Cashier (শুধু একাউন্টস)</option>
+                                <option value="Librarian">Librarian (শুধু লাইব্রেরি)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="text-align: right; margin-top: 15px;">
+                        <button type="submit" class="submit-btn">ইউজার সেভ করুন</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="wrapper">
+                <h4>বর্তমান ইউজার তালিকা</h4>
+                <table style="width: 100%; margin-top: 10px; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #eee;">
+                            <th style="padding: 10px; border: 1px solid #ddd;">ইউজারনেম</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">পাসওয়ার্ড</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">রোল</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userBody"></tbody>
+                </table>
+            </div>
+
+        </div>
+    </main>
+
+    <script>function toggleSidebar(){document.getElementById('sidebar').classList.toggle('active');}</script>
+
+    <script type="module">
+        import { db, ref, push, set, onValue, remove } from './firebase-config.js';
+
+        // ১. ইউজার সেভ করা
+        document.getElementById('userForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newUser = push(ref(db, 'system_users'));
+            set(newUser, {
+                username: document.getElementById('uName').value,
+                password: document.getElementById('uPass').value,
+                role: document.getElementById('uRole').value,
+                id: newUser.key
+            }).then(() => { alert("ইউজার তৈরি হয়েছে!"); document.getElementById('userForm').reset(); });
+        });
+
+        // ২. ইউজার লিস্ট দেখানো
+        onValue(ref(db, 'system_users'), snap => {
+            const body = document.getElementById('userBody');
+            body.innerHTML = "";
+            if(snap.val()) {
+                Object.values(snap.val()).forEach(u => {
+                    body.innerHTML += `
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;">${u.username}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">${u.password}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;"><span style="background:#ddd; padding:2px 5px; border-radius:3px;">${u.role}</span></td>
+                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">
+                                <button onclick="window.del('system_users/${u.id}')" style="color:red; border:none; cursor:pointer;"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } else {
+                body.innerHTML = "<tr><td colspan='4' style='text-align:center;'>কোনো ইউজার নেই</td></tr>";
+            }
+        });
+
+        window.del = (p) => { if(confirm("ডিলিট করবেন?")) remove(ref(db, p)); };
+    </script>
+</body>
+</html>

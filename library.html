@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>লাইব্রেরি ম্যানেজমেন্ট</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="library.html" style="background: #1a252f; border-left: 4px solid #3498db; color: white;"><i class="fas fa-book-reader"></i> লাইব্রেরি</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left"><div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div><h3>লাইব্রেরি</h3></div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            
+            <div class="wrapper" style="margin-bottom: 30px;">
+                <h4>নতুন বই এন্ট্রি</h4>
+                <form id="bookForm">
+                    <div class="form-grid">
+                        <div><label>বইয়ের নাম</label><input type="text" id="bName" required></div>
+                        <div><label>লেখক</label><input type="text" id="bAuthor"></div>
+                        <div><label>ক্যাটাগরি</label><select id="bCat"><option>একাডেমিক</option><option>গল্প/উপন্যাস</option><option>বিজ্ঞান</option><option>অন্যান্য</option></select></div>
+                        <div><label>তাক নং (Shelf)</label><input type="text" id="bShelf"></div>
+                        <div><label>কপি সংখ্যা</label><input type="number" id="bQty" value="1"></div>
+                    </div>
+                    <div style="text-align: right; margin-top: 15px;">
+                        <button type="submit" class="submit-btn"><i class="fas fa-book"></i> বই যোগ করুন</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="wrapper">
+                <h4>বইয়ের তালিকা</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>বইয়ের নাম</th>
+                                <th>লেখক</th>
+                                <th>ক্যাটাগরি</th>
+                                <th>তাক নং</th>
+                                <th>মজুদ (Qty)</th>
+                                <th>অ্যাকশন</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bBody"><tr><td colspan="6">লোড হচ্ছে...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>function toggleSidebar(){document.getElementById('sidebar').classList.toggle('active');}</script>
+    <script type="module">
+        import { db, ref, push, set, onValue, remove } from './firebase-config.js';
+
+        // Add Book
+        document.getElementById('bookForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newRef = push(ref(db, 'library'));
+            set(newRef, {
+                bookName: document.getElementById('bName').value,
+                author: document.getElementById('bAuthor').value,
+                category: document.getElementById('bCat').value,
+                shelf: document.getElementById('bShelf').value,
+                qty: document.getElementById('bQty').value,
+                id: newRef.key
+            }).then(() => { alert("বই যোগ হয়েছে!"); document.getElementById('bookForm').reset(); });
+        });
+
+        // List
+        onValue(ref(db, 'library'), snap => {
+            const body = document.getElementById('bBody'); body.innerHTML = "";
+            if(snap.val()) Object.values(snap.val()).forEach(b => {
+                body.innerHTML += `
+                    <tr>
+                        <td><b>${b.bookName}</b></td>
+                        <td>${b.author}</td>
+                        <td><span style="background:#eee; padding:2px 5px; border-radius:3px;">${b.category}</span></td>
+                        <td>${b.shelf}</td>
+                        <td>${b.qty}</td>
+                        <td><button onclick="window.del('library/${b.id}')" style="color:red; border:none;"><i class="fas fa-trash"></i></button></td>
+                    </tr>
+                `;
+            }); else body.innerHTML = '<tr><td colspan="6">কোনো বই নেই</td></tr>';
+        });
+
+        window.del = (path) => { if(confirm("মুছে ফেলবেন?")) remove(ref(db, path)); };
+    </script>
+</body>
+</html>

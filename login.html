@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>লগইন - স্মার্ট স্কুল</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #2c3e50; }
+        .login-box { background: white; padding: 40px; border-radius: 8px; width: 350px; text-align: center; }
+        .login-box h2 { margin-bottom: 20px; color: #333; }
+        .login-box input { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; }
+        .login-box button { width: 100%; padding: 10px; background: #3498db; color: white; border: none; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .error { color: red; font-size: 13px; display: none; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <div style="font-size: 40px; color: #3498db; margin-bottom: 10px;"><i class="fas fa-school"></i></div>
+        <h2>এডমিন প্যানেল লগইন</h2>
+        <form id="loginForm">
+            <input type="text" id="loginUser" placeholder="ইউজারনেম" required>
+            <input type="password" id="loginPass" placeholder="পাসওয়ার্ড" required>
+            <button type="submit">লগইন করুন</button>
+            <p class="error" id="loginError">ইউজারনেম বা পাসওয়ার্ড ভুল!</p>
+        </form>
+    </div>
+
+    <script type="module">
+        import { db, ref, onValue } from './firebase-config.js';
+
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const user = document.getElementById('loginUser').value;
+            const pass = document.getElementById('loginPass').value;
+            const err = document.getElementById('loginError');
+
+            // ১. ইমার্জেন্সি লগইন (প্রথমবারের জন্য)
+            if (user === 'admin' && pass === '123456') {
+                localStorage.setItem('userRole', 'Admin');
+                localStorage.setItem('userName', 'Master Admin');
+                alert("মাস্টার লগইন সফল! দয়া করে সেটিংসে গিয়ে নতুন এডমিন তৈরি করুন।");
+                window.location.href = "index.html";
+                return;
+            }
+
+            // ২. ডাটাবেস চেক (আসল ইউজারদের জন্য)
+            onValue(ref(db, 'system_users'), snap => {
+                let found = false;
+                if(snap.val()) {
+                    const users = Object.values(snap.val());
+                    const match = users.find(u => u.username === user && u.password === pass);
+
+                    if(match) {
+                        found = true;
+                        localStorage.setItem('userRole', match.role);
+                        localStorage.setItem('userName', match.username);
+                        window.location.href = "index.html";
+                    }
+                }
+
+                if(!found) {
+                    err.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

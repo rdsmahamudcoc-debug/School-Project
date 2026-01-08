@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অভিভাবক তালিকা</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .search-area {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .search-area input, .search-area select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            outline: none;
+            min-width: 200px;
+        }
+        .call-btn {
+            background: #27ae60;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .call-btn:hover { background: #219150; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li>
+                <button class="dropdown-btn active"><span><i class="fas fa-user-graduate"></i> স্টুডেন্ট</span><i class="fas fa-caret-down rotate"></i></button>
+                <div class="dropdown-container" style="display: block;">
+                    <a href="add_student.html">নতুন ভর্তি</a>
+                    <a href="student_list.html">স্টুডেন্ট লিস্ট</a>
+                    <a href="guardian_list.html" style="color: white;">অভিভাবক তথ্য</a>
+                </div>
+            </li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left"><div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div><h3>অভিভাবক তথ্য কেন্দ্র</h3></div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            
+            <div class="search-area">
+                <input type="text" id="searchGuardian" placeholder="ছাত্রের নাম বা বাবার নামে খুঁজুন..." onkeyup="filterGuardians()">
+                <select id="classFilter" onchange="filterGuardians()">
+                    <option value="">সকল ক্লাস</option>
+                </select>
+                <button onclick="window.print()" style="padding: 10px 15px; background: #34495e; color: white; border: none; cursor: pointer; border-radius: 4px;">
+                    <i class="fas fa-print"></i> প্রিন্ট লিস্ট
+                </button>
+            </div>
+
+            <div class="wrapper">
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th>ছাত্রের নাম (রোল)</th>
+                                <th>বাবার নাম</th>
+                                <th>মায়ের নাম</th>
+                                <th>মোবাইল নম্বর</th>
+                                <th>ঠিকানা</th>
+                                <th>অ্যাকশন</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guardianTableBody">
+                            <tr><td colspan="6" style="text-align: center;">ডাটা লোড হচ্ছে...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>function toggleSidebar(){document.getElementById('sidebar').classList.toggle('active');}</script>
+
+    <script type="module">
+        import { db, ref, onValue } from './firebase-config.js';
+
+        // ১. ক্লাস লোড করা (ফিল্টারের জন্য)
+        onValue(ref(db, 'classes'), snap => {
+            const sel = document.getElementById('classFilter');
+            if(snap.val()) {
+                Object.values(snap.val()).forEach(c => {
+                    sel.innerHTML += `<option value="${c.className}">${c.className}</option>`;
+                });
+            }
+        });
+
+        // ২. স্টুডেন্ট ডাটা থেকে অভিভাবকদের তথ্য আনা
+        onValue(ref(db, 'students'), snapshot => {
+            const data = snapshot.val();
+            const tableBody = document.getElementById('guardianTableBody');
+            tableBody.innerHTML = "";
+
+            if (data) {
+                const students = Object.values(data);
+                students.forEach(st => {
+                    tableBody.innerHTML += `
+                        <tr class="guardian-row" data-class="${st.className}" data-name="${st.name.toLowerCase()} ${st.fatherName.toLowerCase()}">
+                            <td>
+                                <b>${st.name}</b><br>
+                                <small style="color: #666;">ক্লাস: ${st.className}, রোল: ${st.roll}</small>
+                            </td>
+                            <td>${st.fatherName || '-'}</td>
+                            <td>${st.motherName || '-'}</td>
+                            <td><b style="color: #2c3e50;">${st.phone || '-'}</b></td>
+                            <td style="font-size: 13px; color: #555;">${st.address || 'N/A'}</td>
+                            <td>
+                                <a href="tel:${st.phone}" class="call-btn"><i class="fas fa-phone"></i> কল করুন</a>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">কোনো তথ্য পাওয়া যায়নি</td></tr>';
+            }
+        });
+
+        // ৩. সার্চ ফিল্টার লজিক
+        window.filterGuardians = () => {
+            const searchText = document.getElementById('searchGuardian').value.toLowerCase();
+            const classVal = document.getElementById('classFilter').value;
+            const rows = document.querySelectorAll('.guardian-row');
+
+            rows.forEach(row => {
+                const rowName = row.getAttribute('data-name');
+                const rowClass = row.getAttribute('data-class');
+                
+                const matchesSearch = rowName.includes(searchText);
+                const matchesClass = classVal === "" || rowClass === classVal;
+
+                if (matchesSearch && matchesClass) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+    </script>
+</body>
+</html>

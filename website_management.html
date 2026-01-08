@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ওয়েবসাইট ম্যানেজমেন্ট</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* রিসেট এবং বেসিক */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Arial', sans-serif; }
+        body { background: #f5f7fa; display: flex; min-height: 100vh; }
+        
+        /* সাইডবার */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(180deg, #2c3e50 0%, #1a252f 100%);
+            color: white;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 3px 0 15px rgba(0,0,0,0.1);
+        }
+        .brand {
+            padding: 25px 20px;
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .menu {
+            list-style: none;
+            padding: 15px 0;
+        }
+        .menu a {
+            padding: 14px 25px;
+            text-decoration: none;
+            color: #b8c7ce;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+            border-left: 4px solid transparent;
+            transition: all 0.3s;
+        }
+        .menu a:hover {
+            background: rgba(255,255,255,0.05);
+            color: white;
+            border-left-color: #8e44ad;
+        }
+        .menu a.active {
+            background: rgba(142, 68, 173, 0.2);
+            color: white;
+            border-left-color: #8e44ad;
+        }
+        
+        /* মেইন কন্টেন্ট */
+        .main-content {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            min-height: 100vh;
+        }
+        header {
+            background: white;
+            padding: 18px 30px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .mobile-toggle {
+            display: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: #555;
+        }
+        
+        /* ট্যাব ডিজাইন */
+        .tabs-container {
+            background: white;
+            margin: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .tab-buttons {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            padding: 5px 5px 0;
+            overflow-x: auto;
+        }
+        .tab-btn {
+            padding: 15px 25px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        .tab-btn:hover {
+            color: #8e44ad;
+            background: rgba(142, 68, 173, 0.05);
+        }
+        .tab-btn.active {
+            color: #8e44ad;
+            border-bottom-color: #8e44ad;
+            background: white;
+        }
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* ফর্ম স্টাইল */
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 5px solid #3498db;
+        }
+        .form-section h5 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        label {
+            display: block;
+            margin: 15px 0 8px;
+            color: #34495e;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: white;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #8e44ad;
+            box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.1);
+        }
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .help-text {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        /* সিগনেচার সেকশন */
+        .signature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 20px 0;
+        }
+        .signature-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        .signature-card label {
+            color: #2c3e50;
+            font-size: 15px;
+            margin-top: 0;
+        }
+        .signature-preview-container {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .signature-preview {
+            width: 200px;
+            height: 85px;
+            border: 2px dashed #ccc;
+            background: #f9f9f9;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 6px;
+        }
+        .signature-preview img {
+            max-width: 95%;
+            max-height: 95%;
+            object-fit: contain;
+            display: block;
+        }
+        .preview-status {
+            font-size: 12px;
+            margin-top: 5px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .preview-status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .preview-status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .preview-status.loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        /* বাটন স্টাইল */
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(142, 68, 173, 0.3);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #7d3c98 0%, #8e44ad 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(142, 68, 173, 0.4);
+        }
+        .btn-secondary {
+            background: #3498db;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #2980b9;
+        }
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        /* লিস্ট আইটেম */
+        .list-item {
+            background: white;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        .list-item:hover {
+            transform: translateX(5px);
+        }
+        .list-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .list-item-title {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        .list-item-date {
+            color: #7f8c8d;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .list-item-desc {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-top: 8px;
+        }
+        
+        /* নোটিফিকেশন */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 9999;
+            display: none;
+            animation: slideIn 0.3s ease;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .notification.success {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        }
+        .notification.error {
+            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+        }
+        .notification.info {
+            background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+        }
+        
+        /* মোবাইল রেসপনসিভ */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            .mobile-toggle {
+                display: block;
+            }
+            .tabs-container {
+                margin: 15px;
+            }
+            .signature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* ইউটিলিটি ক্লাস */
+        .text-center { text-align: center; }
+        .mt-20 { margin-top: 20px; }
+        .mb-20 { margin-bottom: 20px; }
+        .d-flex { display: flex; }
+        .align-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-10 { gap: 10px; }
+        .gap-20 { gap: 20px; }
+        
+        /* স্পিনার */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- সাইডবার -->
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <i class="fas fa-school" style="color: #8e44ad;"></i>
+            স্কুল ড্যাশবোর্ড
+        </div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="website_management.html" class="active"><i class="fas fa-globe"></i> ওয়েবসাইট কন্ট্রোল</a></li>
+            <li><a href="student_list.html"><i class="fas fa-user-graduate"></i> স্টুডেন্ট লিস্ট</a></li>
+            <li><a href="attendance.html"><i class="fas fa-fingerprint"></i> এটেন্ডেন্স</a></li>
+            <li><a href="exam_management.html"><i class="fas fa-file-alt"></i> পরীক্ষা</a></li>
+            <li><a href="fee.html"><i class="fas fa-money-bill-wave"></i> ফি কালেকশন</a></li>
+            <li><a href="#" onclick="logout()" style="color: #e74c3c;"><i class="fas fa-sign-out-alt"></i> লগআউট</a></li>
+        </ul>
+    </aside>
+
+    <!-- মেইন কন্টেন্ট -->
+    <main class="main-content">
+        <header>
+            <div class="header-left">
+                <div class="mobile-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <h3 style="color: #2c3e50;">ওয়েবসাইট কন্টেন্ট ম্যানেজমেন্ট</h3>
+            </div>
+            <div style="font-size: 14px; color: #7f8c8d;">
+                <i class="fas fa-calendar-alt"></i>
+                <span id="currentDate">--/--/----</span>
+            </div>
+        </header>
+
+        <!-- ট্যাব কন্টেন্ট -->
+        <div class="tabs-container">
+            <!-- ট্যাব বাটন -->
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="openTab('infoTab')">
+                    <i class="fas fa-info-circle"></i> স্কুল তথ্য
+                </button>
+                <button class="tab-btn" onclick="openTab('speechTab')">
+                    <i class="fas fa-microphone"></i> বাণী
+                </button>
+                <button class="tab-btn" onclick="openTab('signatureTab')">
+                    <i class="fas fa-signature"></i> সিগনেচার
+                </button>
+                <button class="tab-btn" onclick="openTab('noticeTab')">
+                    <i class="fas fa-bullhorn"></i> নোটিশ
+                </button>
+                <button class="tab-btn" onclick="openTab('eventTab')">
+                    <i class="fas fa-calendar-alt"></i> ইভেন্ট
+                </button>
+            </div>
+
+            <!-- নোটিফিকেশন -->
+            <div id="notification" class="notification"></div>
+
+            <!-- ট্যাব ১: স্কুল তথ্য -->
+            <div id="infoTab" class="tab-content active">
+                <h4 style="color: #2c3e50; margin-bottom: 25px; border-bottom: 3px solid #8e44ad; padding-bottom: 10px;">
+                    <i class="fas fa-school"></i> স্কুলের সাধারণ তথ্য
+                </h4>
+                
+                <form id="generalForm">
+                    <div class="form-section">
+                        <h5><i class="fas fa-id-card"></i> মৌলিক তথ্য</h5>
+                        
+                        <label>স্কুলের নাম (Full Name)</label>
+                        <input type="text" id="sName" placeholder="যেমন: ঢাকা রেসিডেন্সিয়াল মডেল স্কুল" required>
+                        
+                        <label>EIIN নম্বর</label>
+                        <input type="text" id="sEiin" placeholder="123456" required>
+                        
+                        <label>ঠিকানা (Address)</label>
+                        <textarea id="sAddress" rows="3" placeholder="পুরো ঠিকানা লিখুন" required></textarea>
+                        
+                        <label>যোগাযোগ (Phone/Email)</label>
+                        <input type="text" id="sContact" placeholder="ফোন: ০১৭XXXXXXXX, ইমেইল: contact@school.edu" required>
+                    </div>
+
+                    <div class="form-section">
+                        <h5><i class="fas fa-image"></i> লোগো</h5>
+                        <label>লোগো লিংক (Image URL)</label>
+                        <input type="text" id="sLogo" placeholder="https://drive.google.com/uc?export=view&id=..." required>
+                        <p class="help-text">গুগল ড্রাইভে লোগো আপলোড করে লিংক দিন</p>
+                        
+                        <div class="signature-preview-container">
+                            <div class="signature-preview" id="logoPreview">
+                                <div style="color: #888;">লোগো প্রিভিউ</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h5><i class="fas fa-map-marker-alt"></i> গুগল ম্যাপ</h5>
+                        <label>গুগল ম্যাপ এম্বেড কোড</label>
+                        <textarea id="sMap" rows="5" placeholder='<iframe src="https://www.google.com/maps/embed?pb=..." ...></iframe>'></textarea>
+                        <p class="help-text">Google Maps → Share → Embed a map → Copy HTML → পেস্ট করুন</p>
+                        
+                        <div id="mapPreview" style="margin-top: 15px; min-height: 200px; background: #f0f0f0; border: 2px dashed #ccc; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #888;">
+                            ম্যাপ প্রিভিউ এখানে দেখানো হবে
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-20">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> তথ্য সংরক্ষণ করুন
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ট্যাব ২: বাণী -->
+            <div id="speechTab" class="tab-content">
+                <h4 style="color: #2c3e50; margin-bottom: 25px; border-bottom: 3px solid #2ecc71; padding-bottom: 10px;">
+                    <i class="fas fa-microphone"></i> স্কুল প্রধানদের বাণী
+                </h4>
+                
+                <form id="speechForm">
+                    <div class="d-flex gap-20" style="flex-wrap: wrap;">
+                        <!-- প্রধান শিক্ষক -->
+                        <div style="flex: 1; min-width: 300px;">
+                            <div class="form-section">
+                                <h5 style="color: #3498db;">
+                                    <i class="fas fa-user-tie"></i> প্রধান শিক্ষক
+                                </h5>
+                                
+                                <label>নাম</label>
+                                <input type="text" id="hmName" placeholder="প্রধান শিক্ষকের নাম" required>
+                                
+                                <label>পদবী</label>
+                                <input type="text" id="hmDesignation" value="প্রধান শিক্ষক" required>
+                                
+                                <label>ছবি লিংক</label>
+                                <input type="text" id="hmImg" placeholder="https://drive.google.com/uc?export=view&id=..." required>
+                                
+                                <label>বাণী</label>
+                                <textarea id="hmSpeech" rows="6" placeholder="প্রধান শিক্ষকের বাণী লিখুন..." required></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- সভাপতি -->
+                        <div style="flex: 1; min-width: 300px;">
+                            <div class="form-section">
+                                <h5 style="color: #9b59b6;">
+                                    <i class="fas fa-user-tie"></i> সভাপতি
+                                </h5>
+                                
+                                <label>নাম</label>
+                                <input type="text" id="chName" placeholder="সভাপতির নাম" required>
+                                
+                                <label>পদবী</label>
+                                <input type="text" id="chDesignation" value="সভাপতি" required>
+                                
+                                <label>ছবি লিংক</label>
+                                <input type="text" id="chImg" placeholder="https://drive.google.com/uc?export=view&id=..." required>
+                                
+                                <label>বাণী</label>
+                                <textarea id="chSpeech" rows="6" placeholder="সভাপতির বাণী লিখুন..." required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-20">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> বাণী সংরক্ষণ করুন
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ট্যাব ৩: সিগনেচার -->
+            <div id="signatureTab" class="tab-content">
+                <h4 style="color: #2c3e50; margin-bottom: 25px; border-bottom: 3px solid #e74c3c; padding-bottom: 10px;">
+                    <i class="fas fa-signature"></i> সিগনেচার ম্যানেজমেন্ট
+                </h4>
+                
+                <div class="form-section">
+                    <h5 style="color: #d35400;">
+                        <i class="fas fa-info-circle"></i> নির্দেশনা
+                    </h5>
+                    <p style="color: #555; line-height: 1.6; margin-bottom: 0;">
+                        ১. গুগল ড্রাইভে সিগনেচার ইমেজ আপলোড করুন<br>
+                        ২. ইমেজে Right-Click → "Get shareable link"<br>
+                        ৩. লিংক থেকে <code>id=</code> পরের অংশ কপি করুন<br>
+                        ৪. নিচের ফরম্যাটে লিংক দিন: <code>https://drive.google.com/uc?export=view&id=YOUR_FILE_ID</code>
+                    </p>
+                </div>
+                
+                <form id="signatureForm">
+                    <div class="signature-grid">
+                        <!-- প্রধান শিক্ষক -->
+                        <div class="signature-card">
+                            <label>প্রধান শিক্ষক</label>
+                            <input type="text" id="sigPrincipalName" placeholder="প্রধান শিক্ষকের নাম" required>
+                            <input type="text" id="sigPrincipalImg" placeholder="https://drive.google.com/uc?export=view&id=..." 
+                                   class="signature-input" data-preview="previewPrincipal" style="margin-top: 10px;">
+                            
+                            <div class="signature-preview-container">
+                                <div class="signature-preview" id="previewPrincipal">
+                                    <div style="color: #888; font-size: 13px;">প্রিভিউ</div>
+                                </div>
+                                <div class="preview-status" id="statusPrincipal"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- ক্লাস টিচার -->
+                        <div class="signature-card">
+                            <label>ক্লাস টিচার</label>
+                            <input type="text" id="sigTeacherName" placeholder="ক্লাস টিচারের নাম" required>
+                            <input type="text" id="sigTeacherImg" placeholder="https://drive.google.com/uc?export=view&id=..." 
+                                   class="signature-input" data-preview="previewTeacher" style="margin-top: 10px;">
+                            
+                            <div class="signature-preview-container">
+                                <div class="signature-preview" id="previewTeacher">
+                                    <div style="color: #888; font-size: 13px;">প্রিভিউ</div>
+                                </div>
+                                <div class="preview-status" id="statusTeacher"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- ব্যবস্থাপক -->
+                        <div class="signature-card">
+                            <label>ব্যবস্থাপক</label>
+                            <input type="text" id="sigManagerName" placeholder="ব্যবস্থাপকের নাম" required>
+                            <input type="text" id="sigManagerImg" placeholder="https://drive.google.com/uc?export=view&id=..." 
+                                   class="signature-input" data-preview="previewManager" style="margin-top: 10px;">
+                            
+                            <div class="signature-preview-container">
+                                <div class="signature-preview" id="previewManager">
+                                    <div style="color: #888; font-size: 13px;">প্রিভিউ</div>
+                                </div>
+                                <div class="preview-status" id="statusManager"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- পরীক্ষা নিয়ন্ত্রক -->
+                        <div class="signature-card">
+                            <label>পরীক্ষা নিয়ন্ত্রক</label>
+                            <input type="text" id="sigExamName" placeholder="পরীক্ষা নিয়ন্ত্রকের নাম">
+                            <input type="text" id="sigExamImg" placeholder="https://drive.google.com/uc?export=view&id=..." 
+                                   class="signature-input" data-preview="previewExam" style="margin-top: 10px;">
+                            
+                            <div class="signature-preview-container">
+                                <div class="signature-preview" id="previewExam">
+                                    <div style="color: #888; font-size: 13px;">প্রিভিউ</div>
+                                </div>
+                                <div class="preview-status" id="statusExam"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- টেস্ট বাটন -->
+                    <div class="form-section">
+                        <h5><i class="fas fa-vial"></i> টেস্ট লিংক</h5>
+                        <div class="d-flex gap-10" style="flex-wrap: wrap;">
+                            <button type="button" onclick="testSignature('principal')" class="btn btn-secondary">
+                                প্রধান শিক্ষকের টেস্ট
+                            </button>
+                            <button type="button" onclick="testSignature('teacher')" class="btn btn-secondary">
+                                ক্লাস টিচারের টেস্ট
+                            </button>
+                            <button type="button" onclick="testSignature('manager')" class="btn btn-secondary">
+                                ব্যবস্থাপকের টেস্ট
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-20">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-signature"></i> সিগনেচার সংরক্ষণ করুন
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- সংরক্ষিত সিগনেচার -->
+                <div class="form-section" id="savedSignatures" style="display: none;">
+                    <h5 style="color: #27ae60;">
+                        <i class="fas fa-check-circle"></i> সংরক্ষিত সিগনেচার
+                    </h5>
+                    <div id="signatureDisplay" class="d-flex gap-20" style="flex-wrap: wrap; justify-content: center;">
+                        <!-- এখানে ডাটা লোড হবে -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ট্যাব ৪: নোটিশ -->
+            <div id="noticeTab" class="tab-content">
+                <h4 style="color: #2c3e50; margin-bottom: 25px; border-bottom: 3px solid #3498db; padding-bottom: 10px;">
+                    <i class="fas fa-bullhorn"></i> নোটিশ বোর্ড
+                </h4>
+                
+                <div class="form-section">
+                    <h5 style="color: #e67e22;">
+                        <i class="fas fa-plus-circle"></i> নতুন নোটিশ
+                    </h5>
+                    <form id="noticeForm">
+                        <label>নোটিশ শিরোনাম</label>
+                        <input type="text" id="nTitle" placeholder="নোটিশের শিরোনাম" required>
+                        
+                        <label>তারিখ</label>
+                        <input type="date" id="nDate" required>
+                        
+                        <label>বর্ণনা</label>
+                        <textarea id="nDesc" rows="4" placeholder="বিস্তারিত বর্ণনা"></textarea>
+                        
+                        <label>ফাইল লিংক (ঐচ্ছিক)</label>
+                        <input type="text" id="nLink" placeholder="Google Drive Link">
+                        <p class="help-text">PDF, Word বা Image ফাইলের লিংক দিন</p>
+                        
+                        <div class="text-center mt-20">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> নোটিশ প্রকাশ করুন
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="form-section">
+                    <h5 style="color: #2c3e50;">
+                        <i class="fas fa-list"></i> প্রকাশিত নোটিশ
+                    </h5>
+                    <div id="noticeList">
+                        <p style="text-align: center; color: #888; padding: 20px;">
+                            <i class="fas fa-spinner fa-spin"></i> নোটিশ লোড হচ্ছে...
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ট্যাব ৫: ইভেন্ট -->
+            <div id="eventTab" class="tab-content">
+                <h4 style="color: #2c3e50; margin-bottom: 25px; border-bottom: 3px solid #9b59b6; padding-bottom: 10px;">
+                    <i class="fas fa-calendar-alt"></i> স্কুল ইভেন্ট
+                </h4>
+                
+                <div class="form-section">
+                    <h5 style="color: #9b59b6;">
+                        <i class="fas fa-plus-circle"></i> নতুন ইভেন্ট
+                    </h5>
+                    <form id="eventForm">
+                        <label>ইভেন্টের নাম</label>
+                        <input type="text" id="eName" placeholder="ইভেন্টের নাম" required>
+                        
+                        <label>তারিখ</label>
+                        <input type="date" id="eDate" required>
+                        
+                        <label>সময় (ঐচ্ছিক)</label>
+                        <input type="text" id="eTime" placeholder="যেমন: সকাল ১০:০০">
+                        
+                        <label>বর্ণনা</label>
+                        <textarea id="eDesc" rows="4" placeholder="ইভেন্টের বিস্তারিত বর্ণনা"></textarea>
+                        
+                        <div class="text-center mt-20">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-calendar-plus"></i> ইভেন্ট যোগ করুন
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="form-section">
+                    <h5 style="color: #2c3e50;">
+                        <i class="fas fa-calendar-check"></i> আসন্ন ইভেন্ট
+                    </h5>
+                    <div id="eventList">
+                        <p style="text-align: center; color: #888; padding: 20px;">
+                            <i class="fas fa-spinner fa-spin"></i> ইভেন্ট লোড হচ্ছে...
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ফায়ারবেস SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+
+    <script>
+        // ==================== ইনিশিয়াল ফাংশন ====================
+        
+        // সাইডবার টগল
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+        
+        // ট্যাব খোলা
+        function openTab(tabId) {
+            // সব ট্যাব হাইড
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // সব বাটন ইনঅ্যাকটিভ
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // নির্বাচিত ট্যাব ও বাটন একটিভ
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+        
+        // নোটিফিকেশন
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+        
+        // লগআউট
+        function logout() {
+            localStorage.clear();
+            window.location.href = "login.html";
+        }
+        
+        // তারিখ আপডেট
+        function updateDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            document.getElementById('currentDate').textContent = 
+                now.toLocaleDateString('bn-BD', options);
+        }
+        
+        // পেইজ লোড
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDate();
+            // আজকের তারিখ সেট
+            const today = new Date().toISOString().split('T')[0];
+            if (document.getElementById('nDate')) {
+                document.getElementById('nDate').value = today;
+                document.getElementById('nDate').min = today;
+            }
+            if (document.getElementById('eDate')) {
+                document.getElementById('eDate').value = today;
+                document.getElementById('eDate').min = today;
+            }
+        });
+    </script>
+
+    <script>
+        // ==================== ফায়ারবেস কনফিগ ====================
+        
+        // Firebase কনফিগারেশন (আপনার নিজের কনফিগ ব্যবহার করুন)
+        const firebaseConfig = {
+            apiKey: "AIzaSyABC1234567890DEFGHIJKLMNOPQRSTUVWXYZ",
+            authDomain: "your-project.firebaseapp.com",
+            databaseURL: "https://your-project-default-rtdb.firebaseio.com",
+            projectId: "your-project",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "1234567890",
+            appId: "1:1234567890:web:abcdef1234567890"
+        };
+        
+        // Firebase ইনিশিয়ালাইজ
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const database = firebase.database();
+        
+        // ==================== ইউটিলিটি ফাংশন ====================
+        
+        // গুগল ড্রাইভ লিংক কনভার্ট
+        function convertDriveLink(link) {
+            if (!link) return '';
+            
+            link = link.trim();
+            
+            // যদি সরাসরি ভিউ লিংক থাকে
+            if (link.includes('drive.google.com/uc?')) {
+                return link;
+            }
+            
+            // যদি শেয়ারেবল লিংক থাকে
+            if (link.includes('drive.google.com/file/d/')) {
+                const match = link.match(/\/d\/([^\/]+)/);
+                if (match && match[1]) {
+                    return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+                }
+            }
+            
+            // যদি শুধু আইডি থাকে
+            if (link.length >= 30 && !link.includes('http')) {
+                return `https://drive.google.com/uc?export=view&id=${link}`;
+            }
+            
+            return link;
+        }
+        
+        // ইমেজ লোডার
+        function loadImageToPreview(imageUrl, previewId, statusId) {
+            const preview = document.getElementById(previewId);
+            const status = document.getElementById(statusId);
+            
+            if (!imageUrl || imageUrl.trim() === '') {
+                preview.innerHTML = '<div style="color: #888; font-size: 13px;">প্রিভিউ</div>';
+                status.textContent = '';
+                status.className = 'preview-status';
+                return;
+            }
+            
+            const convertedLink = convertDriveLink(imageUrl);
+            
+            // লোডিং স্টেট
+            status.textContent = 'লোড হচ্ছে...';
+            status.className = 'preview-status loading';
+            
+            const img = new Image();
+            img.onload = function() {
+                preview.innerHTML = '';
+                const imgElement = document.createElement('img');
+                imgElement.src = convertedLink;
+                imgElement.alt = 'Signature';
+                imgElement.style.maxWidth = '95%';
+                imgElement.style.maxHeight = '95%';
+                imgElement.style.objectFit = 'contain';
+                preview.appendChild(imgElement);
+                
+                status.textContent = '✅ লোড হয়েছে';
+                status.className = 'preview-status success';
+            };
+            
+            img.onerror = function() {
+                preview.innerHTML = '<div style="color: #e74c3c; font-size: 13px;">লোড ব্যর্থ</div>';
+                status.textContent = '❌ ইমেজ লোড ব্যর্থ';
+                status.className = 'preview-status error';
+            };
+            
+            // টাইমআউট
+            setTimeout(() => {
+                if (!img.complete) {
+                    status.textContent = '⚠️ লোড হতে সময় নিচ্ছে';
+                    status.className = 'preview-status loading';
+                }
+            }, 3000);
+            
+            img.src = convertedLink;
+        }
+        
+        // ==================== ট্যাব ১: স্কুল তথ্য ====================
+        
+        // স্কুল তথ্য ফর্ম
+        document.getElementById('generalForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const generalData = {
+                schoolName: document.getElementById('sName').value,
+                eiin: document.getElementById('sEiin').value,
+                address: document.getElementById('sAddress').value,
+                contact: document.getElementById('sContact').value,
+                logo: document.getElementById('sLogo').value,
+                mapLink: document.getElementById('sMap').value,
+                updatedAt: new Date().toISOString()
+            };
+            
+            try {
+                await database.ref('website_settings/general').set(generalData);
+                showNotification('✅ স্কুলের তথ্য সফলভাবে সংরক্ষণ হয়েছে!', 'success');
+                
+                // লোগো প্রিভিউ আপডেট
+                loadImageToPreview(generalData.logo, 'logoPreview', 'statusPrincipal');
+                
+                // ম্যাপ প্রিভিউ আপডেট
+                const mapPreview = document.getElementById('mapPreview');
+                if (generalData.mapLink && generalData.mapLink.includes('<iframe')) {
+                    mapPreview.innerHTML = generalData.mapLink;
+                }
+            } catch (error) {
+                showNotification('❌ ত্রুটি: ' + error.message, 'error');
+            }
+        });
+        
+        // স্কুল তথ্য লোড
+        database.ref('website_settings/general').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                document.getElementById('sName').value = data.schoolName || '';
+                document.getElementById('sEiin').value = data.eiin || '';
+                document.getElementById('sAddress').value = data.address || '';
+                document.getElementById('sContact').value = data.contact || '';
+                document.getElementById('sLogo').value = data.logo || '';
+                document.getElementById('sMap').value = data.mapLink || '';
+                
+                // লোগো প্রিভিউ
+                loadImageToPreview(data.logo, 'logoPreview', 'statusPrincipal');
+                
+                // ম্যাপ প্রিভিউ
+                const mapPreview = document.getElementById('mapPreview');
+                if (data.mapLink && data.mapLink.includes('<iframe')) {
+                    mapPreview.innerHTML = data.mapLink;
+                }
+            }
+        });
+        
+        // লোগো প্রিভিউ
+        document.getElementById('sLogo')?.addEventListener('input', function() {
+            loadImageToPreview(this.value, 'logoPreview', 'statusPrincipal');
+        });
+        
+        // ==================== ট্যাব ২: বাণী ====================
+        
+        // বাণী ফর্ম
+        document.getElementById('speechForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const speechData = {
+                headmaster: {
+                    name: document.getElementById('hmName').value,
+                    designation: document.getElementById('hmDesignation').value,
+                    img: document.getElementById('hmImg').value,
+                    speech: document.getElementById('hmSpeech').value
+                },
+                chairman: {
+                    name: document.getElementById('chName').value,
+                    designation: document.getElementById('chDesignation').value,
+                    img: document.getElementById('chImg').value,
+                    speech: document.getElementById('chSpeech').value
+                },
+                updatedAt: new Date().toISOString()
+            };
+            
+            try {
+                await database.ref('website_settings/speeches').set(speechData);
+                showNotification('✅ বাণী সফলভাবে সংরক্ষণ হয়েছে!', 'success');
+            } catch (error) {
+                showNotification('❌ ত্রুটি: ' + error.message, 'error');
+            }
+        });
+        
+        // বাণী ডাটা লোড
+        database.ref('website_settings/speeches').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                if (data.headmaster) {
+                    document.getElementById('hmName').value = data.headmaster.name || '';
+                    document.getElementById('hmDesignation').value = data.headmaster.designation || '';
+                    document.getElementById('hmImg').value = data.headmaster.img || '';
+                    document.getElementById('hmSpeech').value = data.headmaster.speech || '';
+                }
+                if (data.chairman) {
+                    document.getElementById('chName').value = data.chairman.name || '';
+                    document.getElementById('chDesignation').value = data.chairman.designation || '';
+                    document.getElementById('chImg').value = data.chairman.img || '';
+                    document.getElementById('chSpeech').value = data.chairman.speech || '';
+                }
+            }
+        });
+        
+        // ==================== ট্যাব ৩: সিগনেচার ====================
+        
+        // সিগনেচার প্রিভিউ ইভেন্ট
+        document.querySelectorAll('.signature-input').forEach(input => {
+            input.addEventListener('input', function() {
+                const previewId = this.getAttribute('data-preview');
+                const statusId = 'status' + previewId.replace('preview', '');
+                loadImageToPreview(this.value, previewId, statusId);
+            });
+        });
+        
+        // সিগনেচার ফর্ম
+        document.getElementById('signatureForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const signatureData = {
+                principal: {
+                    name: document.getElementById('sigPrincipalName').value,
+                    image: document.getElementById('sigPrincipalImg').value,
+                    designation: 'Principal'
+                },
+                teacher: {
+                    name: document.getElementById('sigTeacherName').value,
+                    image: document.getElementById('sigTeacherImg').value,
+                    designation: 'Class Teacher'
+                },
+                manager: {
+                    name: document.getElementById('sigManagerName').value,
+                    image: document.getElementById('sigManagerImg').value,
+                    designation: 'Manager'
+                },
+                examController: {
+                    name: document.getElementById('sigExamName').value,
+                    image: document.getElementById('sigExamImg').value,
+                    designation: 'Exam Controller'
+                },
+                updatedAt: new Date().toISOString()
+            };
+            
+            try {
+                await database.ref('website_settings/signatures').set(signatureData);
+                showNotification('✅ সিগনেচার সফলভাবে সংরক্ষণ হয়েছে!', 'success');
+                loadSavedSignatures();
+            } catch (error) {
+                showNotification('❌ ত্রুটি: ' + error.message, 'error');
+            }
+        });
+        
+        // সিগনেচার ডাটা লোড
+        function loadSignatures() {
+            database.ref('website_settings/signatures').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    // ফর্ম ফিল
+                    document.getElementById('sigPrincipalName').value = data.principal?.name || '';
+                    document.getElementById('sigPrincipalImg').value = data.principal?.image || '';
+                    document.getElementById('sigTeacherName').value = data.teacher?.name || '';
+                    document.getElementById('sigTeacherImg').value = data.teacher?.image || '';
+                    document.getElementById('sigManagerName').value = data.manager?.name || '';
+                    document.getElementById('sigManagerImg').value = data.manager?.image || '';
+                    document.getElementById('sigExamName').value = data.examController?.name || '';
+                    document.getElementById('sigExamImg').value = data.examController?.image || '';
+                    
+                    // প্রিভিউ লোড
+                    loadImageToPreview(data.principal?.image, 'previewPrincipal', 'statusPrincipal');
+                    loadImageToPreview(data.teacher?.image, 'previewTeacher', 'statusTeacher');
+                    loadImageToPreview(data.manager?.image, 'previewManager', 'statusManager');
+                    loadImageToPreview(data.examController?.image, 'previewExam', 'statusExam');
+                    
+                    // সংরক্ষিত সিগনেচার দেখাও
+                    loadSavedSignatures();
+                }
+            });
+        }
+        
+        // সংরক্ষিত সিগনেচার দেখানো
+        function loadSavedSignatures() {
+            database.ref('website_settings/signatures').once('value').then(snapshot => {
+                const data = snapshot.val();
+                const container = document.getElementById('signatureDisplay');
+                const section = document.getElementById('savedSignatures');
+                
+                if (!data) {
+                    section.style.display = 'none';
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                // প্রধান শিক্ষক
+                if (data.principal?.image) {
+                    const link = convertDriveLink(data.principal.image);
+                    container.innerHTML += `
+                        <div style="text-align: center; background: white; padding: 20px; border-radius: 10px; border: 1px solid #e0e0e0; min-width: 200px;">
+                            <img src="${link}" 
+                                 style="width: 160px; height: 70px; object-fit: contain; margin-bottom: 10px; border: 1px solid #ddd; padding: 5px; background: white;" 
+                                 alt="Principal Signature"
+                                 onerror="this.src='https://via.placeholder.com/160x70/3498db/ffffff?text=Signature'">
+                            <div style="font-weight: bold; color: #2c3e50; font-size: 14px;">Principal</div>
+                            <div style="color: #555; font-size: 13px;">${data.principal.name || ''}</div>
+                        </div>
+                    `;
+                }
+                
+                // ক্লাস টিচার
+                if (data.teacher?.image) {
+                    const link = convertDriveLink(data.teacher.image);
+                    container.innerHTML += `
+                        <div style="text-align: center; background: white; padding: 20px; border-radius: 10px; border: 1px solid #e0e0e0; min-width: 200px;">
+                            <img src="${link}" 
+                                 style="width: 160px; height: 70px; object-fit: contain; margin-bottom: 10px; border: 1px solid #ddd; padding: 5px; background: white;" 
+                                 alt="Teacher Signature"
+                                 onerror="this.src='https://via.placeholder.com/160x70/2ecc71/ffffff?text=Signature'">
+                            <div style="font-weight: bold; color: #2c3e50; font-size: 14px;">Class Teacher</div>
+                            <div style="color: #555; font-size: 13px;">${data.teacher.name || ''}</div>
+                        </div>
+                    `;
+                }
+                
+                section.style.display = container.innerHTML ? 'block' : 'none';
+            });
+        }
+        
+        // টেস্ট সিগনেচার
+        window.testSignature = function(type) {
+            const testLinks = {
+                principal: {
+                    name: 'ড. মোঃ রহমত আলী',
+                    image: 'https://drive.google.com/uc?export=view&id=1-LHhG4XgyDaJvSgjSu7l8NIs7GJ1UFAV'
+                },
+                teacher: {
+                    name: 'মোসাম্মৎ সেলিনা আক্তার',
+                    image: 'https://drive.google.com/uc?export=view&id=1wPcG4p3xvK67C8jR2Tj7-7_s6jJmHv9Q'
+                },
+                manager: {
+                    name: 'জনাব এ. কে. এম. শহীদুল্লাহ',
+                    image: 'https://drive.google.com/uc?export=view&id=1QYzQY4zY4zY4zY4zY4zY4zY4zY4zY4zY'
+                }
+            };
+            
+            const data = testLinks[type];
+            if (data) {
+                if (type === 'principal') {
+                    document.getElementById('sigPrincipalName').value = data.name;
+                    document.getElementById('sigPrincipalImg').value = data.image;
+                    loadImageToPreview(data.image, 'previewPrincipal', 'statusPrincipal');
+                } else if (type === 'teacher') {
+                    document.getElementById('sigTeacherName').value = data.name;
+                    document.getElementById('sigTeacherImg').value = data.image;
+                    loadImageToPreview(data.image, 'previewTeacher', 'statusTeacher');
+                } else if (type === 'manager') {
+                    document.getElementById('sigManagerName').value = data.name;
+                    document.getElementById('sigManagerImg').value = data.image;
+                    loadImageToPreview(data.image, 'previewManager', 'statusManager');
+                }
+                showNotification('✅ টেস্ট সিগনেচার লোড হয়েছে!', 'success');
+            }
+        };
+        
+        // ==================== ট্যাব ৪: নোটিশ ====================
+        
+        // নোটিশ ফর্ম
+        document.getElementById('noticeForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const noticeData = {
+                title: document.getElementById('nTitle').value,
+                date: document.getElementById('nDate').value,
+                description: document.getElementById('nDesc').value,
+                link: document.getElementById('nLink').value,
+                createdAt: new Date().toISOString()
+            };
+            
+            try {
+                const newRef = database.ref('notices').push();
+                noticeData.id = newRef.key;
+                await newRef.set(noticeData);
+                
+                showNotification('✅ নোটিশ সফলভাবে প্রকাশিত হয়েছে!', 'success');
+                document.getElementById('noticeForm').reset();
+                document.getElementById('nDate').value = new Date().toISOString().split('T')[0];
+            } catch (error) {
+                showNotification('❌ ত্রুটি: ' + error.message, 'error');
+            }
+        });
+        
+        // নোটিশ লোড
+        function loadNotices() {
+            database.ref('notices').on('value', (snapshot) => {
+                const list = document.getElementById('noticeList');
+                
+                if (!snapshot.val()) {
+                    list.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">কোনো নোটিশ নেই</p>';
+                    return;
+                }
+                
+                const notices = Object.values(snapshot.val()).reverse();
+                list.innerHTML = '';
+                
+                notices.forEach(notice => {
+                    const item = document.createElement('div');
+                    item.className = 'list-item';
+                    
+                    item.innerHTML = `
+                        <div class="list-item-header">
+                            <div class="list-item-title">${notice.title || 'Untitled'}</div>
+                            <button onclick="deleteNotice('${notice.id}')" class="btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <div class="list-item-date">
+                            <i class="fas fa-calendar"></i> ${notice.date || 'No date'}
+                            ${notice.link ? `<span style="margin-left: 15px;"><i class="fas fa-link"></i> সংযুক্তি আছে</span>` : ''}
+                        </div>
+                        ${notice.description ? `<div class="list-item-desc">${notice.description}</div>` : ''}
+                    `;
+                    
+                    list.appendChild(item);
+                });
+            });
+        }
+        
+        // নোটিশ ডিলিট
+        window.deleteNotice = async function(id) {
+            if (confirm('আপনি কি এই নোটিশ মুছে ফেলতে চান?')) {
+                try {
+                    await database.ref(`notices/${id}`).remove();
+                    showNotification('✅ নোটিশ মুছে ফেলা হয়েছে!', 'success');
+                } catch (error) {
+                    showNotification('❌ ত্রুটি: ' + error.message, 'error');
+                }
+            }
+        };
+        
+        // ==================== ট্যাব ৫: ইভেন্ট ====================
+        
+        // ইভেন্ট ফর্ম
+        document.getElementById('eventForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const eventData = {
+                name: document.getElementById('eName').value,
+                date: document.getElementById('eDate').value,
+                time: document.getElementById('eTime').value,
+                description: document.getElementById('eDesc').value,
+                createdAt: new Date().toISOString()
+            };
+            
+            try {
+                const newRef = database.ref('events').push();
+                eventData.id = newRef.key;
+                await newRef.set(eventData);
+                
+                showNotification('✅ ইভেন্ট সফলভাবে যোগ হয়েছে!', 'success');
+                document.getElementById('eventForm').reset();
+                document.getElementById('eDate').value = new Date().toISOString().split('T')[0];
+            } catch (error) {
+                showNotification('❌ ত্রুটি: ' + error.message, 'error');
+            }
+        });
+        
+        // ইভেন্ট লোড
+        function loadEvents() {
+            database.ref('events').on('value', (snapshot) => {
+                const list = document.getElementById('eventList');
+                
+                if (!snapshot.val()) {
+                    list.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">কোনো ইভেন্ট নেই</p>';
+                    return;
+                }
+                
+                const events = Object.values(snapshot.val()).sort((a, b) => 
+                    new Date(a.date) - new Date(b.date)
+                );
+                
+                list.innerHTML = '';
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                events.forEach(event => {
+                    const eventDate = new Date(event.date);
+                    eventDate.setHours(0, 0, 0, 0);
+                    const isPast = eventDate < today;
+                    
+                    const item = document.createElement('div');
+                    item.className = 'list-item';
+                    item.style.backgroundColor = isPast ? '#f5f5f5' : '#fff';
+                    item.style.opacity = isPast ? '0.7' : '1';
+                    item.style.borderLeftColor = isPast ? '#95a5a6' : '#9b59b6';
+                    
+                    item.innerHTML = `
+                        <div class="list-item-header">
+                            <div class="list-item-title" style="color: ${isPast ? '#7f8c8d' : '#2c3e50'}">
+                                ${event.name} ${isPast ? '<span style="font-size: 12px; color: #e74c3c;">(সমাপ্ত)</span>' : ''}
+                            </div>
+                            <button onclick="deleteEvent('${event.id}')" class="btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <div class="list-item-date">
+                            <i class="fas fa-calendar"></i> ${event.date}
+                            ${event.time ? `<span style="margin-left: 15px;"><i class="fas fa-clock"></i> ${event.time}</span>` : ''}
+                        </div>
+                        ${event.description ? `<div class="list-item-desc">${event.description}</div>` : ''}
+                    `;
+                    
+                    list.appendChild(item);
+                });
+            });
+        }
+        
+        // ইভেন্ট ডিলিট
+        window.deleteEvent = async function(id) {
+            if (confirm('আপনি কি এই ইভেন্ট মুছে ফেলতে চান?')) {
+                try {
+                    await database.ref(`events/${id}`).remove();
+                    showNotification('✅ ইভেন্ট মুছে ফেলা হয়েছে!', 'success');
+                } catch (error) {
+                    showNotification('❌ ত্রুটি: ' + error.message, 'error');
+                }
+            }
+        };
+        
+        // ==================== ইনিশিয়ালাইজেশন ====================
+        
+        // পেইজ লোড হলে সব ডাটা লোড
+        document.addEventListener('DOMContentLoaded', function() {
+            // সিগনেচার লোড
+            loadSignatures();
+            
+            // নোটিশ লোড
+            loadNotices();
+            
+            // ইভেন্ট লোড
+            loadEvents();
+            
+            // অ্যাডমিন চেক
+            const role = localStorage.getItem('userRole');
+            if (!role || role !== 'Admin') {
+                showNotification('⚠️ শুধুমাত্র অ্যাডমিন এই পেজ ব্যবহার করতে পারেন!', 'error');
+                setTimeout(() => {
+                    window.location.href = "index.html";
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>

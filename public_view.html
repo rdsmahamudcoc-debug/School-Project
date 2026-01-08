@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>স্মার্ট হাই স্কুল অ্যান্ড কলেজ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* বেসিক রিসেট */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f4f6f9; color: #333; scroll-behavior: smooth; }
+        a { text-decoration: none; color: inherit; }
+
+        /* ১. নেভিগেশন বার */
+        .navbar {
+            background: #2c3e50; color: white; padding: 15px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .nav-logo { font-size: 24px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        .nav-menu { list-style: none; display: flex; gap: 20px; }
+        .nav-menu li a { font-size: 16px; transition: 0.3s; }
+        .nav-menu li a:hover { color: #3498db; }
+        
+        .btn-login {
+            background: #e74c3c; color: white; padding: 8px 20px; border-radius: 20px; font-weight: bold; transition: 0.3s;
+        }
+        .btn-login:hover { background: #c0392b; }
+
+        /* ২. হিরো সেকশন */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://via.placeholder.com/1920x600?text=School+Campus');
+            background-size: cover; background-position: center;
+            height: 80vh; display: flex; align-items: center; justify-content: center;
+            text-align: center; color: white;
+        }
+        .hero h1 { font-size: 48px; margin-bottom: 10px; text-transform: uppercase; }
+        .hero p { font-size: 20px; margin-bottom: 20px; }
+        .hero-btn { background: #3498db; color: white; padding: 12px 30px; font-size: 18px; border-radius: 5px; }
+
+        /* সাধারণ কন্টেইনার */
+        .container { width: 90%; max-width: 1200px; margin: 50px auto; }
+        .section-title { text-align: center; font-size: 32px; color: #2c3e50; margin-bottom: 40px; text-transform: uppercase; position: relative; }
+        .section-title::after { content: ''; display: block; width: 60px; height: 3px; background: #3498db; margin: 10px auto; }
+
+        /* ৩. নোটিশ ও বাণী গ্রিড */
+        .info-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 50px; }
+        .section-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .box-title { border-left: 5px solid #3498db; padding-left: 15px; margin-bottom: 20px; color: #2c3e50; font-size: 22px; font-weight: bold; }
+
+        /* নোটিশ লিস্ট */
+        .notice-list { list-style: none; }
+        .notice-list li { border-bottom: 1px solid #eee; padding: 15px 0; display: flex; gap: 15px; }
+        .date-box { background: #2c3e50; color: white; padding: 5px 10px; text-align: center; border-radius: 5px; min-width: 60px; }
+        .notice-list li:hover a { color: #3498db; }
+
+        /* ৪. রেজাল্ট সার্চ সেকশন (নতুন) */
+        .result-section {
+            background: #34495e; padding: 60px 0; color: white; text-align: center;
+        }
+        .result-box {
+            background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 10px; display: inline-block;
+            backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.2); width: 100%; max-width: 800px;
+        }
+        .result-form { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .result-form select, .result-form input { padding: 12px; border: none; border-radius: 5px; min-width: 150px; }
+        .result-form button { padding: 12px 30px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .result-form button:hover { background: #c0392b; }
+
+        /* ৫. ফটো গ্যালারি (নতুন) */
+        .gallery-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;
+        }
+        .gallery-item {
+            overflow: hidden; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); height: 200px;
+        }
+        .gallery-item img {
+            width: 100%; height: 100%; object-fit: cover; transition: 0.4s;
+        }
+        .gallery-item:hover img { transform: scale(1.1); }
+
+        /* ৬. পরিসংখ্যান */
+        .stats { background: #3498db; color: white; padding: 50px 0; text-align: center; margin-top: 50px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 90%; max-width: 1200px; margin: 0 auto; }
+        .stat-item h2 { font-size: 40px; }
+
+        /* ৭. ফুটার */
+        footer { background: #1a252f; color: #bdc3c7; padding: 50px 5%; margin-top: 0; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
+        .footer-box h3 { color: white; margin-bottom: 20px; border-bottom: 2px solid #3498db; display: inline-block; padding-bottom: 5px; }
+        .footer-box ul { list-style: none; }
+        .footer-box ul li { margin-bottom: 10px; }
+        .copyright { text-align: center; padding-top: 20px; margin-top: 30px; border-top: 1px solid #333; }
+
+        /* রেসপন্সিভ */
+        @media (max-width: 768px) {
+            .navbar { flex-direction: column; gap: 15px; }
+            .nav-menu { flex-wrap: wrap; justify-content: center; }
+            .info-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .hero h1 { font-size: 30px; }
+            .result-form { flex-direction: column; }
+            .result-form select, .result-form input, .result-form button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-logo">
+            <i class="fas fa-school"></i> স্মার্ট স্কুল
+        </div>
+        <ul class="nav-menu">
+            <li><a href="#">হোম</a></li>
+            <li><a href="#about">পরিচিতি</a></li>
+            <li><a href="#result">ফলাফল</a></li> <li><a href="#gallery">গ্যালারি</a></li> <li><a href="#notice">নোটিশ</a></li>
+            <li><a href="#contact">যোগাযোগ</a></li>
+        </ul>
+        <a href="login.html" class="btn-login"><i class="fas fa-sign-in-alt"></i> লগইন</a>
+    </nav>
+
+    <header class="hero">
+        <div>
+            <h1>স্মার্ট হাই স্কুল অ্যান্ড কলেজ</h1>
+            <p>সুশিক্ষাই জাতির মেরুদণ্ড | আমরা গড়ছি আগামীর ভবিষ্যৎ</p>
+            <a href="admission.html" class="hero-btn">অনলাইনে ভর্তি হোন</a>
+        </div>
+    </header>
+
+    <div class="container" id="about">
+        <div class="info-grid">
+            <div class="section-box">
+                <h3 class="box-title">প্রধান শিক্ষকের বাণী</h3>
+                <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                    <img src="https://via.placeholder.com/150" alt="Headmaster" style="border-radius: 5px; border: 4px solid #eee;">
+                    <div style="flex: 1;">
+                        <p style="line-height: 1.6; text-align: justify;">
+                            সম্মানিত অভিভাবক ও প্রিয় শিক্ষার্থীবৃন্দ, <br>
+                            আমাদের লক্ষ্য হলো শিক্ষার্থীদের শুধুমাত্র পাঠ্যবইয়ের জ্ঞানে সীমাবদ্ধ না রেখে, তাদের নৈতিক ও মানবিক গুণাবলী সম্পন্ন মানুষ হিসেবে গড়ে তোলা। আমাদের অভিজ্ঞ শিক্ষক মণ্ডলী এবং আধুনিক ল্যাব শিক্ষার্থীদের বিজ্ঞানমনস্ক করে গড়ে তুলতে সাহায্য করছে।
+                        </p>
+                        <br>
+                        <strong>- মোঃ রফিকুল ইসলাম</strong> <br>
+                        <span>প্রধান শিক্ষক</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box" id="notice">
+                <h3 class="box-title">নোটিশ বোর্ড</h3>
+                <marquee direction="up" scrollamount="3" height="200px" onmouseover="this.stop();" onmouseout="this.start();">
+                    <ul class="notice-list">
+                        <li>
+                            <div class="date-box">১০<br>জানু</div>
+                            <div><a href="#"><b>বার্ষিক ক্রীড়া প্রতিযোগিতা - ২০২৬</b></a><br><small>বিস্তারিত দেখুন...</small></div>
+                        </li>
+                        <li>
+                            <div class="date-box">০৫<br>জানু</div>
+                            <div><a href="#"><b>নতুন সেশনে ভর্তি বিজ্ঞপ্তি</b></a><br><small>বিস্তারিত দেখুন...</small></div>
+                        </li>
+                        <li>
+                            <div class="date-box">০১<br>জানু</div>
+                            <div><a href="#"><b>স্কুল খোলার নোটিশ</b></a><br><small>বিস্তারিত দেখুন...</small></div>
+                        </li>
+                    </ul>
+                </marquee>
+                <div style="text-align: right; margin-top: 10px;">
+                    <a href="notice_board.html" style="color: #3498db; font-weight: bold;">সকল নোটিশ &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section id="result" class="result-section">
+        <div class="container" style="margin: 0 auto;">
+            <h2 style="font-size: 36px; margin-bottom: 20px;">পরীক্ষার ফলাফল খুঁজুন</h2>
+            <p style="margin-bottom: 30px; font-size: 18px; opacity: 0.9;">আপনার পরীক্ষার তথ্য দিয়ে নিচে সার্চ করুন</p>
+            
+            <div class="result-box">
+                <form class="result-form" action="individual_result.html"> <select required>
+                        <option value="">পরীক্ষা নির্বাচন করুন</option>
+                        <option>Annual Exam 2024</option>
+                        <option>Half Yearly Exam 2024</option>
+                    </select>
+                    <select required>
+                        <option value="">ক্লাস</option>
+                        <option>Class 6</option>
+                        <option>Class 7</option>
+                        <option>Class 10</option>
+                    </select>
+                    <input type="text" placeholder="স্টুডেন্ট আইডি / রোল" required>
+                    <button type="submit">রেজাল্ট দেখুন</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="container" style="margin-top: 80px;">
+        <h2 class="section-title">ফটো গ্যালারি</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item"><img src="https://via.placeholder.com/300x200?text=Sports+Day" alt="Gallery"></div>
+            <div class="gallery-item"><img src="https://via.placeholder.com/300x200?text=Cultural+Program" alt="Gallery"></div>
+            <div class="gallery-item"><img src="https://via.placeholder.com/300x200?text=Science+Fair" alt="Gallery"></div>
+            <div class="gallery-item"><img src="https://via.placeholder.com/300x200?text=Classroom" alt="Gallery"></div>
+            <div class="gallery-item"><img src="https://via.placeholder.com/300x200?text=Computer+Lab" alt="Gallery"></div>
+            <div class="gallery-item"><img src="https://via.placeholder.com/300x200?text=Library" alt="Gallery"></div>
+            <div class="gallery-item"><img src="https://via.placeholder.com/300x200?text=Award+Ceremony" alt="Gallery"></div>
+            <div class="gallery-item"><img src="https://via.placeholder.com/300x200?text=Picnic" alt="Gallery"></div>
+        </div>
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="gallery.html" style="background: #3498db; color: white; padding: 10px 25px; border-radius: 5px;">আরও দেখুন</a>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <i class="fas fa-user-graduate" style="font-size: 40px; margin-bottom: 10px;"></i>
+                <h2>১৫০০+</h2>
+                <p>শিক্ষার্থী</p>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-chalkboard-teacher" style="font-size: 40px; margin-bottom: 10px;"></i>
+                <h2>৫০+</h2>
+                <p>শিক্ষক</p>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-trophy" style="font-size: 40px; margin-bottom: 10px;"></i>
+                <h2>১০০+</h2>
+                <p>পুরস্কার</p>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-history" style="font-size: 40px; margin-bottom: 10px;"></i>
+                <h2>৩৫ বছর</h2>
+                <p>ঐতিহ্য</p>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="footer-grid">
+            <div class="footer-box">
+                <h3>যোগাযোগ</h3>
+                <p><i class="fas fa-map-marker-alt"></i> ১০, মিরপুর রোড, ঢাকা - ১২১৬</p>
+                <p><i class="fas fa-phone"></i> +৮৮ ০১৭০০-০০০০০০</p>
+                <p><i class="fas fa-envelope"></i> info@smartschool.com</p>
+            </div>
+
+            <div class="footer-box">
+                <h3>গুরুত্বপূর্ণ লিংক</h3>
+                <ul>
+                    <li><a href="admission.html">ভর্তির তথ্য</a></li>
+                    <li><a href="#result">ফলাফল</a></li>
+                    <li><a href="routine.html">রুটিন ডাউনলোড</a></li>
+                    <li><a href="#">শিক্ষক বাতায়ন</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-box">
+                <h3>সোশ্যাল মিডিয়া</h3>
+                <div style="display: flex; gap: 15px; font-size: 24px;">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>© ২০২৬ স্মার্ট হাই স্কুল অ্যান্ড কলেজ | ডিজাইন ও ডেভেলপমেন্ট</p>
+        </div>
+    </footer>
+
+</body>
+</html>

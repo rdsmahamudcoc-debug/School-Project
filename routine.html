@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ক্লাস রুটিন ম্যানেজমেন্ট</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ট্যাব বাটন ডিজাইন */
+        .tab-btn { padding: 12px 25px; background: #eee; border: none; cursor: pointer; margin-right: 5px; border-radius: 5px 5px 0 0; font-weight: bold; color: #555; }
+        .tab-btn.active { background: #3498db; color: white; }
+        .tab-content { display: none; padding: 25px; background: white; border: 1px solid #ddd; border-top: 4px solid #3498db; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s; }
+        
+        /* ডে ব্যাজ */
+        .day-badge {
+            display: inline-block; width: 80px; text-align: center;
+            padding: 5px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white;
+        }
+        .day-Saturday { background: #e74c3c; }
+        .day-Sunday { background: #e67e22; }
+        .day-Monday { background: #f1c40f; color: #333; }
+        .day-Tuesday { background: #2ecc71; }
+        .day-Wednesday { background: #3498db; }
+        .day-Thursday { background: #9b59b6; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        @media print {
+            .sidebar, header, .tab-btn-container, .form-section, .action-col { display: none !important; }
+            .main-content { margin: 0; width: 100%; }
+            .wrapper { box-shadow: none; border: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            
+            <li>
+                <button class="dropdown-btn active"><span><i class="fas fa-book"></i> একাডেমিক</span><i class="fas fa-caret-down rotate"></i></button>
+                <div class="dropdown-container" style="display: block;">
+                    <a href="routine.html" style="color: white;">ক্লাস রুটিন</a>
+                    <a href="subject.html">বিষয় (Subjects)</a>
+                    <a href="exam_management.html">পরীক্ষা (Exam)</a>
+                </div>
+            </li>
+            
+            <li><a href="student_list.html"><i class="fas fa-user-graduate"></i> স্টুডেন্ট</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left">
+                <div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+                <h3>ক্লাস রুটিন</h3>
+            </div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            <div class="wrapper" style="background: transparent; box-shadow: none; padding: 0;">
+                
+                <div class="tab-btn-container">
+                    <button class="tab-btn active" onclick="openTab(event, 'viewRoutine')"><i class="fas fa-list"></i> রুটিন দেখুন</button>
+                    <button class="tab-btn" onclick="openTab(event, 'addRoutine')"><i class="fas fa-plus-circle"></i> রুটিন তৈরি করুন</button>
+                </div>
+
+                <div id="viewRoutine" class="tab-content active">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <h4 style="margin: 0;">ক্লাস নির্বাচন করুন:</h4>
+                            <select id="filterClass" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                <option value="">লোড হচ্ছে...</option>
+                            </select>
+                        </div>
+                        <button onclick="window.print()" class="btn" style="background: #34495e; color: white;"><i class="fas fa-print"></i> প্রিন্ট</button>
+                    </div>
+
+                    <div style="overflow-x: auto;">
+                        <table border="1" style="border-collapse: collapse; width: 100%; border-color: #eee;">
+                            <thead>
+                                <tr style="background: #f9f9f9;">
+                                    <th>বার (Day)</th>
+                                    <th>সময় (Time)</th>
+                                    <th>বিষয় (Subject)</th>
+                                    <th>শিক্ষক</th>
+                                    <th>রুম নং</th>
+                                    <th class="action-col">অ্যাকশন</th>
+                                </tr>
+                            </thead>
+                            <tbody id="routineTableBody">
+                                <tr><td colspan="6" style="text-align: center; padding: 20px;">দয়া করে একটি ক্লাস সিলেক্ট করুন</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="addRoutine" class="tab-content form-section">
+                    <h4 style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">নতুন পিরিয়ড যুক্ত করুন</h4>
+                    <form id="routineForm">
+                        <div class="form-grid">
+                            <div>
+                                <label>ক্লাস</label>
+                                <select id="routineClass" required>
+                                    <option value="">ক্লাস সিলেক্ট করুন</option>
+                                    <option>Class 6</option><option>Class 7</option><option>Class 8</option><option>Class 9</option><option>Class 10</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>বার (Day)</label>
+                                <select id="routineDay" required>
+                                    <option value="Saturday">শনিবার (Saturday)</option>
+                                    <option value="Sunday">রবিবার (Sunday)</option>
+                                    <option value="Monday">সোমবার (Monday)</option>
+                                    <option value="Tuesday">মঙ্গলবার (Tuesday)</option>
+                                    <option value="Wednesday">বুধবার (Wednesday)</option>
+                                    <option value="Thursday">বৃহস্পতিবার (Thursday)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>বিষয় (Subject)</label>
+                                <input type="text" id="routineSubject" placeholder="Ex: Math, English" required>
+                            </div>
+                            <div>
+                                <label>শিক্ষক (Teacher)</label>
+                                <input type="text" id="routineTeacher" placeholder="Ex: Rafiq Sir">
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <div style="flex: 1;">
+                                    <label>শুরু (Start)</label>
+                                    <input type="time" id="startTime" required>
+                                </div>
+                                <div style="flex: 1;">
+                                    <label>শেষ (End)</label>
+                                    <input type="time" id="endTime" required>
+                                </div>
+                            </div>
+                            <div>
+                                <label>রুম নম্বর</label>
+                                <input type="text" id="roomNo" placeholder="Ex: 101">
+                            </div>
+                        </div>
+                        <div style="text-align: right; margin-top: 20px;">
+                            <button type="submit" class="submit-btn"><i class="fas fa-save"></i> রুটিন সেভ করুন</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove("active");
+            }
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.className += " active";
+        }
+    </script>
+
+    <script type="module">
+        import { db, ref, push, set, onValue, remove } from './firebase-config.js';
+
+        // ১. ডাটা সেভ করা
+        document.getElementById('routineForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // সময়ের ফরম্যাট ঠিক করা (24H to 12H) - অপশনাল, চাইলে রাখতে পারেন
+            const start = document.getElementById('startTime').value;
+            const end = document.getElementById('endTime').value;
+            
+            const newRoutineRef = push(ref(db, 'routines'));
+            
+            set(newRoutineRef, {
+                className: document.getElementById('routineClass').value,
+                day: document.getElementById('routineDay').value,
+                subject: document.getElementById('routineSubject').value,
+                teacher: document.getElementById('routineTeacher').value,
+                startTime: start,
+                endTime: end,
+                roomNo: document.getElementById('roomNo').value,
+                id: newRoutineRef.key
+            })
+            .then(() => {
+                alert("রুটিন যুক্ত হয়েছে!");
+                document.getElementById('routineForm').reset();
+            })
+            .catch((error) => {
+                alert("এরর: " + error.message);
+            });
+        });
+
+        // ২. ডাটা ভিউ এবং ফিল্টার
+        const filterClassSelect = document.getElementById('filterClass');
+        const routineTableBody = document.getElementById('routineTableBody');
+        const daysOrder = ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
+
+        // ক্লাস লোড (ড্রপডাউনের জন্য) - classes নোড থেকে অথবা হার্ডকোডেড
+        // সিম্পল রাখার জন্য আমরা হার্ডকোডেড অপশন দিচ্ছি, আপনি চাইলে DB থেকে আনতে পারেন
+        filterClassSelect.innerHTML = `
+            <option value="">ক্লাস সিলেক্ট করুন</option>
+            <option>Class 6</option>
+            <option>Class 7</option>
+            <option>Class 8</option>
+            <option>Class 9</option>
+            <option>Class 10</option>
+        `;
+
+        // রুটিন লোড ফাংশন
+        filterClassSelect.addEventListener('change', function() {
+            const selectedClass = this.value;
+            if(!selectedClass) return;
+
+            onValue(ref(db, 'routines'), (snapshot) => {
+                const data = snapshot.val();
+                routineTableBody.innerHTML = "";
+                
+                if (data) {
+                    let routines = Object.values(data).filter(r => r.className === selectedClass);
+                    
+                    // দিন অনুযায়ী সাজানো (Sort by Day)
+                    routines.sort((a, b) => {
+                        return daysOrder.indexOf(a.day) - daysOrder.indexOf(b.day) || a.startTime.localeCompare(b.startTime);
+                    });
+
+                    if (routines.length > 0) {
+                        routines.forEach(r => {
+                            // সময় সুন্দর করে দেখানো
+                            const timeStr = `${tConvert(r.startTime)} - ${tConvert(r.endTime)}`;
+                            
+                            const row = `
+                                <tr>
+                                    <td><span class="day-badge day-${r.day}">${r.day}</span></td>
+                                    <td style="font-weight:bold;">${timeStr}</td>
+                                    <td>${r.subject}</td>
+                                    <td>${r.teacher}</td>
+                                    <td>${r.roomNo || '-'}</td>
+                                    <td class="action-col">
+                                        <button onclick="window.deleteRoutine('${r.id}')" style="color: red; border: none; background: none; cursor: pointer;">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                            routineTableBody.innerHTML += row;
+                        });
+                    } else {
+                        routineTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: red;">${selectedClass}-এর কোনো রুটিন পাওয়া যায়নি।</td></tr>`;
+                    }
+                } else {
+                    routineTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center;">ডাটাবেসে কোনো তথ্য নেই।</td></tr>`;
+                }
+            });
+        });
+
+        // সময় কনভার্টার (24h -> 12h AM/PM)
+        function tConvert (time) {
+            // Check correct time format and split into components
+            time = time.toString ().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+
+            if (time.length > 1) { // If time format correct
+                time = time.slice (1);  // Remove full string match value
+                time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+                time[0] = +time[0] % 12 || 12; // Adjust hours
+            }
+            return time.join (''); // return adjusted time or original string
+        }
+
+        // ৩. ডিলিট ফাংশন
+        window.deleteRoutine = function(id) {
+            if(confirm("মুছে ফেলতে চান?")) {
+                remove(ref(db, 'routines/' + id));
+            }
+        };
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>স্কুল প্রোফাইল ও বাণী</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ট্যাব স্টাইল */
+        .tab-container { display: flex; border-bottom: 2px solid #ddd; margin-bottom: 20px; }
+        .tab-btn {
+            padding: 10px 20px; cursor: pointer; border: none; background: none;
+            font-size: 16px; font-weight: bold; color: #555; outline: none;
+        }
+        .tab-btn.active { border-bottom: 3px solid #3498db; color: #3498db; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="notice_board.html"><i class="fas fa-bullhorn"></i> নোটিশ বোর্ড</a></li>
+            <li><a href="school_profile.html" style="background: #1a252f; border-left: 4px solid #3498db; color: white;"><i class="fas fa-university"></i> স্কুল প্রোফাইল & বাণী</a></li>
+            <li><a href="gallery.html"><i class="fas fa-images"></i> ফটো গ্যালারি</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left">
+                <div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+                <h3>ওয়েবসাইট সেটিংস</h3>
+            </div>
+            <div class="user-info"><span>এডমিন</span><div class="user-avatar"><i class="fas fa-user"></i></div></div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            <div class="wrapper">
+                
+                <div class="tab-container">
+                    <button class="tab-btn active" onclick="openTab(event, 'schoolInfo')">স্কুল তথ্য</button>
+                    <button class="tab-btn" onclick="openTab(event, 'headSpeech')">প্রধান শিক্ষকের বাণী</button>
+                    <button class="tab-btn" onclick="openTab(event, 'chairmanSpeech')">সভাপতির বাণী</button>
+                </div>
+
+                <div id="schoolInfo" class="tab-content active">
+                    <form>
+                        <div class="form-grid">
+                            <div style="grid-column: span 2;"><label>স্কুলের নাম (বাংলায়)</label><input type="text" value="স্মার্ট হাই স্কুল অ্যান্ড কলেজ"></div>
+                            <div><label>EIIN নম্বর</label><input type="text" value="123456"></div>
+                            <div><label>স্থাপিত সাল</label><input type="text" value="1990"></div>
+                            <div><label>স্কুল লোগো (Logo)</label><input type="file" style="padding:7px;"></div>
+                            <div><label>ফোন নম্বর</label><input type="text" value="017xxxxxxxx"></div>
+                            <div style="grid-column: span 2;"><label>ঠিকানা</label><textarea style="width:100%; padding:10px; border:1px solid #ddd;">মিরপুর, ঢাকা - ১২১৬</textarea></div>
+                        </div>
+                        <button class="submit-btn" style="margin-top: 20px;">আপডেট করুন</button>
+                    </form>
+                </div>
+
+                <div id="headSpeech" class="tab-content">
+                    <form>
+                        <div class="form-grid">
+                            <div><label>প্রধান শিক্ষকের নাম</label><input type="text" placeholder="নাম লিখুন"></div>
+                            <div><label>ছবি আপলোড</label><input type="file" style="padding:7px;"></div>
+                            <div style="grid-column: span 2;">
+                                <label>বাণী (Message)</label>
+                                <textarea rows="6" style="width:100%; padding:10px; border:1px solid #ddd;" placeholder="শিক্ষার্থীদের উদ্দেশ্যে বাণী লিখুন..."></textarea>
+                            </div>
+                        </div>
+                        <button class="submit-btn" style="margin-top: 20px;">সেভ করুন</button>
+                    </form>
+                </div>
+
+                <div id="chairmanSpeech" class="tab-content">
+                    <form>
+                        <div class="form-grid">
+                            <div><label>সভাপতির নাম</label><input type="text" placeholder="নাম লিখুন"></div>
+                            <div><label>ছবি আপলোড</label><input type="file" style="padding:7px;"></div>
+                            <div style="grid-column: span 2;">
+                                <label>বাণী (Message)</label>
+                                <textarea rows="6" style="width:100%; padding:10px; border:1px solid #ddd;" placeholder="বাণী লিখুন..."></textarea>
+                            </div>
+                        </div>
+                        <button class="submit-btn" style="margin-top: 20px;">সেভ করুন</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+
+        // ট্যাব পরিবর্তনের লজিক
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove("active");
+            }
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.className += " active";
+        }
+    </script>
+</body>
+</html>

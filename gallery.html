@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ফটো গ্যালারি</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        /* গ্যালারি গ্রিড ডিজাইন */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            height: 180px;
+            background: #f8f9fa;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .gallery-item:hover img { 
+            transform: scale(1.05); 
+        }
+        
+        .delete-overlay {
+            position: absolute;
+            top: 10px; 
+            right: 10px;
+            background: rgba(231, 76, 60, 0.9);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            z-index: 10;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.9;
+        }
+        
+        .gallery-item:hover .delete-overlay { 
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 0.9; transform: scale(1); }
+        }
+        
+        /* আপলোড এরিয়া */
+        .upload-area {
+            border: 2px dashed #3498db;
+            padding: 40px 20px;
+            text-align: center;
+            background: #f8faff;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-area:hover {
+            background: #e3f2fd;
+            border-color: #2980b9;
+        }
+        
+        .upload-area.drag-over {
+            background: #d6eaf8;
+            border-color: #1a5276;
+            border-style: solid;
+        }
+        
+        /* সর্ট এবং ফিল্টার */
+        .gallery-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .gallery-controls-left {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn, .sort-btn {
+            padding: 8px 15px;
+            background: #f1f2f6;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover, .sort-btn:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .filter-btn.active, .sort-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        /* মডেল স্টাইল */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            animation: modalFadeIn 0.3s ease;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            margin: auto;
+            margin-top: 5vh;
+        }
+        
+        .modal-img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+        
+        .modal-nav:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .modal-prev {
+            left: 20px;
+        }
+        
+        .modal-next {
+            right: 20px;
+        }
+        
+        .modal-caption {
+            text-align: center;
+            color: white;
+            padding: 15px;
+            font-size: 16px;
+        }
+        
+        /* গ্যালারি স্ট্যাটাস */
+        .gallery-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .stats-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        
+        .stats-item i {
+            color: #3498db;
+            font-size: 18px;
+        }
+        
+        /* নোটিফিকেশন */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: #27ae60;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .notification.error {
+            background: #e74c3c;
+        }
+        
+        /* লোডিং */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #3498db;
+            font-size: 16px;
+        }
+        
+        .loading i {
+            font-size: 30px;
+            margin-bottom: 15px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* খালি স্টেট */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+        
+        .empty-state i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: #bdc3c7;
+        }
+        
+        /* মোবাইল রেসপন্সিভ */
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 10px;
+            }
+            
+            .gallery-item {
+                height: 150px;
+            }
+            
+            .gallery-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .gallery-controls-left {
+                justify-content: center;
+            }
+            
+            .upload-area {
+                padding: 30px 15px;
+            }
+            
+            .modal-content {
+                max-width: 95%;
+                max-height: 80%;
+            }
+            
+            .modal-nav {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+            
+            .modal-close {
+                width: 35px;
+                height: 35px;
+                font-size: 18px;
+            }
+            
+            .gallery-stats {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            .gallery-item {
+                height: 120px;
+            }
+            
+            .delete-overlay {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+            
+            .upload-area h3 {
+                font-size: 18px;
+            }
+        }
+        
+        /* ট্যাব ভিউ */
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .tab-btn {
+            padding: 12px 25px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #7f8c8d;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn:hover {
+            color: #3498db;
+        }
+        
+        .tab-btn.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* ব্যাচ ডিলিট */
+        .batch-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fff8e1;
+            border-radius: 8px;
+            border-left: 4px solid #f39c12;
+        }
+        
+        .batch-actions.hidden {
+            display: none;
+        }
+        
+        .select-all-btn {
+            padding: 8px 15px;
+            background: #f1f2f6;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* ইমেজ সিলেক্ট */
+        .select-checkbox {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 5;
+            width: 20px;
+            height: 20px;
+            display: none;
+        }
+        
+        .selection-mode .select-checkbox {
+            display: block;
+        }
+        
+        .selection-mode .delete-overlay {
+            display: none !important;
+        }
+        
+        /* প্রোগ্রেস বার */
+        .progress-container {
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #3498db;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        /* সাইডবার স্টাইল */
+        .sidebar {
+            width: 250px;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar.active {
+            transform: translateX(0);
+        }
+        
+        @media (min-width: 769px) {
+            .sidebar {
+                transform: translateX(0);
+            }
+            
+            .mobile-toggle {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="student_list.html"><i class="fas fa-user-graduate"></i> ছাত্র তালিকা</a></li>
+            <li><a href="student_admission.html"><i class="fas fa-user-plus"></i> নতুন ভর্তি</a></li>
+            <li><a href="notice_board.html"><i class="fas fa-bullhorn"></i> নোটিশ বোর্ড</a></li>
+            <li><a href="school_profile.html"><i class="fas fa-university"></i> স্কুল প্রোফাইল</a></li>
+            <li><a href="website_management.html"><i class="fas fa-globe"></i> ওয়েবসাইট</a></li>
+            <li><a href="gallery.html" style="background: #1a252f; border-left: 4px solid #3498db; color: white;">
+                <i class="fas fa-images"></i> ফটো গ্যালারি
+            </a></li>
+        </ul>
+        <div style="padding: 15px; font-size: 12px; color: #7f8c8d; text-align: center;">
+            © 2024 স্মার্ট স্কুল
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left">
+                <div class="mobile-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <h3 style="margin: 0;">
+                    <i class="fas fa-images" style="margin-right: 10px; color: #3498db;"></i>
+                    ফটো গ্যালারি ম্যানেজমেন্ট
+                </h3>
+            </div>
+            <div class="user-info">
+                <span>এডমিন</span>
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            <div class="wrapper">
+                
+                <!-- ট্যাব বাটন -->
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="openTab('uploadTab')">
+                        <i class="fas fa-cloud-upload-alt"></i> আপলোড
+                    </button>
+                    <button class="tab-btn" onclick="openTab('manageTab')">
+                        <i class="fas fa-images"></i> গ্যালারি
+                    </button>
+                    <button class="tab-btn" onclick="openTab('albumsTab')">
+                        <i class="fas fa-folder"></i> অ্যালবাম
+                    </button>
+                </div>
+                
+                <!-- নোটিফিকেশন -->
+                <div class="notification" id="notification"></div>
+                
+                <!-- ব্যাচ অ্যাকশন -->
+                <div class="batch-actions hidden" id="batchActions">
+                    <div>
+                        <button class="select-all-btn" id="selectAllBtn">
+                            <i class="fas fa-check-square"></i> সব নির্বাচন
+                        </button>
+                    </div>
+                    <div style="flex: 1; text-align: center;">
+                        <span id="selectedCount">0 টি ছবি নির্বাচিত</span>
+                    </div>
+                    <div>
+                        <button class="delete-btn" onclick="deleteSelected()" style="background: #e74c3c; color: white; padding: 8px 15px; border: none; border-radius: 6px; cursor: pointer;">
+                            <i class="fas fa-trash"></i> নির্বাচিত মুছুন
+                        </button>
+                        <button class="cancel-btn" onclick="exitSelectionMode()" style="background: #95a5a6; color: white; padding: 8px 15px; border: none; border-radius: 6px; cursor: pointer; margin-left: 10px;">
+                            <i class="fas fa-times"></i> বাতিল
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- ট্যাব কন্টেন্ট: আপলোড -->
+                <div id="uploadTab" class="tab-content active">
+                    <div class="upload-area" id="uploadArea" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 50px; color: #3498db; margin-bottom: 15px;"></i>
+                        <h3 style="color: #2c3e50;">ছবি আপলোড করুন</h3>
+                        <p style="color: #666; margin-bottom: 20px;">JPG, PNG বা GIF ফাইল ড্রাগ অ্যান্ড ড্রপ করুন বা ব্রাউজ করুন</p>
+                        <input type="file" multiple accept="image/*" style="display: none;" id="fileInput" onchange="handleFileSelect(event)">
+                        <button class="submit-btn" onclick="document.getElementById('fileInput').click()" style="padding: 12px 25px; font-size: 16px;">
+                            <i class="fas fa-folder-open"></i> ফাইল নির্বাচন করুন
+                        </button>
+                        <p style="color: #7f8c8d; font-size: 13px; margin-top: 15px;">
+                            সর্বোচ্চ ১০টি ছবি একসাথে আপলোড করতে পারেন। প্রতিটি ছবির সর্বোচ্চ সাইজ ৫MB।
+                        </p>
+                    </div>
+                    
+                    <!-- প্রোগ্রেস বার -->
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-text" id="progressText">আপলোড করা হচ্ছে...</div>
+                    </div>
+                    
+                    <!-- প্রিভিউ এরিয়া -->
+                    <div id="previewArea" style="margin-top: 20px; display: none;">
+                        <h4 style="margin-bottom: 15px;">প্রিভিউ</h4>
+                        <div id="previewGrid" class="gallery-grid">
+                            <!-- প্রিভিউ ইমেজ এখানে যোগ হবে -->
+                        </div>
+                        <div style="text-align: right; margin-top: 20px;">
+                            <button class="submit-btn" onclick="uploadImages()" id="uploadBtn">
+                                <i class="fas fa-upload"></i> আপলোড করুন
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ট্যাব কন্টেন্ট: গ্যালারি -->
+                <div id="manageTab" class="tab-content">
+                    <!-- স্ট্যাটস -->
+                    <div class="gallery-stats">
+                        <div class="stats-item">
+                            <i class="fas fa-images"></i>
+                            <span>মোট ছবি: <strong id="totalPhotos">0</strong></span>
+                        </div>
+                        <div class="stats-item">
+                            <i class="fas fa-hdd"></i>
+                            <span>মোট স্পেস: <strong id="totalSpace">0 MB</strong></span>
+                        </div>
+                        <div class="stats-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>সর্বশেষ আপডেট: <strong id="lastUpdate">--</strong></span>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <button class="filter-btn" onclick="toggleSelectionMode()">
+                                <i class="fas fa-check-square"></i> ব্যাচ নির্বাচন
+                            </button>
+                            <button class="filter-btn" onclick="refreshGallery()" style="background: #27ae60; color: white;">
+                                <i class="fas fa-sync-alt"></i> রিফ্রেশ
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- ফিল্টার এবং সর্ট -->
+                    <div class="gallery-controls">
+                        <div class="gallery-controls-left">
+                            <button class="filter-btn active" onclick="filterGallery('all')">
+                                <i class="fas fa-th"></i> সব
+                            </button>
+                            <button class="filter-btn" onclick="filterGallery('recent')">
+                                <i class="fas fa-clock"></i> সাম্প্রতিক
+                            </button>
+                            <button class="filter-btn" onclick="filterGallery('featured')">
+                                <i class="fas fa-star"></i> ফিচার্ড
+                            </button>
+                        </div>
+                        <div class="gallery-controls-right">
+                            <button class="sort-btn" onclick="sortGallery('date')">
+                                <i class="fas fa-calendar"></i> তারিখ
+                            </button>
+                            <button class="sort-btn" onclick="sortGallery('name')">
+                                <i class="fas fa-sort-alpha-down"></i> নাম
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- গ্যালারি গ্রিড -->
+                    <div id="galleryContainer">
+                        <div class="loading" id="galleryLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>গ্যালারি লোড হচ্ছে...</p>
+                        </div>
+                        <div id="galleryGrid" class="gallery-grid">
+                            <!-- গ্যালারি ইমেজ এখানে যোগ হবে -->
+                        </div>
+                    </div>
+                    
+                    <!-- খালি স্টেট -->
+                    <div class="empty-state" id="emptyState" style="display: none;">
+                        <i class="fas fa-images"></i>
+                        <h3 style="color: #7f8c8d; margin-bottom: 10px;">কোনো ছবি নেই</h3>
+                        <p style="color: #95a5a6;">প্রথম ছবি আপলোড করুন শুরু করতে</p>
+                        <button class="submit-btn" onclick="openTab('uploadTab')" style="margin-top: 20px;">
+                            <i class="fas fa-cloud-upload-alt"></i> আপলোড করুন
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- ট্যাব কন্টেন্ট: অ্যালবাম -->
+                <div id="albumsTab" class="tab-content">
+                    <div style="text-align: center; padding: 60px 20px;">
+                        <i class="fas fa-folder-open" style="font-size: 60px; color: #bdc3c7; margin-bottom: 20px;"></i>
+                        <h3 style="color: #7f8c8d; margin-bottom: 10px;">শীঘ্রই আসছে</h3>
+                        <p style="color: #95a5a6;">অ্যালবাম ফিচারটি শীঘ্রই যোগ করা হবে</p>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </main>
+    
+    <!-- ইমেজ মডেল -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <button class="modal-nav modal-prev" onclick="prevImage()">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="modal-nav modal-next" onclick="nextImage()">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <img class="modal-img" id="modalImage" src="" alt="">
+            <div class="modal-caption" id="modalCaption"></div>
+        </div>
+    </div>
+
+    <script>
+        // গ্লোবাল ভেরিয়েবল
+        let allImages = [];
+        let filteredImages = [];
+        let selectedImages = new Set();
+        let isSelectionMode = false;
+        let currentImageIndex = 0;
+        let filesToUpload = [];
+        
+        // DOM Elements
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const previewArea = document.getElementById('previewArea');
+        const previewGrid = document.getElementById('previewGrid');
+        const galleryGrid = document.getElementById('galleryGrid');
+        const galleryLoading = document.getElementById('galleryLoading');
+        const emptyState = document.getElementById('emptyState');
+        const totalPhotos = document.getElementById('totalPhotos');
+        const totalSpace = document.getElementById('totalSpace');
+        const lastUpdate = document.getElementById('lastUpdate');
+        const notification = document.getElementById('notification');
+        const batchActions = document.getElementById('batchActions');
+        const selectedCount = document.getElementById('selectedCount');
+        const imageModal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalCaption = document.getElementById('modalCaption');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        
+        // ড্রাগ অ্যান্ড ড্রপ ইভেন্ট
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.add('drag-over');
+        }
+        
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.remove('drag-over');
+        }
+        
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFiles(files);
+            }
+        }
+        
+        // ফাইল সিলেক্ট
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            if (files.length > 0) {
+                handleFiles(files);
+            }
+        }
+        
+        // ফাইল হ্যান্ডলিং
+        function handleFiles(files) {
+            if (files.length > 10) {
+                showNotification('সর্বোচ্চ ১০টি ছবি আপলোড করতে পারেন', 'error');
+                return;
+            }
+            
+            filesToUpload = [];
+            previewGrid.innerHTML = '';
+            
+            Array.from(files).forEach((file, index) => {
+                if (!file.type.match('image.*')) {
+                    showNotification(`${file.name} একটি ছবি ফাইল নয়`, 'error');
+                    return;
+                }
+                
+                if (file.size > 5 * 1024 * 1024) {
+                    showNotification(`${file.name} ৫MB এর বেশি`, 'error');
+                    return;
+                }
+                
+                filesToUpload.push(file);
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'gallery-item';
+                    previewItem.innerHTML = `
+                        <img src="${e.target.result}" alt="${file.name}">
+                        <div class="delete-overlay" onclick="removePreview(${index})">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    `;
+                    previewGrid.appendChild(previewItem);
+                };
+                reader.readAsDataURL(file);
+            });
+            
+            if (filesToUpload.length > 0) {
+                previewArea.style.display = 'block';
+            }
+        }
+        
+        // প্রিভিউ রিমুভ
+        function removePreview(index) {
+            filesToUpload.splice(index, 1);
+            previewGrid.innerHTML = '';
+            
+            filesToUpload.forEach((file, i) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'gallery-item';
+                    previewItem.innerHTML = `
+                        <img src="${e.target.result}" alt="${file.name}">
+                        <div class="delete-overlay" onclick="removePreview(${i})">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    `;
+                    previewGrid.appendChild(previewItem);
+                };
+                reader.readAsDataURL(file);
+            });
+            
+            if (filesToUpload.length === 0) {
+                previewArea.style.display = 'none';
+            }
+        }
+        
+        // ইমেজ আপলোড
+        async function uploadImages() {
+            if (filesToUpload.length === 0) {
+                showNotification('আপলোড করার জন্য কোনো ছবি নেই', 'error');
+                return;
+            }
+            
+            const uploadBtn = document.getElementById('uploadBtn');
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> আপলোড হচ্ছে...';
+            
+            progressContainer.style.display = 'block';
+            progressFill.style.width = '0%';
+            progressText.textContent = '০% সম্পন্ন';
+            
+            let uploadedCount = 0;
+            
+            try {
+                for (let i = 0; i < filesToUpload.length; i++) {
+                    const file = filesToUpload[i];
+                    
+                    // সিমুলেট আপলোড প্রোগ্রেস
+                    await simulateUpload(file);
+                    
+                    uploadedCount++;
+                    const progress = Math.round((uploadedCount / filesToUpload.length) * 100);
+                    progressFill.style.width = `${progress}%`;
+                    progressText.textContent = `${progress}% সম্পন্ন (${uploadedCount}/${filesToUpload.length})`;
+                }
+                
+                showNotification(`${uploadedCount}টি ছবি সফলভাবে আপলোড হয়েছে`, 'success');
+                
+                // রিসেট
+                filesToUpload = [];
+                previewArea.style.display = 'none';
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = '<i class="fas fa-upload"></i> আপলোড করুন';
+                progressContainer.style.display = 'none';
+                
+                // গ্যালারি রিফ্রেশ
+                loadGallery();
+                openTab('manageTab');
+                
+            } catch (error) {
+                showNotification('আপলোডে ত্রুটি হয়েছে', 'error');
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = '<i class="fas fa-upload"></i> আপলোড করুন';
+                progressContainer.style.display = 'none';
+            }
+        }
+        
+        // আপলোড সিমুলেশন
+        function simulateUpload(file) {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    resolve({
+                        name: file.name,
+                        size: file.size,
+                        type: file.type,
+                        url: URL.createObjectURL(file),
+                        date: new Date().toISOString()
+                    });
+                }, 1000);
+            });
+        }
+        
+        // গ্যালারি লোড
+        async function loadGallery() {
+            galleryLoading.style.display = 'block';
+            galleryGrid.innerHTML = '';
+            emptyState.style.display = 'none';
+            
+            try {
+                // সিমুলেট ডেটা
+                allImages = [
+                    {
+                        id: 1,
+                        name: 'স্কুল ভবন',
+                        url: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=300&fit=crop',
+                        date: '2024-01-15',
+                        size: '1.2MB',
+                        featured: true
+                    },
+                    {
+                        id: 2,
+                        name: 'ক্রীড়া প্রতিযোগিতা',
+                        url: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w-400&h=300&fit=crop',
+                        date: '2024-01-20',
+                        size: '0.8MB',
+                        featured: false
+                    },
+                    {
+                        id: 3,
+                        name: 'পুরস্কার বিতরণী',
+                        url: 'https://images.unsplash.com/photo-1519861531473-920034658307?w-400&h=300&fit=crop',
+                        date: '2024-01-25',
+                        size: '1.5MB',
+                        featured: true
+                    },
+                    {
+                        id: 4,
+                        name: 'ক্লাসরুম',
+                        url: 'https://images.unsplash.com/photo-1588072432836-e10032774350?w=400&h=300&fit=crop',
+                        date: '2024-02-01',
+                        size: '2.1MB',
+                        featured: false
+                    },
+                    {
+                        id: 5,
+                        name: 'ল্যাবরেটরি',
+                        url: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=400&h=300&fit=crop',
+                        date: '2024-02-05',
+                        size: '1.8MB',
+                        featured: false
+                    },
+                    {
+                        id: 6,
+                        name: 'সাংস্কৃতিক অনুষ্ঠান',
+                        url: 'https://images.unsplash.com/photo-1492684223066-e9e3c5d7d5c4?w=400&h=300&fit=crop',
+                        date: '2024-02-10',
+                        size: '2.3MB',
+                        featured: true
+                    }
+                ];
+                
+                filteredImages = [...allImages];
+                renderGallery();
+                
+            } catch (error) {
+                console.error('গ্যালারি লোডে ত্রুটি:', error);
+                showNotification('গ্যালারি লোড করতে সমস্যা হয়েছে', 'error');
+            } finally {
+                galleryLoading.style.display = 'none';
+            }
+        }
+        
+        // গ্যালারি রেন্ডার
+        function renderGallery() {
+            galleryGrid.innerHTML = '';
+            
+            if (filteredImages.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            filteredImages.forEach((image, index) => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+                if (isSelectionMode) {
+                    galleryItem.classList.add('selection-mode');
+                }
+                
+                galleryItem.innerHTML = `
+                    <input type="checkbox" class="select-checkbox" id="select-${image.id}" 
+                           onchange="toggleSelection(${image.id})" 
+                           ${selectedImages.has(image.id) ? 'checked' : ''}>
+                    <img src="${image.url}" alt="${image.name}" onclick="openImageModal(${index})">
+                    <div class="delete-overlay" onclick="deleteImage(${image.id})">
+                        <i class="fas fa-trash"></i>
+                    </div>
+                    ${image.featured ? '<div style="position: absolute; top: 10px; left: 10px; background: #f39c12; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px;"><i class="fas fa-star"></i></div>' : ''}
+                `;
+                galleryGrid.appendChild(galleryItem);
+            });
+            
+            // স্ট্যাটস আপডেট
+            updateStats();
+        }
+        
+        // স্ট্যাটস আপডেট
+        function updateStats() {
+            totalPhotos.textContent = allImages.length;
+            
+            const totalSize = allImages.reduce((sum, img) => {
+                const size = parseFloat(img.size);
+                return sum + (isNaN(size) ? 0 : size);
+            }, 0);
+            totalSpace.textContent = `${totalSize.toFixed(1)} MB`;
+            
+            if (allImages.length > 0) {
+                const latest = new Date(Math.max(...allImages.map(img => new Date(img.date))));
+                lastUpdate.textContent = latest.toLocaleDateString('bn-BD');
+            }
+        }
+        
+        // ইমেজ মুছুন
+        function deleteImage(id) {
+            if (confirm('আপনি কি এই ছবিটি মুছতে চান?')) {
+                allImages = allImages.filter(img => img.id !== id);
+                filteredImages = filteredImages.filter(img => img.id !== id);
+                selectedImages.delete(id);
+                renderGallery();
+                showNotification('ছবি মুছে ফেলা হয়েছে', 'success');
+            }
+        }
+        
+        // ব্যাচ নির্বাচন মুছুন
+        function deleteSelected() {
+            if (selectedImages.size === 0) {
+                showNotification('কোনো ছবি নির্বাচন করা হয়নি', 'error');
+                return;
+            }
+            
+            if (confirm(`আপনি কি ${selectedImages.size}টি ছবি মুছতে চান?`)) {
+                allImages = allImages.filter(img => !selectedImages.has(img.id));
+                filteredImages = filteredImages.filter(img => !selectedImages.has(img.id));
+                selectedImages.clear();
+                renderGallery();
+                exitSelectionMode();
+                showNotification(`${selectedImages.size}টি ছবি মুছে ফেলা হয়েছে`, 'success');
+            }
+        }
+        
+        // নির্বাচন টগল
+        function toggleSelection(id) {
+            if (selectedImages.has(id)) {
+                selectedImages.delete(id);
+            } else {
+                selectedImages.add(id);
+            }
+            updateSelectedCount();
+        }
+        
+        // নির্বাচন সংখ্যা আপডেট
+        function updateSelectedCount() {
+            selectedCount.textContent = `${selectedImages.size} টি ছবি নির্বাচিত`;
+        }
+        
+        // সব নির্বাচন
+        function selectAll() {
+            const selectAllBtn = document.getElementById('selectAllBtn');
+            const isSelectAll = selectAllBtn.querySelector('i').classList.contains('fa-check-square');
+            
+            if (isSelectAll) {
+                // সব সিলেক্ট
+                filteredImages.forEach(img => selectedImages.add(img.id));
+                selectAllBtn.innerHTML = '<i class="fas fa-times"></i> সব আনসিলেক্ট';
+            } else {
+                // সব আনসিলেক্ট
+                selectedImages.clear();
+                selectAllBtn.innerHTML = '<i class="fas fa-check-square"></i> সব নির্বাচন';
+            }
+            
+            renderGallery();
+            updateSelectedCount();
+        }
+        
+        // সিলেকশন মোড টগল
+        function toggleSelectionMode() {
+            isSelectionMode = !isSelectionMode;
+            if (isSelectionMode) {
+                batchActions.classList.remove('hidden');
+                document.querySelectorAll('.gallery-item').forEach(item => {
+                    item.classList.add('selection-mode');
+                });
+            } else {
+                exitSelectionMode();
+            }
+        }
+        
+        // সিলেকশন মোড থেকে বের হোন
+        function exitSelectionMode() {
+            isSelectionMode = false;
+            selectedImages.clear();
+            batchActions.classList.add('hidden');
+            document.querySelectorAll('.gallery-item').forEach(item => {
+                item.classList.remove('selection-mode');
+            });
+            document.getElementById('selectAllBtn').innerHTML = '<i class="fas fa-check-square"></i> সব নির্বাচন';
+            updateSelectedCount();
+        }
+        
+        // গ্যালারি ফিল্টার
+        function filterGallery(filter) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            switch(filter) {
+                case 'all':
+                    filteredImages = [...allImages];
+                    break;
+                case 'recent':
+                    filteredImages = [...allImages].sort((a, b) => new Date(b.date) - new Date(a.date));
+                    break;
+                case 'featured':
+                    filteredImages = allImages.filter(img => img.featured);
+                    break;
+            }
+            
+            renderGallery();
+        }
+        
+        // গ্যালারি সর্ট
+        function sortGallery(sortBy) {
+            document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            switch(sortBy) {
+                case 'date':
+                    filteredImages.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    break;
+                case 'name':
+                    filteredImages.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+            }
+            
+            renderGallery();
+        }
+        
+        // ইমেজ মডেল
+        function openImageModal(index) {
+            if (isSelectionMode) return;
+            
+            currentImageIndex = index;
+            const image = filteredImages[index];
+            
+            modalImage.src = image.url;
+            modalCaption.textContent = image.name;
+            imageModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            imageModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        function prevImage() {
+            currentImageIndex = (currentImageIndex - 1 + filteredImages.length) % filteredImages.length;
+            const image = filteredImages[currentImageIndex];
+            modalImage.src = image.url;
+            modalCaption.textContent = image.name;
+        }
+        
+        function nextImage() {
+            currentImageIndex = (currentImageIndex + 1) % filteredImages.length;
+            const image = filteredImages[currentImageIndex];
+            modalImage.src = image.url;
+            modalCaption.textContent = image.name;
+        }
+        
+        // নোটিফিকেশন
+        function showNotification(message, type = 'success') {
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // ট্যাব ম্যানেজমেন্ট
+        function openTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+        
+        // রিফ্রেশ গ্যালারি
+        function refreshGallery() {
+            loadGallery();
+            showNotification('গ্যালারি রিফ্রেশ করা হয়েছে', 'success');
+        }
+        
+        // সাইডবার টগল
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            if (window.innerWidth <= 768) {
+                document.body.style.overflow = document.getElementById('sidebar').classList.contains('active') ? 'hidden' : 'auto';
+            }
+        }
+        
+        // কীবোর্ড শর্টকাট
+        document.addEventListener('keydown', function(e) {
+            if (imageModal.style.display === 'block') {
+                if (e.key === 'Escape') closeModal();
+                if (e.key === 'ArrowLeft') prevImage();
+                if (e.key === 'ArrowRight') nextImage();
+            }
+        });
+        
+        // ইভেন্ট লিসেনার
+        document.getElementById('selectAllBtn').addEventListener('click', selectAll);
+        window.removePreview = removePreview;
+        window.toggleSelection = toggleSelection;
+        window.deleteSelected = deleteSelected;
+        window.exitSelectionMode = exitSelectionMode;
+        window.deleteImage = deleteImage;
+        window.openImageModal = openImageModal;
+        window.closeModal = closeModal;
+        window.prevImage = prevImage;
+        window.nextImage = nextImage;
+        window.filterGallery = filterGallery;
+        window.sortGallery = sortGallery;
+        window.refreshGallery = refreshGallery;
+        window.toggleSelectionMode = toggleSelectionMode;
+        
+        // ইনিশিয়ালাইজেশন
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGallery();
+        });
+    </script>
+</body>
+</html>

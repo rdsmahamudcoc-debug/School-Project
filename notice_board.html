@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>নোটিশ বোর্ড ম্যানেজমেন্ট</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="notice_board.html" style="background: #1a252f; border-left: 4px solid #3498db; color: white;"><i class="fas fa-bullhorn"></i> নোটিশ বোর্ড</a></li>
+            <li><a href="school_profile.html"><i class="fas fa-university"></i> স্কুল প্রোফাইল & বাণী</a></li>
+            <li><a href="gallery.html"><i class="fas fa-images"></i> ফটো গ্যালারি</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left">
+                <div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+                <h3>নোটিশ বোর্ড</h3>
+            </div>
+            <div class="user-info"><span>এডমিন</span><div class="user-avatar"><i class="fas fa-user"></i></div></div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            
+            <div class="wrapper" style="margin-bottom: 30px;">
+                <h4 style="border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">নতুন নোটিশ যোগ করুন</h4>
+                <form>
+                    <div class="form-grid">
+                        <div style="grid-column: span 2;">
+                            <label>নোটিশের শিরোনাম (Title) *</label>
+                            <input type="text" placeholder="যেমন: ঈদুল ফিতর উপলক্ষে স্কুল বন্ধের নোটিশ" required>
+                        </div>
+                        <div>
+                            <label>প্রকাশের তারিখ</label>
+                            <input type="date">
+                        </div>
+                        <div>
+                            <label>ফাইল যুক্ত করুন (PDF/Image)</label>
+                            <input type="file" style="padding: 7px;">
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <label>বিস্তারিত বিবরণ</label>
+                            <textarea rows="4" style="width: 100%; border: 1px solid #ddd; padding: 10px;" placeholder="নোটিশের বিস্তারিত লিখুন..."></textarea>
+                        </div>
+                    </div>
+                    <div style="text-align: right; margin-top: 15px;">
+                        <button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> নোটিশ প্রকাশ করুন</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="wrapper">
+                <h4>প্রকাশিত নোটিশ সমূহ</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>তারিখ</th>
+                                <th>শিরোনাম</th>
+                                <th>ফাইল</th>
+                                <th>অ্যাকশন</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>১০ জানুয়ারী ২০২৬</td>
+                                <td>বার্ষিক ক্রীড়া প্রতিযোগিতা - ২০২৬</td>
+                                <td><i class="fas fa-file-pdf" style="color: red;"></i> Download</td>
+                                <td>
+                                    <button class="btn btn-edit"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>০১ জানুয়ারী ২০২৬</td>
+                                <td>নতুন সেশনে ভর্তি বিজ্ঞপ্তি</td>
+                                <td><i class="fas fa-image" style="color: blue;"></i> View</td>
+                                <td>
+                                    <button class="btn btn-edit"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+    </script>
+</body>
+</html>

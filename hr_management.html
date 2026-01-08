@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR ম্যানেজমেন্ট (শিক্ষক ও কর্মচারী)</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ট্যাব ডিজাইন */
+        .tab-btn { padding: 12px 25px; background: #eee; border: none; cursor: pointer; margin-right: 5px; border-radius: 5px 5px 0 0; font-weight: bold; color: #555; font-size: 15px; }
+        .tab-btn.active { background: #3498db; color: white; }
+        .tab-content { display: none; padding: 20px; background: white; border: 1px solid #ddd; border-top: 4px solid #3498db; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="hr_management.html" style="background: #1a252f; border-left: 4px solid #3498db; color: white;"><i class="fas fa-users-cog"></i> এইচআর (HR)</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left"><div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div><h3>এইচআর ম্যানেজমেন্ট</h3></div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            <div class="wrapper" style="background: transparent; box-shadow: none; padding: 0;">
+                
+                <div>
+                    <button class="tab-btn active" onclick="openTab(event, 'teacherTab')"><i class="fas fa-chalkboard-teacher"></i> শিক্ষক তালিকা</button>
+                    <button class="tab-btn" onclick="openTab(event, 'employeeTab')"><i class="fas fa-user-tie"></i> কর্মচারী তালিকা</button>
+                </div>
+
+                <div id="teacherTab" class="tab-content active">
+                    <div style="background: #f9f9f9; padding: 20px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #eee;">
+                        <h4 style="margin-bottom: 15px; color: #2c3e50;">নতুন শিক্ষক নিয়োগ</h4>
+                        <form id="teacherForm">
+                            <div class="form-grid">
+                                <div><label>নাম</label><input type="text" id="tName" required placeholder="শিক্ষকের নাম"></div>
+                                <div><label>পদবি</label><input type="text" id="tDesig" placeholder="যেমন: সহকারী শিক্ষক"></div>
+                                <div><label>মোবাইল</label><input type="text" id="tPhone" required></div>
+                                <div><label>বিষয়</label><input type="text" id="tSubject" placeholder="কোন বিষয়ের শিক্ষক?"></div>
+                                <div><label>যোগদান</label><input type="date" id="tJoinDate"></div>
+                                <div><label>বেতন</label><input type="number" id="tSalary" placeholder="টাকা"></div>
+                            </div>
+                            <div style="text-align: right; margin-top: 15px;">
+                                <button type="submit" class="submit-btn"><i class="fas fa-plus-circle"></i> শিক্ষক সেভ করুন</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>নাম & পদবি</th>
+                                    <th>বিষয়</th>
+                                    <th>মোবাইল</th>
+                                    <th>যোগদান</th>
+                                    <th>বেতন</th>
+                                    <th>অ্যাকশন</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teacherBody"><tr><td colspan="6" style="text-align:center;">লোড হচ্ছে...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="employeeTab" class="tab-content">
+                    <div style="background: #f9f9f9; padding: 20px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #eee;">
+                        <h4 style="margin-bottom: 15px; color: #e67e22;">নতুন কর্মচারী নিয়োগ</h4>
+                        <form id="employeeForm">
+                            <div class="form-grid">
+                                <div><label>নাম</label><input type="text" id="eName" required placeholder="কর্মচারীর নাম"></div>
+                                <div><label>পদবি</label><input type="text" id="eDesig" placeholder="যেমন: পিয়ন, ক্লার্ক, গার্ড"></div>
+                                <div><label>মোবাইল</label><input type="text" id="ePhone" required></div>
+                                <div><label>যোগদান</label><input type="date" id="eJoinDate"></div>
+                                <div><label>বেতন</label><input type="number" id="eSalary" placeholder="টাকা"></div>
+                            </div>
+                            <div style="text-align: right; margin-top: 15px;">
+                                <button type="submit" class="submit-btn" style="background: #e67e22;"><i class="fas fa-plus-circle"></i> কর্মচারী সেভ করুন</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>নাম</th>
+                                    <th>পদবি (Designation)</th>
+                                    <th>মোবাইল</th>
+                                    <th>যোগদান</th>
+                                    <th>বেতন</th>
+                                    <th>অ্যাকশন</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employeeBody"><tr><td colspan="6" style="text-align:center;">লোড হচ্ছে...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar(){document.getElementById('sidebar').classList.toggle('active');}
+        
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove("active");
+            }
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.className += " active";
+        }
+    </script>
+
+    <script type="module">
+        import { db, ref, push, set, onValue, remove } from './firebase-config.js';
+
+        // ==========================
+        // ১. শিক্ষক লজিক (Teachers)
+        // ==========================
+        document.getElementById('teacherForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newRef = push(ref(db, 'teachers'));
+            set(newRef, {
+                name: document.getElementById('tName').value,
+                designation: document.getElementById('tDesig').value,
+                phone: document.getElementById('tPhone').value,
+                subject: document.getElementById('tSubject').value,
+                joinDate: document.getElementById('tJoinDate').value,
+                salary: document.getElementById('tSalary').value,
+                id: newRef.key
+            }).then(() => { alert("✅ শিক্ষক যুক্ত হয়েছে!"); document.getElementById('teacherForm').reset(); });
+        });
+
+        onValue(ref(db, 'teachers'), snap => {
+            const body = document.getElementById('teacherBody'); body.innerHTML = "";
+            if(snap.val()) Object.values(snap.val()).forEach(t => {
+                body.innerHTML += `
+                    <tr>
+                        <td><b>${t.name}</b><br><small style="color:#777;">${t.designation}</small></td>
+                        <td>${t.subject}</td>
+                        <td>${t.phone}</td>
+                        <td>${t.joinDate}</td>
+                        <td>${t.salary}৳</td>
+                        <td><button onclick="window.del('teachers/${t.id}')" style="color:red; border:none; cursor:pointer;"><i class="fas fa-trash"></i></button></td>
+                    </tr>
+                `;
+            }); else body.innerHTML = '<tr><td colspan="6" style="text-align:center;">কোনো শিক্ষক নেই</td></tr>';
+        });
+
+        // ==========================
+        // ২. কর্মচারী লজিক (Employees)
+        // ==========================
+        document.getElementById('employeeForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newRef = push(ref(db, 'employees'));
+            set(newRef, {
+                name: document.getElementById('eName').value,
+                designation: document.getElementById('eDesig').value,
+                phone: document.getElementById('ePhone').value,
+                joinDate: document.getElementById('eJoinDate').value,
+                salary: document.getElementById('eSalary').value,
+                id: newRef.key
+            }).then(() => { alert("✅ কর্মচারী যুক্ত হয়েছে!"); document.getElementById('employeeForm').reset(); });
+        });
+
+        onValue(ref(db, 'employees'), snap => {
+            const body = document.getElementById('employeeBody'); body.innerHTML = "";
+            if(snap.val()) Object.values(snap.val()).forEach(e => {
+                body.innerHTML += `
+                    <tr>
+                        <td><b>${e.name}</b></td>
+                        <td><span style="background:#fef9e7; padding:2px 8px; border-radius:4px; color:#f39c12; font-weight:bold;">${e.designation}</span></td>
+                        <td>${e.phone}</td>
+                        <td>${e.joinDate}</td>
+                        <td>${e.salary}৳</td>
+                        <td><button onclick="window.del('employees/${e.id}')" style="color:red; border:none; cursor:pointer;"><i class="fas fa-trash"></i></button></td>
+                    </tr>
+                `;
+            }); else body.innerHTML = '<tr><td colspan="6" style="text-align:center;">কোনো কর্মচারী নেই</td></tr>';
+        });
+
+        // কমন ডিলিট ফাংশন
+        window.del = (path) => { if(confirm("আপনি কি নিশ্চিত মুছে ফেলতে চান?")) remove(ref(db, path)); };
+    </script>
+</body>
+</html>

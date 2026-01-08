@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>শিক্ষক তালিকা</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="view_teachers.html" style="background: #1a252f; border-left: 4px solid #3498db; color: white;"><i class="fas fa-chalkboard-teacher"></i> শিক্ষক তালিকা</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left"><div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div><h3>শিক্ষক পরিচিতি</h3></div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            <div class="wrapper">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h4>সম্মানিত শিক্ষকদের তালিকা</h4>
+                    <button onclick="window.print()" style="padding: 8px 15px; background: #34495e; color: white; border: none; cursor: pointer; border-radius: 4px;"><i class="fas fa-print"></i> প্রিন্ট করুন</button>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>নাম</th>
+                                <th>পদবি</th>
+                                <th>বিষয়</th>
+                                <th>মোবাইল</th>
+                                <th>যোগদানের তারিখ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teacherBody">
+                            <tr><td colspan="5" style="text-align: center;">লোড হচ্ছে...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>function toggleSidebar(){document.getElementById('sidebar').classList.toggle('active');}</script>
+
+    <script type="module">
+        import { db, ref, onValue } from './firebase-config.js';
+
+        // ডাটাবেস থেকে শুধু শিক্ষকদের তথ্য আনা হচ্ছে
+        onValue(ref(db, 'teachers'), snap => {
+            const body = document.getElementById('teacherBody'); 
+            body.innerHTML = "";
+            
+            if(snap.val()) {
+                Object.values(snap.val()).forEach(t => {
+                    body.innerHTML += `
+                        <tr>
+                            <td style="font-weight: bold; color: #2c3e50;">${t.name}</td>
+                            <td><span style="background: #eaf2f8; color: #3498db; padding: 2px 8px; border-radius: 4px; font-size: 13px;">${t.designation}</span></td>
+                            <td>${t.subject}</td>
+                            <td>${t.phone}</td>
+                            <td>${t.joinDate}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                body.innerHTML = '<tr><td colspan="5" style="text-align:center;">কোনো তথ্য পাওয়া যায়নি</td></tr>';
+            }
+        });
+    </script>
+</body>
+</html>

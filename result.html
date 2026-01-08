@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ফলাফল ব্যবস্থাপনা - স্মার্ট স্কুল</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* সাইডবার ও লেআউট */
+        .sidebar { width: 250px; background: #2c3e50; position: fixed; height: 100%; color: white; transition: 0.3s; z-index: 1000; }
+        .sidebar a { display: block; padding: 15px 20px; color: #b8c7ce; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar a:hover { background: #1a252f; color: white; }
+        .main-content { margin-left: 250px; padding: 20px; width: calc(100% - 250px); min-height: 100vh; }
+        
+        .filter-wrapper { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .transcript-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow-x: auto; }
+        
+        /* টেবিল ডিজাইন */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background: #f8f9fa; color: #333; }
+        .fail-text { color: red; font-weight: bold; }
+        .pass-text { color: green; font-weight: bold; }
+
+        /* ইনডিভিজুয়াল কার্ড ডিজাইন (Fix) */
+        .marksheet-view { 
+            display: none; margin: 30px auto; border: 2px solid #333; padding: 25px; 
+            background: #fff; max-width: 750px; box-sizing: border-box; position: relative;
+        }
+        .marksheet-view table { table-layout: fixed; width: 100%; margin-top: 15px; }
+        .marksheet-view th, .marksheet-view td { border: 1px solid #333; padding: 8px; word-wrap: break-word; }
+
+        @media (max-width: 768px) {
+            .sidebar { left: -250px; }
+            .sidebar.active { left: 0; }
+            .main-content { margin-left: 0; width: 100%; }
+        }
+        @media print {
+            .sidebar, header, .filter-wrapper, .no-print, .btn-action { display: none !important; }
+            .main-content { margin-left: 0 !important; width: 100% !important; padding: 0; }
+            .marksheet-view { border: 2px solid #333; display: block !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand" style="padding: 20px; font-size: 20px; font-weight: bold; background: #1a252f;"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu" style="list-style: none; padding: 0;">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="marks_entry.html"><i class="fas fa-edit"></i> মার্কস এন্ট্রি</a></li>
+            <li><a href="result.html" style="background: #3498db; color: white;"><i class="fas fa-poll-h"></i> রেজাল্ট শিট</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="no-print" style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+            <div class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('active')" style="cursor: pointer; font-size: 20px;"><i class="fas fa-bars"></i></div>
+            <h3>ফলাফল ও ট্যাবুলেশন শিট</h3>
+        </header>
+
+        <div class="filter-wrapper no-print">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <select id="examSelect" style="padding: 10px; border: 1px solid #ddd; flex:1;"><option value="">পরীক্ষা নির্বাচন করুন...</option></select>
+                <select id="classSelect" style="padding: 10px; border: 1px solid #ddd; flex:1;"><option value="">ক্লাস নির্বাচন করুন...</option></select>
+                <button id="viewResultBtn" style="padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">রেজাল্ট লোড করুন</button>
+                <button style="background: #34495e; padding: 10px 20px; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="window.print()"><i class="fas fa-print"></i> প্রিন্ট</button>
+            </div>
+        </div>
+
+        <div class="transcript-card" id="tabulationArea" style="display: none;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2 id="schoolName">স্কুলের নাম</h2>
+                <h4 id="examTitle">পরীক্ষার নাম</h4>
+                <p><b>ট্যাবুলেশন শিট - শ্রেণি: <span id="displayClass">---</span></b></p>
+            </div>
+            <div id="tabulationContainer"></div>
+        </div>
+
+        <div id="individualMarksheetArea"></div>
+        
+        <div id="noData" class="no-print" style="text-align:center; padding: 50px; color: #999;">
+            <i class="fas fa-search" style="font-size: 50px; margin-bottom: 10px;"></i>
+            <p>পরীক্ষা এবং ক্লাস সিলেক্ট করে "রেজাল্ট লোড করুন" বাটনে ক্লিক করুন</p>
+        </div>
+    </main>
+
+    <script type="module">
+        import { db, ref, onValue, get } from './firebase-config.js';
+
+        // ডাটা লোডার
+        onValue(ref(db, 'exams'), s => {
+            const el = document.getElementById('examSelect');
+            if(s.val()) Object.values(s.val()).forEach(v => el.innerHTML += `<option value="${v.examName}">${v.examName}</option>`);
+        });
+        onValue(ref(db, 'classes'), s => {
+            const el = document.getElementById('classSelect');
+            if(s.val()) Object.values(s.val()).forEach(v => el.innerHTML += `<option value="${v.className}">${v.className}</option>`);
+        });
+        onValue(ref(db, 'website_settings/general'), s => {
+            if(s.val()) document.getElementById('schoolName').innerText = s.val().schoolName;
+        });
+
+        // গ্রেড ক্যালকুলেটর
+        const getGP = (m) => {
+            m = parseFloat(m);
+            if (m >= 80) return 5.0; if (m >= 70) return 4.0; if (m >= 60) return 3.5;
+            if (m >= 50) return 3.0; if (m >= 40) return 2.0; if (m >= 33) return 1.0;
+            return 0.0;
+        };
+        const getGL = (m) => {
+            m = parseFloat(m);
+            if (m >= 80) return 'A+'; if (m >= 70) return 'A'; if (m >= 60) return 'A-';
+            if (m >= 50) return 'B'; if (m >= 40) return 'C'; if (m >= 33) return 'D';
+            return 'F';
+        };
+
+        // মেইন বাটন ইভেন্ট
+        document.getElementById('viewResultBtn').addEventListener('click', async () => {
+            const ex = document.getElementById('examSelect').value;
+            const cl = document.getElementById('classSelect').value;
+            if(!ex || !cl) return alert("পরীক্ষা ও ক্লাস নির্বাচন করুন!");
+
+            const [resSnap, stSnap, subSnap] = await Promise.all([
+                get(ref(db, `results/${ex}/${cl}`)),
+                get(ref(db, 'students')),
+                get(ref(db, 'subjects'))
+            ]);
+
+            if(!resSnap.exists()) return alert("এই ক্লাসের কোনো রেজাল্ট পাওয়া যায়নি!");
+
+            const results = resSnap.val();
+            const students = Object.values(stSnap.val() || {}).filter(s => s.className === cl);
+            const allSubs = Object.values(subSnap.val() || {}).filter(s => s.className === cl);
+            
+            // ধর্ম শিক্ষা শনাক্তকরণ
+            const relKeys = ['Islam', 'Hindu', 'Christian', 'Buddhist', 'ধর্ম'];
+            const mainSubs = allSubs.filter(sub => !relKeys.some(k => sub.subjectName.includes(k)));
+            const relSubs = allSubs.filter(sub => relKeys.some(k => sub.subjectName.includes(k)));
+
+            let finalStudents = students.map(st => {
+                let total = 0, fail = false, gpSum = 0, compCount = 0, optGP = 0;
+                let subDetails = [];
+
+                // সাধারণ বিষয়সমূহ
+                mainSubs.forEach(sub => {
+                    const mData = results[sub.subjectName] ? results[sub.subjectName][st.id] : null;
+                    const mark = mData ? parseFloat(mData.total) : 0;
+                    const grade = mData ? (mData.grade || getGL(mark)) : 'F';
+                    const gp = getGP(mark);
+
+                    if(sub.subjectType === 'Optional') {
+                        optGP = gp > 2 ? gp - 2 : 0;
+                    } else {
+                        compCount++; gpSum += gp;
+                        if(mark < 33 || grade === 'F') fail = true;
+                    }
+                    total += mark;
+                    subDetails.push({ name: sub.subjectName, mark, grade, gp });
+                });
+
+                // ধর্ম শিক্ষা (মার্জ লজিক)
+                let rMark = 0, rName = "Religion", rGrade = "F";
+                relSubs.forEach(rs => {
+                    const mData = results[rs.subjectName] ? results[rs.subjectName][st.id] : null;
+                    if(mData && parseFloat(mData.total) > 0) {
+                        rMark = parseFloat(mData.total);
+                        rName = rs.subjectName;
+                        rGrade = mData.grade || getGL(rMark);
+                    }
+                });
+                const rGP = getGP(rMark);
+                compCount++; gpSum += rGP;
+                if(rMark < 33 || rGrade === 'F') fail = true;
+                total += rMark;
+                subDetails.push({ name: rName, mark: rMark, grade: rGrade, gp: rGP, isRel: true });
+
+                let gpa = fail ? "0.00" : ((gpSum + optGP) / compCount).toFixed(2);
+                if(parseFloat(gpa) > 5) gpa = "5.00";
+
+                return { ...st, total, fail, gpa, subDetails };
+            });
+
+            // পজিশন ক্যালকুলেশন
+            finalStudents.sort((a,b) => parseFloat(b.gpa) - parseFloat(a.gpa) || b.total - a.total);
+            finalStudents = finalStudents.map((s, i) => ({ ...s, pos: s.fail ? '---' : i+1 }));
+
+            // ট্যাবুলেশন টেবিল তৈরি
+            let html = `<table><thead><tr><th>Roll</th><th>Name</th>`;
+            mainSubs.forEach(s => html += `<th>${s.subjectName}</th>`);
+            html += `<th>Religion</th><th>Total</th><th>GPA</th><th>Pos</th><th class="no-print">Action</th></tr></thead><tbody>`;
+
+            finalStudents.forEach(s => {
+                html += `<tr><td>${s.roll}</td><td style="text-align:left">${s.name}</td>`;
+                mainSubs.forEach(ms => {
+                    const d = s.subDetails.find(sd => sd.name === ms.subjectName);
+                    html += `<td>${d ? d.mark : 0}</td>`;
+                });
+                const r = s.subDetails.find(sd => sd.isRel);
+                html += `<td>${r ? r.mark : 0}</td>
+                         <td><b>${s.total}</b></td>
+                         <td class="${s.fail?'fail-text':'pass-text'}">${s.gpa}</td>
+                         <td>${s.pos}</td>
+                         <td class="no-print"><button class="btn-action" onclick="viewCard('${s.id}')" style="cursor:pointer; background:#3498db; color:white; border:none; padding:5px 10px; border-radius:3px;">View</button></td></tr>`;
+            });
+            html += `</tbody></table>`;
+            
+            document.getElementById('tabulationContainer').innerHTML = html;
+            window.currentResultData = finalStudents;
+            document.getElementById('tabulationArea').style.display = 'block';
+            document.getElementById('noData').style.display = 'none';
+            document.getElementById('examTitle').innerText = ex;
+            document.getElementById('displayClass').innerText = cl;
+        });
+
+        // ইনডিভিজুয়াল কার্ড ভিউ
+        window.viewCard = (id) => {
+            const s = window.currentResultData.find(x => x.id === id);
+            const school = document.getElementById('schoolName').innerText;
+            const exam = document.getElementById('examSelect').value;
+
+            let html = `
+                <div class="marksheet-view" style="display: block;">
+                    <div style="text-align:center; border-bottom:2px solid #333; margin-bottom:20px;">
+                        <h2 style="margin:0;">${school}</h2>
+                        <h3 style="margin:5px 0;">একাডেমিক ট্রান্সক্রিপ্ট</h3>
+                        <h4 style="margin:0; color:#555;">${exam} - ২০২৬</h4>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-size:14px;">
+                        <div><p><b>নাম:</b> ${s.name}</p><p><b>রোল:</b> ${s.roll} | <b>শ্রেণি:</b> ${s.className}</p></div>
+                        <div style="text-align:right"><p><b>পজিশন:</b> ${s.pos}</p><p><b>ফলাফল:</b> ${s.fail ? 'FAIL' : 'PASS'}</p></div>
+                    </div>
+                    <table>
+                        <thead><tr style="background:#eee;"><th>বিষয়</th><th>নম্বর</th><th>গ্রেড</th><th>পয়েন্ট</th></tr></thead>
+                        <tbody>`;
+            s.subDetails.forEach(sd => {
+                html += `<tr><td style="text-align:left;">${sd.name}</td><td>${sd.mark}</td><td>${sd.grade}</td><td>${sd.gp.toFixed(2)}</td></tr>`;
+            });
+            html += `</tbody></table>
+                    <div style="margin-top:20px; display:flex; justify-content:space-between; font-weight:bold; background:#f9f9f9; padding:10px; border:1px solid #333;">
+                        <span>মোট নম্বর: ${s.total}</span><span>জিপিএ: ${s.gpa}</span>
+                    </div>
+                    <div style="margin-top:70px; display:flex; justify-content:space-between; font-size:12px;">
+                        <span style="border-top:1px solid #000; width:120px; text-align:center; padding-top:5px;">অভিভাবক</span>
+                        <span style="border-top:1px solid #000; width:120px; text-align:center; padding-top:5px;">শ্রেণি শিক্ষক</span>
+                        <span style="border-top:1px solid #000; width:120px; text-align:center; padding-top:5px;">প্রধান শিক্ষক</span>
+                    </div>
+                    <div class="no-print" style="margin-top:30px; text-align:center;">
+                        <button onclick="window.print()" style="padding:10px 20px; background:#27ae60; color:white; border:none; border-radius:4px; cursor:pointer;">প্রিন্ট করুন</button>
+                        <button onclick="this.parentElement.parentElement.style.display='none'" style="padding:10px 20px; background:#e74c3c; color:white; border:none; border-radius:4px; cursor:pointer; margin-left:10px;">বন্ধ করুন</button>
+                    </div>
+                </div>`;
+            
+            const cardArea = document.getElementById('individualMarksheetArea');
+            cardArea.innerHTML = html;
+            cardArea.scrollIntoView({ behavior: 'smooth' });
+        };
+    </script>
+</body>
+</html>
