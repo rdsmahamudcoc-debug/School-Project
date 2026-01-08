@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>রিপোর্ট ও এনালাইসিস</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* রিপোর্ট ফিল্টার এরিয়া */
+        .filter-area {
+            background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex; gap: 15px; align-items: end; flex-wrap: wrap;
+        }
+
+        /* চার্ট কন্টেইনার */
+        .chart-container {
+            display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 30px;
+        }
+        .chart-box {
+            background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        /* প্রিন্ট মুড */
+        @media print {
+            .sidebar, header, .filter-area button { display: none !important; }
+            .main-content { margin: 0; width: 100%; }
+            .chart-container { display: block; } /* প্রিন্টে গ্রাফ নিচে নিচে আসবে */
+            .chart-box { page-break-inside: avoid; margin-bottom: 20px; border: 1px solid #ddd; box-shadow: none; }
+        }
+
+        @media (max-width: 768px) {
+            .chart-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="student_list.html"><i class="fas fa-user-graduate"></i> স্টুডেন্ট</a></li>
+            
+            <li>
+                <button class="dropdown-btn active"><span><i class="fas fa-money-bill-wave"></i> একাউন্টস</span><i class="fas fa-caret-down rotate"></i></button>
+                <div class="dropdown-container" style="display: block;">
+                    <a href="fee.html">ফি কালেকশন</a>
+                    <a href="expense.html">খরচ (Expense)</a>
+                    <a href="report.html" style="color: white;">রিপোর্ট & গ্রাফ</a>
+                </div>
+            </li>
+            
+            <li><a href="teacher_list.html"><i class="fas fa-chalkboard-teacher"></i> শিক্ষক</a></li>
+            <li><a href="settings.html"><i class="fas fa-cogs"></i> সেটিংস</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left">
+                <div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+                <h3>রিপোর্ট ও পরিসংখ্যান</h3>
+            </div>
+            <div class="user-info"><span>এডমিন</span><div class="user-avatar"><i class="fas fa-user"></i></div></div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            
+            <div class="filter-area">
+                <div style="flex: 1;">
+                    <label style="font-weight: bold; font-size: 13px;">শুরুর তারিখ</label>
+                    <input type="date" value="2026-01-01" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-top: 5px;">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-weight: bold; font-size: 13px;">শেষের তারিখ</label>
+                    <input type="date" value="2026-12-31" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-top: 5px;">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-weight: bold; font-size: 13px;">রিপোর্টের ধরণ</label>
+                    <select style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-top: 5px;">
+                        <option>আয় ও ব্যয় (Financial)</option>
+                        <option>উপস্থিতি (Attendance)</option>
+                        <option>একাডেমিক রেজাল্ট</option>
+                    </select>
+                </div>
+                <button class="submit-btn" style="margin: 0; height: 38px;"><i class="fas fa-sync-alt"></i> জেনারেট</button>
+                <button class="btn" style="background: #34495e; color: white; height: 38px;" onclick="window.print()"><i class="fas fa-print"></i> প্রিন্ট</button>
+            </div>
+
+            <div class="dashboard-cards" style="padding: 0; margin-bottom: 30px;">
+                <div class="card" style="border-left-color: #2ecc71;">
+                    <div><h3>৳ ৫,০০,০০০</h3><p>মোট আয় (Income)</p></div>
+                    <i class="fas fa-arrow-up" style="color: #2ecc71;"></i>
+                </div>
+                <div class="card" style="border-left-color: #e74c3c;">
+                    <div><h3>৳ ২,৫০,০০০</h3><p>মোট ব্যয় (Expense)</p></div>
+                    <i class="fas fa-arrow-down" style="color: #e74c3c;"></i>
+                </div>
+                <div class="card" style="border-left-color: #3498db;">
+                    <div><h3>৳ ২,৫০,০০০</h3><p>নিট লাভ (Profit)</p></div>
+                    <i class="fas fa-wallet" style="color: #3498db;"></i>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-box">
+                    <h4 style="margin-bottom: 20px; color: #555;">মাসিক আয় বনাম ব্যয় (২০২৬)</h4>
+                    <canvas id="financeChart"></canvas>
+                </div>
+                
+                <div class="chart-box">
+                    <h4 style="margin-bottom: 20px; color: #555;">আজকের উপস্থিতি</h4>
+                    <canvas id="attendanceChart"></canvas>
+                </div>
+            </div>
+
+            <div class="wrapper">
+                <h4 style="margin-bottom: 15px;">ক্লাস ভিত্তিক কালেকশন রিপোর্ট</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr style="background: #f1f2f6;">
+                                <th>ক্লাস</th>
+                                <th>মোট ছাত্র</th>
+                                <th>বেতন পরিশোধ করেছে</th>
+                                <th>বকেয়া আছে</th>
+                                <th style="text-align: right;">মোট কালেকশন</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Class 6</td>
+                                <td>৫০ জন</td>
+                                <td style="color: green;">৪০ জন</td>
+                                <td style="color: red;">১০ জন</td>
+                                <td style="text-align: right; font-weight: bold;">৪০,০০০ ৳</td>
+                            </tr>
+                            <tr>
+                                <td>Class 7</td>
+                                <td>৪৫ জন</td>
+                                <td style="color: green;">৪৫ জন</td>
+                                <td style="color: red;">০ জন</td>
+                                <td style="text-align: right; font-weight: bold;">৪৫,০০০ ৳</td>
+                            </tr>
+                            <tr>
+                                <td>Class 10</td>
+                                <td>৬০ জন</td>
+                                <td style="color: green;">৫৫ জন</td>
+                                <td style="color: red;">৫ জন</td>
+                                <td style="text-align: right; font-weight: bold;">৫৫,০০০ ৳</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: #2c3e50; color: white;">
+                                <td colspan="4" style="text-align: right; padding-right: 20px;">সর্বমোট:</td>
+                                <td style="text-align: right; font-weight: bold;">১,৪০,০০০ ৳</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+
+        // ==========================================
+        // গ্রাফ তৈরি করার জাভাস্ক্রিপ্ট (Chart.js)
+        // ==========================================
+
+        // ১. আয়-ব্যয় চার্ট (Bar Chart)
+        const ctx1 = document.getElementById('financeChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: ['জানু', 'ফেব্রু', 'মার্চ', 'এপ্রিল', 'মে', 'জুন'],
+                datasets: [
+                    {
+                        label: 'আয় (Income)',
+                        data: [50000, 60000, 55000, 70000, 65000, 80000],
+                        backgroundColor: '#2ecc71'
+                    },
+                    {
+                        label: 'ব্যয় (Expense)',
+                        data: [30000, 35000, 32000, 40000, 38000, 45000],
+                        backgroundColor: '#e74c3c'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+            }
+        });
+
+        // ২. উপস্থিতি চার্ট (Pie Chart)
+        const ctx2 = document.getElementById('attendanceChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['উপস্থিত (Present)', 'অনুপস্থিত (Absent)', 'ছুটিতে (Leave)'],
+                datasets: [{
+                    data: [85, 10, 5],
+                    backgroundColor: ['#3498db', '#e74c3c', '#f1c40f']
+                }]
+            },
+            options: {
+                responsive: true,
+            }
+        });
+    </script>
+</body>
+</html>

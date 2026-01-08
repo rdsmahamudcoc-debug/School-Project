@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">স্মার্ট স্কুল ড্যাশবোর্ড</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ====================
+           CSS ভেরিয়েবল ও ডিজাইন
+           ==================== */
+        :root {
+            --primary-bg: #2c3e50;
+            --sub-menu-bg: #22303f;
+            --accent-color: #3498db;
+            --text-color: #ecf0f1;
+            --body-bg: #f4f6f9;
+            --sidebar-width: 250px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--body-bg); display: flex; min-height: 100vh; }
+
+        /* সাইডবার */
+        .sidebar {
+            width: var(--sidebar-width); background-color: var(--primary-bg); color: var(--text-color);
+            position: fixed; height: 100%; overflow-y: auto; transition: 0.3s; z-index: 1000;
+        }
+        .brand { 
+            padding: 20px; font-size: 20px; font-weight: bold; text-align: center; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); background: #1a252f; 
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+        }
+        .brand .school-name { font-size: 18px; }
+        .brand .school-tagline { font-size: 12px; opacity: 0.8; }
+        
+        .menu { list-style: none; padding: 0; }
+        .menu a, .dropdown-btn {
+            padding: 15px 20px; text-decoration: none; font-size: 15px; color: #b8c7ce; display: block;
+            border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.3s; cursor: pointer;
+            background: none; border: none; width: 100%; text-align: left; outline: none;
+        }
+        .dropdown-btn { display: flex; justify-content: space-between; align-items: center; }
+        .menu i, .dropdown-btn i { width: 25px; }
+        .menu a:hover, .dropdown-btn:hover { background-color: #1a252f; color: #fff; border-left: 4px solid var(--accent-color); }
+        .dropdown-container { display: none; background-color: var(--sub-menu-bg); }
+        .dropdown-container a { padding-left: 50px; font-size: 14px; border-bottom: none; }
+        .rotate { transform: rotate(180deg); transition: 0.3s; }
+
+        /* মেইন কন্টেন্ট */
+        .main-content { margin-left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); transition: 0.3s; }
+        header {
+            background: #fff; padding: 15px 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 999;
+        }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .user-info { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+        .user-avatar { width: 35px; height: 35px; background: var(--accent-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; }
+
+        /* কার্ডস (আপডেটেড) */
+        .dashboard-cards { padding: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+        .card {
+            background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--accent-color);
+            cursor: pointer; transition: transform 0.3s;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .card h3 { font-size: 24px; color: #333; margin-bottom: 5px; }
+        .card p { font-size: 14px; color: #777; }
+        .card i { font-size: 35px; color: #ddd; }
+
+        /* টেবিল */
+        .content-area { padding: 0 30px 30px; }
+        .table-wrapper { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background-color: #f8f9fa; color: #555; font-weight: 600; }
+        tr:hover { background-color: #f9f9f9; }
+
+        .btn { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; color: white; font-size: 12px; }
+        .btn-view { background: #3498db; }
+        .btn-add { background: #2ecc71; font-size: 14px; padding: 8px 15px; text-decoration: none; }
+
+        /* ফুটার */
+        .footer {
+            margin-top: 30px; padding: 15px; background: #fff; border-top: 1px solid #eee;
+            text-align: center; font-size: 14px; color: #666;
+        }
+        .footer-info { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        
+        /* মোবাইল */
+        .mobile-toggle { display: none; font-size: 20px; cursor: pointer; }
+        @media (max-width: 768px) {
+            .sidebar { left: -250px; }
+            .sidebar.active { left: 0; }
+            .main-content { margin-left: 0; width: 100%; }
+            .mobile-toggle { display: block; }
+            .brand .school-name { font-size: 16px; }
+            .footer-info { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <i class="fas fa-school"></i>
+            <div class="school-name" id="dashboardSchoolName">স্মার্ট স্কুল</div>
+            <div class="school-tagline" id="dashboardTagline">ডিজিটাল শিক্ষা ব্যবস্থা</div>
+        </div>
+        
+        <ul class="menu">
+            <li><a href="index.html" style="background: #1a252f; border-left: 4px solid #3498db; color: white;"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+
+            <li id="menu-student">
+                <button class="dropdown-btn"><span><i class="fas fa-user-graduate"></i> স্টুডেন্ট</span><i class="fas fa-caret-down"></i></button>
+                <div class="dropdown-container">
+                    <a href="add_student.html">নতুন ভর্তি (Add)</a>
+                    <a href="student_list.html">স্টুডেন্ট লিস্ট</a>
+                    <a href="id_card.html">আইডি কার্ড জেনারেট</a>
+                    <a href="guardian_list.html">অভিভাবক তথ্য</a>
+                </div>
+            </li>
+
+            <li id="menu-academic">
+                <button class="dropdown-btn"><span><i class="fas fa-book"></i> একাডেমিক</span><i class="fas fa-caret-down"></i></button>
+                <div class="dropdown-container">
+                    <a href="routine.html">ক্লাস রুটিন</a>
+                    <a href="subject.html">বিষয় (Subjects)</a>
+                    <a href="syllabus.html">সিলেবাস</a>
+                    <a href="academic_settings.html">সেটিং (Class & Sub)</a>
+                </div>
+            </li>
+
+            <li id="menu-exam">
+                <button class="dropdown-btn"><span><i class="fas fa-file-alt"></i> পরীক্ষা</span><i class="fas fa-caret-down"></i></button>
+                <div class="dropdown-container">
+                    <a href="exam_management.html">পরীক্ষা ব্যবস্থা</a>
+                    <a href="marks_entry.html">মার্কস এন্ট্রি</a>
+                    <a href="result.html">রেজাল্ট শিট</a>
+                    <a href="admit_card.html">এডমিট কার্ড</a>
+                </div>
+            </li>
+
+            <li id="menu-hr">
+                <button class="dropdown-btn"><span><i class="fas fa-chalkboard-teacher"></i> এইচআর & স্টাফ</span><i class="fas fa-caret-down"></i></button>
+                <div class="dropdown-container">
+                    <a href="hr_management.html">শিক্ষক ও কর্মচারী তালিকা</a>
+                    <a href="payroll.html">পে-রোল (বেতন)</a>
+                </div>
+            </li>
+
+            <li id="menu-accounts">
+                <button class="dropdown-btn"><span><i class="fas fa-money-bill-wave"></i> একাউন্টস</span><i class="fas fa-caret-down"></i></button>
+                <div class="dropdown-container">
+                    <a href="fee.html">ফি কালেকশন</a>
+                    <a href="expense.html">খরচ (Expense)</a>
+                    <a href="report.html">রিপোর্ট</a>
+                </div>
+            </li>
+
+            <li id="menu-att"><a href="attendance.html"><i class="fas fa-fingerprint"></i> এটেন্ডেন্স</a></li>
+            <li id="menu-lib"><a href="library.html"><i class="fas fa-book-reader"></i> লাইব্রেরি</a></li>
+            <li id="menu-settings"><a href="settings.html"><i class="fas fa-cogs"></i> সেটিংস</a></li>
+            <li>
+                <a href="website_management.html">
+                    <i class="fas fa-globe"></i> ওয়েবসাইট কন্ট্রোল
+                </a>
+            </li>
+
+            <li><a href="#" onclick="logout()" style="color: #e74c3c;"><i class="fas fa-sign-out-alt"></i> লগআউট</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        
+        <header>
+            <div class="header-left">
+                <div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+                <h3 id="dashboardHeader">এডমিন প্যানেল</h3>
+            </div>
+            <div class="user-info">
+                <span id="userNameDisplay">ব্যবহারকারী</span>
+                <div class="user-avatar"><i class="fas fa-user"></i></div>
+            </div>
+        </header>
+
+        <div class="dashboard-cards">
+            
+            <div class="card" onclick="window.location.href='student_list.html'" title="ছাত্র তালিকা দেখুন">
+                <div>
+                    <h3 id="totalStudents">0</h3>
+                    <p>মোট ছাত্র-ছাত্রী</p>
+                </div>
+                <i class="fas fa-users"></i>
+            </div>
+
+            <div class="card" style="border-left-color: #2ecc71;" onclick="window.location.href='view_teachers.html'" title="শিক্ষক পরিচিতি দেখুন">
+                <div>
+                    <h3 id="totalTeachers">0</h3>
+                    <p>মোট শিক্ষক</p>
+                </div>
+                <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+
+            <div class="card" style="border-left-color: #f1c40f;" onclick="window.location.href='view_attendance.html'" title="উপস্থিত ছাত্রদের তালিকা দেখুন">
+                <div>
+                    <h3 id="todayAttendance">0%</h3> 
+                    <p id="attLabel" style="font-size: 12px; color: #666;">আজকের উপস্থিতি (0/0)</p>
+                </div>
+                <i class="fas fa-user-clock"></i>
+            </div>
+
+            <div class="card" style="border-left-color: #e74c3c;" onclick="window.location.href='fee.html'" title="ফি কালেকশন">
+                <div>
+                    <h3 id="totalIncome">৳ 0</h3>
+                    <p>এই মাসের আয়</p>
+                </div>
+                <i class="fas fa-wallet"></i>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="table-wrapper">
+                <div class="table-header">
+                    <h3>সাম্প্রতিক ভর্তি (Last 5 Students)</h3>
+                    <div class="search-box">
+                        <a href="add_student.html" class="btn btn-add"><i class="fas fa-plus"></i> নতুন স্টুডেন্ট</a>
+                    </div>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>আইডি</th>
+                                <th>নাম</th>
+                                <th>ক্লাস</th>
+                                <th>পিতা</th>
+                                <th>মোবাইল</th>
+                                <th>স্ট্যাটাস</th>
+                                <th>অ্যাকশন</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentStudentTable">
+                            <tr><td colspan="7" style="text-align: center;">ডাটা লোড হচ্ছে...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ফুটার যোগ করা হয়েছে -->
+        <div class="footer">
+            <div class="footer-info">
+                <span id="footerSchoolName">স্মার্ট স্কুল</span>
+                <span id="footerAddress">ঢাকা, বাংলাদেশ</span>
+                <span id="footerContact">ফোন: ০১৭১২৩৪৫৬৭৮</span>
+            </div>
+            <div style="margin-top: 10px; font-size: 12px; color: #888;">
+                © 2024 সকল স্বত্ব সংরক্ষিত | Powered by Smart School System
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() { 
+            document.getElementById('sidebar').classList.toggle('active'); 
+        }
+        
+        var dropdowns = document.getElementsByClassName("dropdown-btn");
+        for (var i = 0; i < dropdowns.length; i++) {
+            dropdowns[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                content.style.display = content.style.display === "block" ? "none" : "block";
+                this.querySelector(".fa-caret-down").classList.toggle("rotate");
+            });
+        }
+        
+        window.logout = function() {
+            localStorage.clear();
+            window.location.href = "login.html";
+        }
+    </script>
+
+    <script type="module">
+        import { db, ref, onValue } from './firebase-config.js';
+
+        // ১. লগইন ও রোল চেক
+        const role = localStorage.getItem('userRole');
+        const name = localStorage.getItem('userName');
+        if(!role) { 
+            window.location.href = "login.html"; 
+        } else {
+            document.getElementById('userNameDisplay').innerText = name + " (" + role + ")";
+            
+            // রোল অনুযায়ী মেনু হাইড/শো
+            if (role === 'Teacher') {
+                document.getElementById('menu-hr').style.display = 'none';
+                document.getElementById('menu-accounts').style.display = 'none';
+                document.getElementById('menu-settings').style.display = 'none';
+                document.getElementById('menu-lib').style.display = 'none';
+            } else if (role === 'Cashier') {
+                document.getElementById('menu-student').style.display = 'none';
+                document.getElementById('menu-academic').style.display = 'none';
+                document.getElementById('menu-exam').style.display = 'none';
+                document.getElementById('menu-hr').style.display = 'none';
+                document.getElementById('menu-att').style.display = 'none';
+                document.getElementById('menu-lib').style.display = 'none';
+                document.getElementById('menu-settings').style.display = 'none';
+            } else if (role === 'Librarian') {
+                document.getElementById('menu-student').style.display = 'none';
+                document.getElementById('menu-academic').style.display = 'none';
+                document.getElementById('menu-exam').style.display = 'none';
+                document.getElementById('menu-hr').style.display = 'none';
+                document.getElementById('menu-accounts').style.display = 'none';
+                document.getElementById('menu-att').style.display = 'none';
+                document.getElementById('menu-settings').style.display = 'none';
+            }
+        }
+
+        // ২. ড্যাশবোর্ড সেটিংস লোড (ওয়েবসাইট সেটিংস থেকে আলাদা)
+        onValue(ref(db, 'dashboard_settings'), (snapshot) => {
+            const settings = snapshot.val();
+            if(settings) {
+                // ড্যাশবোর্ডের ব্র্যান্ড নাম
+                document.getElementById('dashboardSchoolName').innerText = settings.school_name || 'স্মার্ট স্কুল';
+                
+                // ব্রাউজার ট্যাবের টাইটেল
+                document.title = (settings.school_name || 'স্মার্ট স্কুল') + " - ড্যাশবোর্ড";
+                
+                // হেডার আপডেট
+                document.getElementById('dashboardHeader').innerText = settings.school_name 
+                    ? settings.school_name + " - এডমিন প্যানেল" 
+                    : "এডমিন প্যানেল";
+                
+                // ফুটার তথ্য
+                document.getElementById('footerSchoolName').innerText = settings.school_name || 'স্মার্ট স্কুল';
+                document.getElementById('footerAddress').innerText = settings.address || 'ঢাকা, বাংলাদেশ';
+                document.getElementById('footerContact').innerText = settings.contact 
+                    ? 'ফোন: ' + settings.contact 
+                    : 'ফোন: ০১৭১২৩৪৫৬৭৮';
+                
+                // থিম কালার সেট (যদি থাকে)
+                if(settings.theme_color) {
+                    document.documentElement.style.setProperty('--accent-color', settings.theme_color);
+                }
+            }
+        });
+
+        // ৩. ছাত্র সংখ্যা ও টেবিল
+        onValue(ref(db, 'students'), (snapshot) => {
+            const data = snapshot.val();
+            const totalEl = document.getElementById('totalStudents');
+            const tableBody = document.getElementById('recentStudentTable');
+            
+            if (data) {
+                const arr = Object.values(data);
+                totalEl.innerText = arr.length;
+                tableBody.innerHTML = "";
+                
+                arr.reverse().slice(0, 5).forEach(st => {
+                    tableBody.innerHTML += `<tr>
+                        <td>${st.id ? st.id.substring(1, 8) : 'N/A'}</td>
+                        <td>${st.name || 'N/A'}</td>
+                        <td>${st.className || 'N/A'}</td>
+                        <td>${st.fatherName || 'N/A'}</td>
+                        <td>${st.phone || 'N/A'}</td>
+                        <td><span style="color: green; font-weight: bold;">Active</span></td>
+                        <td><a href="student_list.html" class="btn btn-view"><i class="fas fa-eye"></i></a></td>
+                    </tr>`;
+                });
+            } else {
+                totalEl.innerText = "0"; 
+                tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">কোনো ছাত্র নেই</td></tr>';
+            }
+        });
+
+        // ৪. শিক্ষক সংখ্যা
+        onValue(ref(db, 'teachers'), snap => {
+            document.getElementById('totalTeachers').innerText = snap.val() ? Object.keys(snap.val()).length : "0";
+        });
+
+        // ৫. এটেন্ডেন্স পার্সেন্টেজ
+        const todayDate = new Date().toISOString().split('T')[0];
+        onValue(ref(db, 'attendance/' + todayDate), (snapshot) => {
+            const data = snapshot.val();
+            const attEl = document.getElementById('todayAttendance');
+            const attLabel = document.getElementById('attLabel');
+            
+            if (data) {
+                let totalChecked = 0, totalPresent = 0;
+                Object.values(data).forEach(cls => {
+                    if (cls) {
+                        Object.values(cls).forEach(st => {
+                            totalChecked++; 
+                            if (st.status === 'Present') totalPresent++;
+                        });
+                    }
+                });
+                
+                if (totalChecked > 0) {
+                    const percentage = Math.round((totalPresent / totalChecked) * 100);
+                    attEl.innerText = percentage + "%";
+                    attLabel.innerText = `আজকের উপস্থিতি (${totalPresent}/${totalChecked})`;
+                    
+                    // পার্সেন্টেজ অনুযায়ী কালার চেঞ্জ (অপশনাল)
+                    if(percentage < 70) attEl.style.color = '#e74c3c';
+                    else if(percentage < 85) attEl.style.color = '#f39c12';
+                    else attEl.style.color = '#27ae60';
+                } else { 
+                    attEl.innerText = "0%"; 
+                    attLabel.innerText = "আজকের উপস্থিতি (0/0)";
+                }
+            } else { 
+                attEl.innerText = "0%"; 
+                attLabel.innerText = "আজকের উপস্থিতি (0/0)";
+            }
+        });
+
+        // ৬. এই মাসের আয় (Income Calculation)
+        onValue(ref(db, 'fee_collections'), (snapshot) => {
+            const data = snapshot.val();
+            const incomeEl = document.getElementById('totalIncome');
+            
+            if (data) {
+                let totalIncome = 0;
+                const currentMonth = new Date().getMonth() + 1;
+                const currentYear = new Date().getFullYear();
+
+                Object.values(data).forEach(fee => {
+                    if(fee && fee.date) {
+                        const feeDate = new Date(fee.date);
+                        if((feeDate.getMonth() + 1) === currentMonth && feeDate.getFullYear() === currentYear) {
+                            totalIncome += parseFloat(fee.amount) || 0;
+                        }
+                    }
+                });
+                incomeEl.innerText = "৳ " + totalIncome.toLocaleString('bn-BD');
+            } else {
+                incomeEl.innerText = "৳ 0";
+            }
+        });
+
+    </script>
+</body>
+</html>

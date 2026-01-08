@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ফি কালেকশন</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .tab-btn { padding: 10px 20px; border: none; background: #ddd; cursor: pointer; font-weight: bold; margin-right: 5px; border-radius: 5px 5px 0 0; }
+        .tab-btn.active { background: #3498db; color: white; }
+        .tab-content { display: none; padding: 20px; background: white; border: 1px solid #ddd; border-top: 4px solid #3498db; }
+        .tab-content.active { display: block; }
+
+        /* রিসিদ ডিজাইন (প্রিন্টের জন্য) */
+        @media print {
+            body * { visibility: hidden; }
+            #receiptArea, #receiptArea * { visibility: visible; }
+            #receiptArea { position: absolute; left: 0; top: 0; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="fee.html" style="background: #1a252f; border-left: 4px solid #3498db; color: white;"><i class="fas fa-money-bill-wave"></i> ফি কালেকশন</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left"><div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div><h3>অ্যাকাউন্টস & ফি</h3></div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            <div class="wrapper" style="background: transparent; box-shadow: none; padding: 0;">
+                
+                <div>
+                    <button class="tab-btn active" onclick="openTab('collectionTab')">১. ফি আদায় (Collection)</button>
+                    <button class="tab-btn" onclick="openTab('setupTab')">২. ফি সেটআপ (Config)</button>
+                    <button class="tab-btn" onclick="openTab('historyTab')">৩. জমার ইতিহাস (History)</button>
+                </div>
+
+                <div id="collectionTab" class="tab-content active">
+                    <div style="background: #fdfefe; border: 1px solid #eee; padding: 20px; border-radius: 5px;">
+                        <h4 style="margin-bottom: 20px; color: #27ae60;">টাকা জমা নিন</h4>
+                        <form id="feeForm">
+                            <div class="form-grid">
+                                <div><label>তারিখ</label><input type="date" id="payDate" required></div>
+                                <div><label>ক্লাস</label><select id="payClass" required><option value="">লোড হচ্ছে...</option></select></div>
+                                <div><label>ছাত্র নির্বাচন করুন</label><select id="payStudent" required><option value="">আগে ক্লাস দিন</option></select></div>
+                                <div>
+                                    <label>ফি-এর ধরন</label>
+                                    <select id="payType" required><option value="">সিলেক্ট করুন</option></select>
+                                </div>
+                                <div><label>টাকার পরিমাণ</label><input type="number" id="payAmount" required placeholder="0.00"></div>
+                                <div><label>মন্তব্য (যদি থাকে)</label><input type="text" id="payNote" placeholder="Ex: January Month"></div>
+                            </div>
+                            <div style="text-align: right; margin-top: 20px;">
+                                <button type="submit" class="submit-btn"><i class="fas fa-save"></i> পেমেন্ট সেভ ও রিসিদ</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="setupTab" class="tab-content">
+                    <div style="display: flex; gap: 20px;">
+                        <div style="flex: 1; background: #f9f9f9; padding: 15px; border-radius: 5px;">
+                            <h4>নতুন ফি যুক্ত করুন</h4>
+                            <form id="configForm">
+                                <label>ফি-এর নাম (যেমন: Monthly Fee)</label>
+                                <input type="text" id="confName" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                                
+                                <label>কোন ক্লাসের জন্য?</label>
+                                <select id="confClass" required style="width: 100%; padding: 8px; margin-bottom: 10px;"></select>
+                                
+                                <label>নির্ধারিত টাকা</label>
+                                <input type="number" id="confAmount" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                                
+                                <button type="submit" class="submit-btn" style="width: 100%;">সেভ করুন</button>
+                            </form>
+                        </div>
+                        <div style="flex: 2;">
+                            <h4>ফি তালিকা</h4>
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead><tr style="background: #eee;"><th>নাম</th><th>ক্লাস</th><th>টাকা</th><th>অ্যাকশন</th></tr></thead>
+                                <tbody id="configTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="historyTab" class="tab-content">
+                    <h4>সর্বশেষ লেনদেন</h4>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #eee;">
+                                    <th>রিসিদ নং</th>
+                                    <th>তারিখ</th>
+                                    <th>ছাত্রের নাম (রোল)</th>
+                                    <th>বাবদ</th>
+                                    <th>টাকা</th>
+                                    <th>প্রিন্ট</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTable"><tr><td colspan="6">লোড হচ্ছে...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <div id="receiptArea" style="display: none; padding: 20px; font-family: monospace; border: 2px dashed #333; width: 300px; margin: auto;">
+        <h3 style="text-align: center;">স্মার্ট স্কুল</h3>
+        <p style="text-align: center;">টাকা জমার রিসিদ</p>
+        <hr>
+        <p>রিসিদ নং: <span id="rNo"></span></p>
+        <p>তারিখ: <span id="rDate"></span></p>
+        <p>নাম: <span id="rName"></span></p>
+        <p>ক্লাস: <span id="rClass"></span></p>
+        <hr>
+        <p><span id="rType"></span> : <span id="rAmount" style="float: right;"></span></p>
+        <hr>
+        <h3 style="text-align: center;">Total: <span id="rTotal"></span> Tk</h3>
+        <p style="text-align: center; font-size: 10px;">Thank you!</p>
+    </div>
+
+    <script>
+        function toggleSidebar(){document.getElementById('sidebar').classList.toggle('active');}
+        window.openTab = (id) => {
+            document.querySelectorAll('.tab-content').forEach(d=>d.style.display='none');
+            document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+            document.getElementById(id).style.display='block';
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+
+    <script type="module">
+        import { db, ref, push, set, onValue, remove, get } from './firebase-config.js';
+
+        // তারিখ সেট
+        document.getElementById('payDate').valueAsDate = new Date();
+
+        // ১. লোডারস (ক্লাস, স্টুডেন্ট)
+        const loadClasses = () => {
+            onValue(ref(db, 'classes'), s => {
+                let opts = "<option value=''>ক্লাস সিলেক্ট করুন</option>";
+                if(s.val()) Object.values(s.val()).forEach(c => opts += `<option value="${c.className}">${c.className}</option>`);
+                document.getElementById('payClass').innerHTML = opts;
+                document.getElementById('confClass').innerHTML = opts;
+            });
+        };
+        loadClasses();
+
+        // ক্লাস চেঞ্জ হলে স্টুডেন্ট এবং ফি লোড হবে
+        document.getElementById('payClass').addEventListener('change', function() {
+            const cl = this.value;
+            const stuDrop = document.getElementById('payStudent');
+            const typeDrop = document.getElementById('payType');
+            
+            // স্টুডেন্ট লোড
+            stuDrop.innerHTML = "<option value=''>লোড হচ্ছে...</option>";
+            onValue(ref(db, 'students'), s => {
+                stuDrop.innerHTML = "<option value=''>ছাত্র সিলেক্ট করুন</option>";
+                if(s.val()) Object.values(s.val()).forEach(st => {
+                    if(st.className === cl) {
+                        stuDrop.innerHTML += `<option value="${st.name}|${st.roll}|${st.id}">${st.name} (Roll: ${st.roll})</option>`;
+                    }
+                });
+            }, {onlyOnce: true});
+
+            // ফি টাইপ লোড
+            typeDrop.innerHTML = "<option value=''>ফি সিলেক্ট করুন</option>";
+            onValue(ref(db, 'fee_config'), s => {
+                if(s.val()) Object.values(s.val()).forEach(f => {
+                    if(f.className === cl) {
+                        typeDrop.innerHTML += `<option value="${f.amount}" data-name="${f.feeName}">${f.feeName} - ${f.amount}৳</option>`;
+                    }
+                });
+            }, {onlyOnce: true});
+        });
+
+        // ফি সিলেক্ট করলে এমাউন্ট অটো বসবে
+        document.getElementById('payType').addEventListener('change', function() {
+            document.getElementById('payAmount').value = this.value;
+        });
+
+        // ২. কনফিগারেশন সেভ (Fee Setup)
+        document.getElementById('configForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newRef = push(ref(db, 'fee_config'));
+            set(newRef, {
+                feeName: document.getElementById('confName').value,
+                className: document.getElementById('confClass').value,
+                amount: document.getElementById('confAmount').value,
+                id: newRef.key
+            }).then(() => { alert("ফি সেটআপ হয়েছে!"); document.getElementById('configForm').reset(); });
+        });
+
+        // কনফিগ লিস্ট
+        onValue(ref(db, 'fee_config'), s => {
+            const b = document.getElementById('configTable'); b.innerHTML="";
+            if(s.val()) Object.values(s.val()).forEach(f => {
+                b.innerHTML += `<tr><td>${f.feeName}</td><td>${f.className}</td><td>${f.amount}</td><td><button onclick="window.del('fee_config/${f.id}')" style="color:red;border:none;">X</button></td></tr>`;
+            });
+        });
+
+        // ৩. পেমেন্ট সেভ এবং রিসিদ প্রিন্ট (Collection)
+        document.getElementById('feeForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const rawStu = document.getElementById('payStudent').value; // Name|Roll|ID
+            if(!rawStu) return alert("ছাত্র সিলেক্ট করুন!");
+            const [sName, sRoll, sId] = rawStu.split('|');
+            
+            const feeSelect = document.getElementById('payType');
+            const feeName = feeSelect.options[feeSelect.selectedIndex].getAttribute('data-name') || "অন্যান্য";
+            
+            const amount = document.getElementById('payAmount').value;
+            const date = document.getElementById('payDate').value;
+            const receiptNo = Date.now().toString().slice(-6); // ছোট রিসিদ নং
+
+            // ডাটাবেসে সেভ
+            const newRef = push(ref(db, 'fee_collections'));
+            const data = {
+                date: date,
+                studentId: sId,
+                studentName: sName,
+                roll: sRoll,
+                className: document.getElementById('payClass').value,
+                feeName: feeName,
+                amount: amount,
+                receiptNo: receiptNo,
+                id: newRef.key
+            };
+
+            set(newRef, data).then(() => {
+                // রিসিদ প্রিন্ট সেটআপ
+                document.getElementById('rNo').innerText = receiptNo;
+                document.getElementById('rDate').innerText = date;
+                document.getElementById('rName').innerText = sName + " (Roll: " + sRoll + ")";
+                document.getElementById('rClass').innerText = data.className;
+                document.getElementById('rType').innerText = feeName;
+                document.getElementById('rAmount').innerText = amount;
+                document.getElementById('rTotal').innerText = amount;
+
+                // প্রিন্ট উইন্ডো ওপেন
+                window.print();
+                
+                // রিসেট
+                document.getElementById('feeForm').reset();
+                document.getElementById('payDate').valueAsDate = new Date();
+            });
+        });
+
+        // ৪. হিস্টোরি লোড
+        onValue(ref(db, 'fee_collections'), s => {
+            const b = document.getElementById('historyTable'); b.innerHTML = "";
+            if(s.val()) {
+                const arr = Object.values(s.val()).reverse(); // নতুন আগে
+                arr.forEach(tr => {
+                    b.innerHTML += `
+                        <tr>
+                            <td>#${tr.receiptNo}</td>
+                            <td>${tr.date}</td>
+                            <td>${tr.studentName} (${tr.roll})</td>
+                            <td>${tr.feeName}</td>
+                            <td>${tr.amount}৳</td>
+                            <td><button onclick="alert('Reprint feature coming soon!')" style="background:#ddd;border:none;">🖨️</button></td>
+                        </tr>
+                    `;
+                });
+            } else b.innerHTML = "<tr><td colspan='6'>কোনো লেনদেন নেই</td></tr>";
+        });
+
+        window.del = (p) => { if(confirm("মুছে ফেলবেন?")) remove(ref(db, p)); };
+    </script>
+</body>
+</html>

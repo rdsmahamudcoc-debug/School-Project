@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>রেজাল্ট শিট</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* রেজাল্ট পেজের জন্য এক্সট্রা স্টাইল */
+        .status-pass { background: #e8f8f5; color: #2ecc71; padding: 5px 10px; border-radius: 15px; font-weight: bold; font-size: 12px; }
+        .status-fail { background: #fdebd0; color: #e74c3c; padding: 5px 10px; border-radius: 15px; font-weight: bold; font-size: 12px; }
+        
+        /* প্রিন্ট করার সময় সাইডবার লুকানোর জন্য */
+        @media print {
+            .sidebar, header, .search-section, .btn-action { display: none; }
+            .main-content { margin: 0; width: 100%; }
+            .wrapper { box-shadow: none; border: 1px solid #ddd; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            
+            <li>
+                <button class="dropdown-btn"><span><i class="fas fa-user-graduate"></i> স্টুডেন্ট</span><i class="fas fa-caret-down"></i></button>
+                <div class="dropdown-container">
+                    <a href="admission.html">নতুন ভর্তি</a>
+                    <a href="student_list.html">স্টুডেন্ট লিস্ট</a>
+                </div>
+            </li>
+
+            <li>
+                <button class="dropdown-btn active"><span><i class="fas fa-file-alt"></i> পরীক্ষা</span><i class="fas fa-caret-down rotate"></i></button>
+                <div class="dropdown-container" style="display: block;">
+                    <a href="#">মার্কস এন্ট্রি</a>
+                    <a href="result.html" style="color: white;">রেজাল্ট শিট</a>
+                    <a href="#">এডমিট কার্ড</a>
+                </div>
+            </li>
+            
+            <li><a href="teacher_list.html"><i class="fas fa-chalkboard-teacher"></i> শিক্ষক তালিকা</a></li>
+            <li><a href="#"><i class="fas fa-cogs"></i> সেটিংস</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left">
+                <div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+                <h3>পরীক্ষার ফলাফল</h3>
+            </div>
+            <div class="user-info"><span>এডমিন</span><div class="user-avatar"><i class="fas fa-user"></i></div></div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            <div class="wrapper">
+                
+                <div class="search-section" style="background: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #eee;">
+                    <h4 style="margin-bottom: 15px; color: #555;">রেজাল্ট ফিল্টার করুন</h4>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <select style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option>পরীক্ষা নির্বাচন করুন</option>
+                            <option>অর্ধ-বার্ষিক পরীক্ষা ২০২৪</option>
+                            <option>বার্ষিক পরীক্ষা ২০২৪</option>
+                        </select>
+                        <select style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option>ক্লাস নির্বাচন করুন</option>
+                            <option>Class 6</option>
+                            <option>Class 7</option>
+                            <option>Class 8</option>
+                        </select>
+                        <select style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option>সেকশন</option>
+                            <option>A</option>
+                            <option>B</option>
+                        </select>
+                        <button class="submit-btn" style="margin-top: 0; padding: 10px 25px;"><i class="fas fa-search"></i> রেজাল্ট দেখুন</button>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="color: #2c3e50;">মেরিট লিস্ট - Class 6 (Annual Exam)</h3>
+                    <button onclick="window.print()" class="submit-btn btn-action" style="margin-top: 0; background: #34495e;"><i class="fas fa-print"></i> প্রিন্ট</button>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th>মেরিট</th>
+                                <th>আইডি</th>
+                                <th>নাম</th>
+                                <th>বাংলা</th>
+                                <th>ইংরেজি</th>
+                                <th>গণিত</th>
+                                <th>মোট নম্বর</th>
+                                <th>GPA</th>
+                                <th>গ্রেড</th>
+                                <th>স্ট্যাটাস</th>
+                            </tr>
+                        </thead>
+                        <tbody style="text-align: center;">
+                            <tr>
+                                <td><b>০১</b></td>
+                                <td>ST-1005</td>
+                                <td style="text-align: left;">আব্দুল্লাহ আল মামুন</td>
+                                <td>৮০</td>
+                                <td>৮৫</td>
+                                <td>৯০</td>
+                                <td><b>২৫৫</b></td>
+                                <td><b>৫.০০</b></td>
+                                <td><b>A+</b></td>
+                                <td><span class="status-pass">PASS</span></td>
+                            </tr>
+                            <tr>
+                                <td><b>০২</b></td>
+                                <td>ST-1012</td>
+                                <td style="text-align: left;">ফারিহা ইসলাম</td>
+                                <td>৭৫</td>
+                                <td>৮০</td>
+                                <td>৮৮</td>
+                                <td><b>২৪৩</b></td>
+                                <td><b>৪.৮০</b></td>
+                                <td><b>A</b></td>
+                                <td><span class="status-pass">PASS</span></td>
+                            </tr>
+                            <tr>
+                                <td><b>০৩</b></td>
+                                <td>ST-1020</td>
+                                <td style="text-align: left;">করিম শেখ</td>
+                                <td>৪০</td>
+                                <td>৩৩</td>
+                                <td style="color: red;">২৫</td>
+                                <td><b>৯৮</b></td>
+                                <td><b>০.০০</b></td>
+                                <td style="color: red;"><b>F</b></td>
+                                <td><span class="status-fail">FAIL</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        var dropdowns = document.getElementsByClassName("dropdown-btn");
+        for (var i = 0; i < dropdowns.length; i++) {
+            dropdowns[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                content.style.display = content.style.display === "block" ? "none" : "block";
+                this.querySelector(".fa-caret-down").classList.toggle("rotate");
+            });
+        }
+    </script>
+</body>
+</html>

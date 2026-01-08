@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <title>Staff Management - EduSphere</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: "DM Sans", system-ui, -apple-system;
+      background: #0a0f2a;
+      color: #e5e7eb;
+      margin: 0; padding: 0;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      background: #111a3c;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.8);
+    }
+    h1 {
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      color: #d1d5db;
+    }
+    th, td {
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid #374151;
+      text-align: left;
+    }
+    th {
+      background: #1e293b;
+      font-weight: 600;
+    }
+    .btn {
+      background: #4ade80;
+      color: #022c22;
+      border: none;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      transition: background 0.3s ease;
+    }
+    .btn:hover {
+      background: #22c55e;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main">
+    <h1>Staff Management</h1>
+    <table aria-label="Staff list table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Role</th>
+          <th>Department</th>
+          <th>Contact</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Mr. Rahman</td>
+          <td>Teacher</td>
+          <td>Mathematics</td>
+          <td>+880 1712 345678</td>
+          <td><button class="btn">Edit</button></td>
+        </tr>
+        <tr>
+          <td>Ms. Sultana</td>
+          <td>Teacher</td>
+          <td>Physics</td>
+          <td>+880 1911 223344</td>
+          <td><button class="btn">Edit</button></td>
+        </tr>
+        <tr>
+          <td>Mr. Karim</td>
+          <td>Accountant</td>
+          <td>Accounts</td>
+          <td>+880 1810 556677</td>
+          <td><button class="btn">Edit</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

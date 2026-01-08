@@ -1,0 +1,1915 @@
+ 
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <title>EduSphere School Manager</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050816;
+      --bg-soft: #080b1f;
+      --bg-elevated: rgba(14, 20, 40, 0.88);
+      --primary: #4ade80;
+      --primary-soft: rgba(74, 222, 128, 0.12);
+      --accent: #f97316;
+      --accent-soft: rgba(249, 115, 22, 0.15);
+      --danger: #f43f5e;
+      --muted: #9ca3af;
+      --text: #f9fafb;
+      --border-subtle: rgba(148, 163, 184, 0.4);
+      --card-radius: 22px;
+      --transition-fast: 180ms ease-out;
+      --transition-slow: 320ms ease;
+      --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.75);
+      --shadow-glow: 0 0 30px rgba(74, 222, 128, 0.45);
+      --nav-h: 64px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      scroll-behavior: smooth;
+      background: radial-gradient(circle at top left, #1e293b 0, #020617 52%, #000 100%);
+      color: var(--text);
+      font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont;
+    }
+
+    body {
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Background mesh & noise */
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -20%;
+      z-index: -3;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(74, 222, 128, 0.16) 0, transparent 55%),
+        radial-gradient(circle at 80% 0%, rgba(56, 189, 248, 0.12) 0, transparent 48%),
+        radial-gradient(circle at 0% 80%, rgba(249, 115, 22, 0.16) 0, transparent 52%),
+        radial-gradient(circle at 100% 90%, rgba(129, 140, 248, 0.12) 0, transparent 50%);
+      filter: blur(30px);
+    }
+
+    body::after {
+      mix-blend-mode: soft-light;
+      opacity: 0.6;
+    }
+
+    .noise-layer {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+      opacity: 0.38;
+      mix-blend-mode: soft-light;
+    }
+
+    main {
+      min-height: 100vh;
+    }
+
+    /* Typography */
+    h1, h2, h3, h4 {
+      font-family: "Space Grotesk", system-ui, -apple-system;
+      letter-spacing: 0.03em;
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 4vw + 1rem, 3.8rem);
+      line-height: 1.02;
+    }
+
+    h2 {
+      font-size: clamp(1.7rem, 2.6vw, 2.2rem);
+    }
+
+    h3 {
+      font-size: clamp(1.25rem, 1.8vw, 1.5rem);
+    }
+
+    p {
+      font-size: 0.98rem;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    /* Layout */
+    .shell {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 1.1rem clamp(1.25rem, 4vw, 2.5rem) 3.5rem;
+    }
+
+    /* Top nav */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(22px);
+      background: linear-gradient(to bottom, rgba(2, 6, 23, 0.92), rgba(2, 6, 23, 0.65) 60%, transparent 100%);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: var(--nav-h);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 40% 60% 45% 55%;
+      background: conic-gradient(from 210deg, #4ade80, #22d3ee, #a855f7, #f97316, #4ade80);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.95), 0 0 25px rgba(45, 212, 191, 0.55);
+    }
+
+    .brand-mark span {
+      width: 60%;
+      height: 60%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #f9fafb 0, #d1fae5 28%, #22c55e 80%);
+      box-shadow: inset 0 0 0 2px rgba(15, 23, 42, 0.65);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-text strong {
+      font-size: 1.05rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand-text span {
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .nav-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      background: radial-gradient(circle at top, rgba(30, 64, 175, 0.55), rgba(15, 23, 42, 0.9));
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+    }
+
+    .nav-chip span {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.9);
+    }
+
+    .nav-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      padding: 0.45rem 0.95rem;
+      background: radial-gradient(circle at top left, rgba(74, 222, 128, 0.2), rgba(15, 23, 42, 0.95));
+      color: var(--text);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+    }
+
+    .nav-btn span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(249, 115, 22, 0.8);
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.85);
+      border-color: rgba(74, 222, 128, 0.5);
+    }
+
+    /* Hero / Dashboard Shell */
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(260px, 2.3fr);
+      gap: clamp(1.6rem, 3vw, 2.4rem);
+      margin-top: 1.6rem;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 820px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .hero-main {
+      position: relative;
+    }
+
+    .hero-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.9rem;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      background: rgba(15, 23, 42, 0.9);
+      padding: 0.25rem 0.6rem;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      color: var(--muted);
+    }
+
+    .pill strong {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .pill svg {
+      width: 11px;
+      height: 11px;
+    }
+
+    .hero-heading {
+      margin-bottom: 0.9rem;
+    }
+
+    .hero-heading span.label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.12rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      background: radial-gradient(circle at top, rgba(74, 222, 128, 0.18), rgba(15, 23, 42, 0.96));
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin-bottom: 0.55rem;
+    }
+
+    .hero-heading span.label em {
+      color: var(--primary);
+      font-style: normal;
+    }
+
+    .hero-heading h1 {
+      max-width: 19ch;
+    }
+
+    .hero-heading h1 span.highlight {
+      background: linear-gradient(120deg, #4ade80, #22c55e, #22c55e, #f97316);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .hero-sub {
+      max-width: 33rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .hero-sub p strong {
+      color: #e5e7eb;
+      font-weight: 500;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      align-items: center;
+      margin-bottom: 1.3rem;
+    }
+
+    .btn-primary, .btn-ghost {
+      border-radius: 999px;
+      padding: 0.6rem 1.3rem;
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+    }
+
+    .btn-primary {
+      background: radial-gradient(circle at 10% 0%, #4ade80, #22c55e 40%, #22c55e 60%, #15803d 110%);
+      box-shadow: var(--shadow-glow);
+      color: #022c22;
+      font-weight: 600;
+    }
+
+    .btn-primary svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px) scale(1.01);
+      box-shadow: 0 0 35px rgba(74, 222, 128, 0.7);
+      background: radial-gradient(circle at 10% 0%, #bbf7d0, #4ade80 45%, #16a34a 110%);
+    }
+
+    .btn-ghost {
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(148, 163, 184, 0.6);
+      color: var(--muted);
+    }
+
+    .btn-ghost:hover {
+      border-color: rgba(74, 222, 128, 0.6);
+      color: #e5e7eb;
+      background: linear-gradient(to right, rgba(15, 23, 42, 0.95), rgba(22, 163, 74, 0.25));
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.9);
+    }
+
+    .hero-meta {
+      display: flex;
+      gap: 1.1rem;
+      flex-wrap: wrap;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .hero-meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.18rem;
+    }
+
+    .hero-meta-item strong {
+      font-size: 0.9rem;
+      color: #e5e7eb;
+    }
+
+    /* Quick metric cards row */
+    .quick-metrics {
+      margin-top: 2.1rem;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+
+    @media (max-width: 880px) {
+      .quick-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      .quick-metrics {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mini-card {
+      border-radius: 18px;
+      padding: 0.85rem 0.9rem;
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.92));
+      border: 1px solid rgba(30, 64, 175, 0.55);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.85);
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      cursor: pointer;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+    }
+
+    .mini-card::before {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.28), transparent 60%);
+      opacity: 0;
+      transition: opacity var(--transition-slow);
+      z-index: -1;
+    }
+
+    .mini-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+      border-color: rgba(56, 189, 248, 0.8);
+      background: linear-gradient(145deg, #020617, #020617);
+    }
+
+    .mini-card:hover::before {
+      opacity: 1;
+    }
+
+    .mini-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.45rem;
+    }
+
+    .tag {
+      font-size: 0.64rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+    }
+
+    .status-pill {
+      font-size: 0.64rem;
+      padding: 0.16rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      color: var(--muted);
+    }
+
+    .status-pill span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.75);
+    }
+
+    .mini-card-main {
+      display: flex;
+      align-items: baseline;
+      gap: 0.4rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .mini-card-main strong {
+      font-size: 1.1rem;
+      letter-spacing: 0.04em;
+    }
+
+    .mini-card-main span.unit {
+      font-size: 0.68rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .mini-card-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.15rem;
+      font-size: 0.7rem;
+    }
+
+    .trend.up {
+      color: #4ade80;
+    }
+
+    .trend.down {
+      color: var(--danger);
+    }
+
+    /* Right column: main dashboard panel */
+    .hero-panel {
+      position: relative;
+    }
+
+    .dashboard-card {
+      border-radius: var(--card-radius);
+      background: radial-gradient(circle at top left, rgba(74, 222, 128, 0.18), rgba(15, 23, 42, 0.96));
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      box-shadow: var(--shadow-soft);
+      padding: 1rem 1.05rem;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .dashboard-card::before {
+      content: "";
+      position: absolute;
+      inset: -25%;
+      background: radial-gradient(circle at 120% 0, rgba(56, 189, 248, 0.4), transparent 55%);
+      opacity: 0.75;
+      mix-blend-mode: screen;
+      z-index: -1;
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .dashboard-title {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .dashboard-title h2 {
+      font-size: 1rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .dashboard-title span {
+      font-size: 0.76rem;
+      color: var(--muted);
+    }
+
+    .dashboard-switcher {
+      display: inline-flex;
+      padding: 0.16rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .switch-pill {
+      border-radius: 999px;
+      padding: 0.23rem 0.6rem;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+    }
+
+    .switch-pill.active {
+      background: radial-gradient(circle at 10% 0, rgba(74, 222, 128, 0.95), rgba(34, 197, 94, 0.95));
+      color: #052e16;
+      transform: translateY(-1px);
+    }
+
+    .dashboard-body {
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 0.75rem;
+    }
+
+    .summary-row {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 0.65rem;
+    }
+
+    @media (max-width: 480px) {
+      .summary-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .summary-block {
+      border-radius: 14px;
+      padding: 0.55rem 0.65rem;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      font-size: 0.76rem;
+    }
+
+    .summary-block strong {
+      font-size: 0.86rem;
+      color: #e5e7eb;
+    }
+
+    .summary-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .pill-soft {
+      padding: 0.1rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.85);
+      font-size: 0.7rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .pill-soft span.badge {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .timeline {
+      border-radius: 14px;
+      padding: 0.55rem 0.65rem;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      font-size: 0.76rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      max-height: 180px;
+      overflow: hidden;
+    }
+
+    .timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.15rem;
+    }
+
+    .timeline-header span {
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .timeline-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.35rem;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0.4rem;
+      align-items: start;
+    }
+
+    .timeline-dot {
+      margin-top: 0.25rem;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #38bdf8;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.9);
+    }
+
+    .timeline-main {
+      display: flex;
+      flex-direction: column;
+      gap: 0.05rem;
+    }
+
+    .timeline-main strong {
+      color: #e5e7eb;
+    }
+
+    .timeline-main span.sub {
+      color: var(--muted);
+      font-size: 0.7rem;
+    }
+
+    .timeline-time {
+      font-size: 0.7rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .table-shell {
+      margin-top: 0.3rem;
+      border-radius: 14px;
+      padding: 0.55rem 0.65rem 0.7rem;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      font-size: 0.76rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      max-height: 210px;
+    }
+
+    .table-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .table-head h3 {
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #e5e7eb;
+    }
+
+    .table-filters {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .chip-filter {
+      padding: 0.12rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.95);
+      font-size: 0.7rem;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      cursor: pointer;
+      transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+    }
+
+    .chip-filter.active {
+      background: var(--primary-soft);
+      border-color: rgba(74, 222, 128, 0.8);
+      color: #bbf7d0;
+    }
+
+    .chip-filter-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--primary);
+    }
+
+    .data-table {
+      width: 100%;
+      border-spacing: 0;
+      border-collapse: collapse;
+      font-size: 0.74rem;
+    }
+
+    .data-table thead {
+      position: sticky;
+      top: 0;
+      background: linear-gradient(to bottom, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.96));
+      z-index: 1;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 0.3rem 0.2rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(30, 64, 175, 0.5);
+    }
+
+    .data-table th {
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.68rem;
+    }
+
+    .data-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge-status {
+      padding: 0.08rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.28rem;
+      border: 1px solid transparent;
+    }
+
+    .badge-status.present {
+      border-color: rgba(74, 222, 128, 0.8);
+      background: rgba(22, 163, 74, 0.1);
+      color: #bbf7d0;
+    }
+
+    .badge-status.absent {
+      border-color: rgba(248, 113, 113, 0.9);
+      background: rgba(248, 113, 113, 0.08);
+      color: #fecaca;
+    }
+
+    .badge-status.late {
+      border-color: rgba(251, 191, 36, 0.9);
+      background: rgba(251, 191, 36, 0.08);
+      color: #fef3c7;
+    }
+
+    .badge-status span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    .avatar-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .avatar-circle {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #22c55e, #0ea5e9);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: #022c22;
+    }
+
+    .avatar-pill span.label {
+      color: #e5e7eb;
+    }
+
+    .scroll-y {
+      overflow-y: auto;
+    }
+
+    /* Secondary section: modules */
+    section#modules {
+      margin-top: 2.6rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      align-items: flex-end;
+      margin-bottom: 1.1rem;
+    }
+
+    @media (max-width: 720px) {
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    .section-header h2 span {
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    .section-header h2 strong {
+      background: linear-gradient(120deg, #4ade80, #22c55e, #22c55e, #22d3ee);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .section-header p {
+      max-width: 30rem;
+      font-size: 0.9rem;
+    }
+
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+
+    @media (max-width: 960px) {
+      .modules-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .modules-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 520px) {
+      .modules-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .module-card {
+      border-radius: 18px;
+      padding: 0.8rem 0.85rem;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.9);
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+    }
+
+    .module-card::before {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background: radial-gradient(circle at 0 0, rgba(74, 222, 128, 0.25), transparent 60%);
+      opacity: 0;
+      z-index: -1;
+      transition: opacity var(--transition-slow), transform var(--transition-slow);
+    }
+
+    .module-card:hover {
+      transform: translateY(-4px) translateX(1px);
+      box-shadow: 0 18px 38px rgba(15, 23, 42, 0.95);
+      border-color: rgba(74, 222, 128, 0.9);
+      background: radial-gradient(circle at 0 0, rgba(15, 23, 42, 1), rgba(15, 23, 42, 0.96));
+    }
+
+    .module-card:hover::before {
+      opacity: 1;
+      transform: translate3d(8px, -4px, 0);
+    }
+
+    .module-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 11px;
+      background: radial-gradient(circle at 20% 0, #4ade80, #22c55e, #0f766e);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #022c22;
+      font-size: 0.9rem;
+      box-shadow: 0 0 22px rgba(34, 197, 94, 0.75);
+    }
+
+    .module-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .module-title h3 {
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .module-pill {
+      padding: 0.12rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+
+    .module-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 2.5rem;
+      border-top: 1px solid rgba(148, 163, 184, 0.5);
+      padding-top: 1.2rem;
+      padding-bottom: 1.6rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-row a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .footer-row a:hover {
+      color: #e5e7eb;
+      text-decoration: underline dashed;
+      text-underline-offset: 3px;
+    }
+
+    /* Auth overlay modal */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.5), rgba(3, 7, 18, 0.94));
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.2rem;
+      z-index: 60;
+    }
+
+    .overlay.active {
+      display: flex;
+    }
+
+    .auth-modal {
+      max-width: 420px;
+      width: 100%;
+      border-radius: 22px;
+      background: radial-gradient(circle at top left, rgba(74, 222, 128, 0.18), rgba(15, 23, 42, 0.98));
+      border: 1px solid rgba(148, 163, 184, 0.75);
+      box-shadow: 0 25px 80px rgba(15, 23, 42, 0.95);
+      padding: 1.1rem 1.1rem 1.25rem;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .auth-modal::before {
+      content: "";
+      position: absolute;
+      inset: -25%;
+      background: radial-gradient(circle at 110% -10%, rgba(56, 189, 248, 0.5), transparent 55%);
+      opacity: 0.7;
+      z-index: -1;
+    }
+
+    .auth-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.8rem;
+      align-items: flex-start;
+      margin-bottom: 0.7rem;
+    }
+
+    .auth-header h2 {
+      font-size: 1.1rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .auth-header span {
+      font-size: 0.76rem;
+      color: var(--muted);
+    }
+
+    .auth-tag {
+      padding: 0.22rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      font-size: 0.7rem;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .auth-tag span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 0.3rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.18rem;
+      font-size: 0.78rem;
+    }
+
+    .field label {
+      color: #e5e7eb;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.4rem;
+    }
+
+    .field input,
+    .field select {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.75);
+      background: rgba(15, 23, 42, 0.95);
+      padding: 0.45rem 0.7rem;
+      color: #e5e7eb;
+      font-size: 0.78rem;
+      outline: none;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+    }
+
+    .field input::placeholder {
+      color: rgba(148, 163, 184, 0.7);
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: rgba(74, 222, 128, 0.9);
+      box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.8);
+      background: rgba(15, 23, 42, 1);
+    }
+
+    .auth-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.5rem;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .auth-footer button {
+      flex-shrink: 0;
+    }
+
+    .link-plain {
+      border: none;
+      background: none;
+      padding: 0;
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.75rem;
+      cursor: pointer;
+      text-decoration: underline dotted;
+      text-underline-offset: 3px;
+    }
+
+    .overlay-close {
+      position: absolute;
+      top: 0.55rem;
+      right: 0.6rem;
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.75);
+      background: rgba(15, 23, 42, 0.95);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 0.8rem;
+      transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .overlay-close:hover {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fecaca;
+      box-shadow: 0 0 18px rgba(248, 113, 113, 0.8);
+      transform: translateY(-1px);
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    [data-animate] {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    [data-animate].visible {
+      opacity: 1;
+      transform: translateY(0);
+      animation: fadeUp 0.5s var(--transition-slow) both;
+    }
+
+    .delay-1 { animation-delay: 0.08s; }
+    .delay-2 { animation-delay: 0.16s; }
+    .delay-3 { animation-delay: 0.24s; }
+    .delay-4 { animation-delay: 0.32s; }
+  </style>
+</head>
+<body>
+  <div class="noise-layer" aria-hidden="true"></div>
+
+  <header>
+    <div class="shell nav">
+      <a href="#top" class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <span></span>
+        </div>
+        <div class="brand-text">
+          <strong>EduSphere</strong>
+          <span>School OS</span>
+        </div>
+      </a>
+
+      <div class="nav-right">
+        <div class="nav-chip">
+          <span></span>
+          Live session • 2025
+        </div>
+        <button class="nav-btn" id="openAuth">
+          <span class="dot"></span>
+          Sign In
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <div class="shell">
+      <!-- HERO / DASHBOARD -->
+      <section class="hero" aria-label="School Dashboard Overview">
+        <article class="hero-main">
+          <div class="hero-badge-row" data-animate>
+            <div class="pill">
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <circle cx="10" cy="10" r="9" fill="none" stroke="rgba(148,163,184,0.7)" stroke-width="1.2"/>
+                <path d="M5 11l3 3 7-8" fill="none" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <strong>Unified</strong> School Management
+            </div>
+            <span class="pill">
+              1200+ Students • 72 Teachers • 40 Classrooms
+            </span>
+          </div>
+
+          <div class="hero-heading" data-animate>
+            <span class="label">
+              Central Control for <em>Attendance</em>, Fees &amp; Results
+            </span>
+            <h1>
+              Smart <span class="highlight">School Management</span><br>
+              for Principals, Teachers &amp; Admins.
+            </h1>
+          </div>
+
+          <div class="hero-sub" data-animate>
+            <p>
+              Track every <strong>student</strong>, every <strong>class</strong> and every
+              <strong>fee payment</strong> from a single, realtime dashboard — designed for
+              Bangladeshi schools and colleges.
+            </p>
+          </div>
+
+          <div class="hero-actions" data-animate>
+            <button class="btn-primary" id="openAuthHero">
+              Launch Admin Panel
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M5 10h8.5M10 5l5 5-5 5" fill="none" stroke="#052e16" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="btn-ghost">
+              View Demo Classes
+            </button>
+          </div>
+
+          <div class="hero-meta" data-animate>
+            <div class="hero-meta-item">
+              <span>Attendance Today</span>
+              <strong>96.3%</strong>
+            </div>
+            <div class="hero-meta-item">
+              <span>Fees Collected</span>
+              <strong>৳ 4,25,000</strong>
+            </div>
+            <div class="hero-meta-item">
+              <span>Exams This Week</span>
+              <strong>12 Schedules</strong>
+            </div>
+          </div>
+
+          <div class="quick-metrics" aria-label="Key metrics">
+            <div class="mini-card" data-animate>
+              <div class="mini-card-header">
+                <span class="tag">Students</span>
+                <span class="status-pill">
+                  <span class="dot"></span>
+                  Live
+                </span>
+              </div>
+              <div class="mini-card-main">
+                <strong>1,218</strong>
+                <span class="unit">Enrolled</span>
+              </div>
+              <div class="mini-card-foot">
+                <span class="trend up">
+                  ▲ 4.3%
+                </span>
+                <span>+ 52 this term</span>
+              </div>
+            </div>
+
+            <div class="mini-card" data-animate>
+              <div class="mini-card-header">
+                <span class="tag">Attendance</span>
+                <span class="status-pill">
+                  <span class="dot"></span>
+                  Synced
+                </span>
+              </div>
+              <div class="mini-card-main">
+                <strong>37</strong>
+                <span class="unit">Classes Marked</span>
+              </div>
+              <div class="mini-card-foot">
+                <span class="trend up">
+                  ▲ 98%
+                </span>
+                <span>Present today</span>
+              </div>
+            </div>
+
+            <div class="mini-card" data-animate>
+              <div class="mini-card-header">
+                <span class="tag">Fees</span>
+                <span class="status-pill">
+                  <span class="dot" style="background:#facc15; box-shadow:0 0 10px rgba(250,204,21,0.8);"></span>
+                  Due
+                </span>
+              </div>
+              <div class="mini-card-main">
+                <strong>৳ 1,15,000</strong>
+              </div>
+              <div class="mini-card-foot">
+                <span class="trend down">
+                  ▼ 12%
+                </span>
+                <span>Pending this month</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Right Dashboard Panel -->
+        <aside class="hero-panel" aria-label="Admin snapshot">
+          <div class="dashboard-card" data-animate>
+            <div class="dashboard-header">
+              <div class="dashboard-title">
+                <h2>Today • Control Room</h2>
+                <span>Class 6–10 • Morning Shift</span>
+              </div>
+              <div class="dashboard-switcher" role="tablist" aria-label="User role">
+                <button class="switch-pill active" data-role="admin" role="tab" aria-selected="true">Admin</button>
+                <button class="switch-pill" data-role="teacher" role="tab" aria-selected="false">Teacher</button>
+              </div>
+            </div>
+
+            <div class="dashboard-body">
+              <div class="summary-row">
+                <div class="summary-block">
+                  <span>Overall Attendance</span>
+                  <strong>96.3%</strong>
+                  <div class="summary-meta">
+                    <span>Present: 1,173</span>
+                    <span>Absent: 45</span>
+                  </div>
+                </div>
+                <div class="summary-block">
+                  <span>Fee Collection</span>
+                  <strong>78%</strong>
+                  <div class="summary-meta">
+                    <span>Paid: 842</span>
+                    <span>Due: 236</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="timeline">
+                <div class="timeline-header">
+                  <span>Live Periods</span>
+                  <span class="pill-soft">
+                    <span class="badge"></span>
+                    Now: 3rd Period
+                  </span>
+                </div>
+                <ul class="timeline-list scroll-y" aria-label="Class timeline">
+                  <li class="timeline-item">
+                    <span class="timeline-dot"></span>
+                    <div class="timeline-main">
+                      <strong>Class 8 • Mathematics</strong>
+                      <span class="sub">Section A • Room 203 • Mr. Rahman</span>
+                    </div>
+                    <span class="timeline-time">10:00–10:40</span>
+                  </li>
+                  <li class="timeline-item">
+                    <span class="timeline-dot" style="background:#f97316; box-shadow:0 0 10px rgba(249,115,22,0.9);"></span>
+                    <div class="timeline-main">
+                      <strong>Class 10 • Physics</strong>
+                      <span class="sub">Lab Session • Room 402 • Ms. Sultana</span>
+                    </div>
+                    <span class="timeline-time">Running</span>
+                  </li>
+                  <li class="timeline-item">
+                    <span class="timeline-dot" style="background:#22c55e; box-shadow:0 0 10px rgba(34,197,94,0.9);"></span>
+                    <div class="timeline-main">
+                      <strong>Class 7 • English</strong>
+                      <span class="sub">Section C • Room 105 • Mr. Islam</span>
+                    </div>
+                    <span class="timeline-time">Next • 10:40</span>
+                  </li>
+                  <li class="timeline-item">
+                    <span class="timeline-dot" style="background:#6366f1; box-shadow:0 0 10px rgba(99,102,241,0.9);"></span>
+                    <div class="timeline-main">
+                      <strong>Staff Meeting</strong>
+                      <span class="sub">Coordination Room • Shift Planning</span>
+                    </div>
+                    <span class="timeline-time">01:30 PM</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="table-shell">
+                <div class="table-head">
+                  <h3>Today’s Attendance Snapshot</h3>
+                  <div class="table-filters">
+                    <button class="chip-filter active" data-filter="all">
+                      <span class="chip-filter-dot"></span>
+                      All
+                    </button>
+                    <button class="chip-filter" data-filter="present">Present</button>
+                    <button class="chip-filter" data-filter="due">Fee Due</button>
+                  </div>
+                </div>
+                <div class="scroll-y" style="margin-top:0.25rem;">
+                  <table class="data-table" aria-label="Student attendance table">
+                    <thead>
+                      <tr>
+                        <th>Student</th>
+                        <th>Class</th>
+                        <th>Status</th>
+                        <th>Fees</th>
+                      </tr>
+                    </thead>
+                    <tbody id="studentRows">
+                      <tr data-status="present">
+                        <td>
+                          <div class="avatar-pill">
+                            <span class="avatar-circle">SR</span>
+                            <span class="label">Sadia Rahman</span>
+                          </div>
+                        </td>
+                        <td>8 • A</td>
+                        <td>
+                          <span class="badge-status present">
+                            <span class="dot"></span> Present
+                          </span>
+                        </td>
+                        <td>Paid</td>
+                      </tr>
+                      <tr data-status="present">
+                        <td>
+                          <div class="avatar-pill">
+                            <span class="avatar-circle">MH</span>
+                            <span class="label">Mahin Hasan</span>
+                          </div>
+                        </td>
+                        <td>9 • B</td>
+                        <td>
+                          <span class="badge-status late">
+                            <span class="dot"></span> Late
+                          </span>
+                        </td>
+                        <td>Paid</td>
+                      </tr>
+                      <tr data-status="absent" data-due="true">
+                        <td>
+                          <div class="avatar-pill">
+                            <span class="avatar-circle">RK</span>
+                            <span class="label">Rafiul Karim</span>
+                          </div>
+                        </td>
+                        <td>7 • C</td>
+                        <td>
+                          <span class="badge-status.absent badge-status absent">
+                            <span class="dot"></span> Absent
+                          </span>
+                        </td>
+                        <td>Due • 2 months</td>
+                      </tr>
+                      <tr data-status="present" data-due="true">
+                        <td>
+                          <div class="avatar-pill">
+                            <span class="avatar-circle">FA</span>
+                            <span class="label">Faria Akter</span>
+                          </div>
+                        </td>
+                        <td>10 • A</td>
+                        <td>
+                          <span class="badge-status present">
+                            <span class="dot"></span> Present
+                          </span>
+                        </td>
+                        <td>Due • 1 month</td>
+                      </tr>
+                      <tr data-status="absent">
+                        <td>
+                          <div class="avatar-pill">
+                            <span class="avatar-circle">NS</span>
+                            <span class="label">Nusrat Sultana</span>
+                          </div>
+                        </td>
+                        <td>6 • B</td>
+                        <td>
+                          <span class="badge-status absent">
+                            <span class="dot"></span> Absent
+                          </span>
+                        </td>
+                        <td>Paid</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <!-- MODULES -->
+      <section id="modules" aria-label="Core modules">
+        <div class="section-header" data-animate>
+          <div>
+            <h2>
+              <span>Modules</span>
+              <strong>All‑in‑One School Management</strong>
+            </h2>
+          </div>
+          <p>
+            From <strong>admission</strong> to <strong>result publication</strong>,
+            EduSphere keeps everything in one place. Pick modules that match
+            your current workflow — add more when you grow.
+          </p>
+        </div>
+
+        <div class="modules-grid" data-animate>
+          <article class="module-card">
+            <div class="module-icon" aria-hidden="true">A</div>
+            <div class="module-title">
+              <h3>Attendance</h3>
+              <span class="module-pill">Realtime</span>
+            </div>
+            <p>
+              Mark daily attendance from mobile or desktop, auto‑calculate
+              percentages and share SMS alerts with guardians.
+            </p>
+            <div class="module-meta">
+              <span>Biometric &amp; manual entry</span>
+              <span>Export: Excel / PDF</span>
+            </div>
+          </article>
+
+          <article class="module-card">
+            <div class="module-icon" aria-hidden="true">F</div>
+            <div class="module-title">
+              <h3>Fees &amp; Accounts</h3>
+              <span class="module-pill">Finance</span>
+            </div>
+            <p>
+              Configure fee structures, track dues, send reminders and
+              generate monthly &amp; yearly financial reports.
+            </p>
+            <div class="module-meta">
+              <span>Custom fee heads</span>
+              <span>Multi‑session support</span>
+            </div>
+          </article>
+
+          <article class="module-card">
+            <div class="module-icon" aria-hidden="true">R</div>
+            <div class="module-title">
+              <h3>Result &amp; Exams</h3>
+              <span class="module-pill">Academics</span>
+            </div>
+            <p>
+              Design exam templates, enter marks, auto‑calculate grades and
+              publish digital report cards with one click.
+            </p>
+            <div class="module-meta">
+              <span>Custom grading</span>
+              <span>Merit list &amp; GPA</span>
+            </div>
+          </article>
+
+          <article class="module-card">
+            <div class="module-icon" aria-hidden="true">C</div>
+            <div class="module-title">
+              <h3>Class Routine</h3>
+              <span class="module-pill">Planner</span>
+            </div>
+            <p>
+              Build weekly routines for each class and teacher, avoid clashes
+              and share schedules with students instantly.
+            </p>
+            <div class="module-meta">
+              <span>Drag &amp; drop planning</span>
+              <span>Teacher load view</span>
+            </div>
+          </article>
+
+          <article class="module-card">
+            <div class="module-icon" aria-hidden="true">S</div>
+            <div class="module-title">
+              <h3>Student Records</h3>
+              <span class="module-pill">Profiles</span>
+            </div>
+            <p>
+              Store full student history — admission, guardians, payments,
+              academic performance and disciplinary notes.
+            </p>
+            <div class="module-meta">
+              <span>Secure &amp; searchable</span>
+              <span>Photo &amp; docs</span>
+            </div>
+          </article>
+
+          <article class="module-card">
+            <div class="module-icon" aria-hidden="true">T</div>
+            <div class="module-title">
+              <h3>Teacher Portal</h3>
+              <span class="module-pill">Staff</span>
+            </div>
+            <p>
+              Give teachers their own login to manage attendance, marks,
+              homework and communicate with guardians.
+            </p>
+            <div class="module-meta">
+              <span>Role based access</span>
+              <span>Activity logs</span>
+            </div>
+          </article>
+
+          <article class="module-card">
+            <div class="module-icon" aria-hidden="true">G</div>
+            <div class="module-title">
+              <h3>Guardian App</h3>
+              <span class="module-pill">Communication</span>
+            </div>
+            <p>
+              Notify guardians about attendance, results, fees and
+              announcements — in Bangla &amp; English.
+            </p>
+            <div class="module-meta">
+              <span>SMS &amp; Push alerts</span>
+              <span>Multi‑child view</span>
+            </div>
+          </article>
+
+          <article class="module-card">
+            <div class="module-icon" aria-hidden="true">R</div>
+            <div class="module-title">
+              <h3>Reports</h3>
+              <span class="module-pill">Analytics</span>
+            </div>
+            <p>
+              Get instant reports on students, fees, staff performance and
+              academic outcomes to support better decisions.
+            </p>
+            <div class="module-meta">
+              <span>Download &amp; print ready</span>
+              <span>Custom filters</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer aria-label="Footer">
+        <div class="footer-row">
+          <span>© 2025 EduSphere School OS • Made for modern schools.</span>
+          <span>
+            <a href="#top">Back to top</a> ·
+            <a href="#">Privacy</a> ·
+            <a href="#">Support</a>
+          </span>
+        </div>
+      </footer>
+    </div>
+  </main>
+
+  <!-- AUTH MODAL -->
+  <div class="overlay" id="authOverlay" aria-hidden="true" aria-label="Login">
+    <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <button class="overlay-close" aria-label="Close sign in" id="closeAuth">×</button>
+      <div class="auth-header">
+        <div>
+          <h2 id="authTitle">Sign in to EduSphere</h2>
+          <span>Choose your role to access the school dashboard.</span>
+        </div>
+        <div class="auth-tag">
+          <span class="dot"></span>
+          Secure Portal
+        </div>
+      </div>
+
+      <form class="auth-form" onsubmit="event.preventDefault();">
+        <div class="field-row">
+          <div class="field">
+            <label for="role">Login As</label>
+            <select id="role">
+              <option>Administrator</option>
+              <option>Teacher</option>
+              <option>Accounts</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="session">Session</label>
+            <select id="session">
+              <option>2024–25</option>
+              <option>2023–24</option>
+              <option>2022–23</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="userId">User ID</label>
+          <input id="userId" type="text" placeholder="e.g. admin01 or teacher12" autocomplete="username">
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" type="password" placeholder="Enter your password" autocomplete="current-password">
+        </div>
+
+        <div class="auth-footer">
+          <button class="btn-primary" type="submit">
+            Continue
+          </button>
+          <div>
+            <button class="link-plain" type="button">Forgot password?</button><br>
+            <span>Need a school account? <a href="#" style="color:#4ade80;">Request demo</a></span>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Scroll-triggered animations
+    const animatedEls = document.querySelectorAll('[data-animate]');
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+    animatedEls.forEach((el, i) => {
+      el.style.setProperty('animation-delay', (i * 0.06) + 's');
+      observer.observe(el);
+    });
+
+    // Auth overlay controls
+    const overlay = document.getElementById('authOverlay');
+    const openBtns = [document.getElementById('openAuth'), document.getElementById('openAuthHero')];
+    const closeBtn = document.getElementById('closeAuth');
+
+    function openOverlay() {
+      overlay.classList.add('active');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.getElementById('userId').focus();
+    }
+    function closeOverlay() {
+      overlay.classList.remove('active');
+      overlay.setAttribute('aria-hidden', 'true');
+    }
+
+    openBtns.forEach(btn => btn && btn.addEventListener('click', openOverlay));
+    closeBtn.addEventListener('click', closeOverlay);
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) closeOverlay();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && overlay.classList.contains('active')) {
+        closeOverlay();
+      }
+    });
+
+    // Role switcher (admin / teacher)
+    const roleButtons = document.querySelectorAll('.switch-pill');
+    roleButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        roleButtons.forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+      });
+    });
+
+    // Student filter
+    const filters = document.querySelectorAll('.chip-filter');
+    const rows = Array.from(document.querySelectorAll('#studentRows tr'));
+
+    filters.forEach(filter => {
+      filter.addEventListener('click', () => {
+        filters.forEach(f => f.classList.remove('active'));
+        filter.classList.add('active');
+
+        const mode = filter.getAttribute('data-filter');
+        rows.forEach(row => {
+          const status = row.getAttribute('data-status');
+          const due = row.getAttribute('data-due') === 'true';
+
+          let show = true;
+          if (mode === 'present') {
+            show = status === 'present';
+          } else if (mode === 'due') {
+            show = due;
+          }
+          row.style.display = show ? '' : 'none';
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+ 

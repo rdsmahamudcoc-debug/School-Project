@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>নতুন শিক্ষক যোগ</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .form-section-title {
+            background: #f1f2f6;
+            padding: 10px 15px;
+            border-left: 4px solid #2ecc71; /* শিক্ষকের জন্য সবুজ বর্ডার */
+            margin: 20px 0 15px 0;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li>
+                <button class="dropdown-btn"><span><i class="fas fa-user-graduate"></i> স্টুডেন্ট</span><i class="fas fa-caret-down"></i></button>
+                <div class="dropdown-container">
+                    <a href="add_student.html">নতুন ভর্তি</a>
+                    <a href="student_list.html">স্টুডেন্ট লিস্ট</a>
+                </div>
+            </li>
+            <li><a href="teacher_list.html"><i class="fas fa-chalkboard-teacher"></i> শিক্ষক তালিকা</a></li>
+            <li><a href="add_teacher.html" style="background: #1a252f; border-left: 4px solid #3498db; color: white;">
+                <i class="fas fa-user-plus"></i> নতুন শিক্ষক যোগ
+            </a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left">
+                <div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+                <h3>নতুন শিক্ষক নিয়োগ ফরম</h3>
+            </div>
+            <div class="user-info"><span>এডমিন</span><div class="user-avatar"><i class="fas fa-user"></i></div></div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            <div class="wrapper">
+                <form action="#" method="POST" enctype="multipart/form-data">
+                    
+                    <div class="form-section-title">১. সাধারণ তথ্য (Basic Info)</div>
+                    <div class="form-grid">
+                        <div><label>শিক্ষকের নাম *</label><input type="text" placeholder="পুরো নাম" required></div>
+                        <div><label>লিঙ্গ</label><select><option>পুরুষ</option><option>মহিলা</option></select></div>
+                        <div><label>জন্ম তারিখ</label><input type="date"></div>
+                        <div><label>মোবাইল নম্বর *</label><input type="text" placeholder="01xxxxxxxxx" required></div>
+                        <div><label>ইমেইল (Email)</label><input type="email" placeholder="teacher@school.com"></div>
+                        <div><label>ছবি আপলোড</label><input type="file" style="padding: 7px;"></div>
+                    </div>
+
+                    <div class="form-section-title">২. প্রফেশনাল তথ্য (Professional Info)</div>
+                    <div class="form-grid">
+                        <div><label>পদবী (Designation)</label><input type="text" placeholder="যেমন: সহকারী শিক্ষক"></div>
+                        <div><label>বিভাগ/বিষয়</label><select><option>গণিত</option><option>বাংলা</option><option>ইংরেজি</option><option>বিজ্ঞান</option><option>ধর্ম</option></select></div>
+                        <div><label>শিক্ষাগত যোগ্যতা</label><input type="text" placeholder="যেমন: B.Sc in Math"></div>
+                        <div><label>যোগদানের তারিখ</label><input type="date"></div>
+                        <div><label>বেসিক স্যালারি (বেতন)</label><input type="number" placeholder="৳"></div>
+                    </div>
+
+                    <div class="form-section-title">৩. ঠিকানা ও পাসওয়ার্ড</div>
+                    <div class="form-grid">
+                        <div style="grid-column: span 2;">
+                            <label>বর্তমান ঠিকানা</label>
+                            <input type="text" placeholder="পূর্ণ ঠিকানা">
+                        </div>
+                        <div><label>লগইন পাসওয়ার্ড</label><input type="password" placeholder="পাসওয়ার্ড দিন"></div>
+                    </div>
+
+                    <div style="text-align: right; margin-top: 30px;">
+                        <button type="submit" class="submit-btn"><i class="fas fa-save"></i> শিক্ষক সেভ করুন</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </main>
+    <script>
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        var dropdowns = document.getElementsByClassName("dropdown-btn");
+        for (var i = 0; i < dropdowns.length; i++) {
+            dropdowns[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                content.style.display = content.style.display === "block" ? "none" : "block";
+                this.querySelector(".fa-caret-down").classList.toggle("rotate");
+            });
+        }
+    </script>
+</body>
+</html>

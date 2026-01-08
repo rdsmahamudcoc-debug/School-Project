@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ড্যাশবোর্ড সেটিংস</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --success-color: #2ecc71;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        
+        body { background: #f5f7fa; padding: 20px; }
+        
+        .container { max-width: 800px; margin: 0 auto; }
+        
+        .header { 
+            background: white; padding: 20px; border-radius: 10px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        
+        .header h1 { color: #333; }
+        
+        .back-btn { 
+            text-decoration: none; background: var(--primary-color); color: white;
+            padding: 8px 15px; border-radius: 5px; display: flex; align-items: center; gap: 8px;
+        }
+        
+        .settings-card { 
+            background: white; padding: 25px; border-radius: 10px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px;
+        }
+        
+        .settings-card h2 { 
+            color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .form-group { margin-bottom: 20px; }
+        
+        .form-group label { 
+            display: block; margin-bottom: 8px; font-weight: 600; color: #444;
+        }
+        
+        .form-control { 
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px;
+            font-size: 16px; transition: border 0.3s;
+        }
+        
+        .form-control:focus { 
+            outline: none; border-color: var(--primary-color); 
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .color-picker {
+            display: flex; gap: 10px; align-items: center;
+        }
+        
+        .color-option {
+            width: 40px; height: 40px; border-radius: 5px; cursor: pointer;
+            border: 3px solid transparent; transition: all 0.3s;
+        }
+        
+        .color-option:hover { transform: scale(1.1); }
+        .color-option.selected { border-color: #333; }
+        
+        .btn { 
+            padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer;
+            font-size: 16px; font-weight: 600; transition: all 0.3s;
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+        
+        .btn-primary { 
+            background: var(--primary-color); color: white;
+        }
+        
+        .btn-primary:hover { background: #2980b9; }
+        
+        .message { 
+            padding: 15px; border-radius: 5px; margin-top: 20px; display: none;
+        }
+        
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        
+        .info-box { 
+            background: #f8f9fa; padding: 15px; border-left: 4px solid var(--primary-color);
+            margin-top: 20px; border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-sliders-h"></i> ড্যাশবোর্ড সেটিংস</h1>
+            <a href="index.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> ড্যাশবোর্ডে ফিরে যান
+            </a>
+        </div>
+        
+        <div class="settings-card">
+            <h2><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড কাস্টমাইজেশন</h2>
+            
+            <div class="info-box">
+                <p><i class="fas fa-info-circle"></i> <strong>দ্রষ্টব্য:</strong> এই সেটিংস শুধুমাত্র ড্যাশবোর্ডে প্রযোজ্য হবে। ওয়েবসাইটে দেখাতে চাইলে "ওয়েবসাইট কন্ট্রোল" পৃষ্ঠা ব্যবহার করুন।</p>
+            </div>
+            
+            <form id="dashboardSettingsForm">
+                <div class="form-group">
+                    <label for="dashboardSchoolName">ড্যাশবোর্ডের স্কুল নাম</label>
+                    <input type="text" id="dashboardSchoolName" class="form-control" 
+                           placeholder="ড্যাশবোর্ডে দেখানোর স্কুলের নাম">
+                </div>
+                
+                <div class="form-group">
+                    <label for="dashboardAddress">ড্যাশবোর্ডের ঠিকানা</label>
+                    <input type="text" id="dashboardAddress" class="form-control" 
+                           placeholder="ড্যাশবোর্ডে দেখানোর ঠিকানা">
+                </div>
+                
+                <div class="form-group">
+                    <label for="dashboardContact">যোগাযোগ নম্বর (ড্যাশবোর্ড)</label>
+                    <input type="text" id="dashboardContact" class="form-control" 
+                           placeholder="ড্যাশবোর্ডে দেখানোর ফোন নম্বর">
+                </div>
+                
+                <div class="form-group">
+                    <label>থিম কালার সিলেক্ট করুন</label>
+                    <div class="color-picker">
+                        <div class="color-option" style="background: #3498db;" data-color="#3498db"></div>
+                        <div class="color-option" style="background: #2ecc71;" data-color="#2ecc71"></div>
+                        <div class="color-option" style="background: #e74c3c;" data-color="#e74c3c"></div>
+                        <div class="color-option" style="background: #f39c12;" data-color="#f39c12"></div>
+                        <div class="color-option" style="background: #9b59b6;" data-color="#9b59b6"></div>
+                        <div class="color-option" style="background: #1abc9c;" data-color="#1abc9c"></div>
+                        <input type="hidden" id="themeColor" value="#3498db">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> ড্যাশবোর্ড সেটিংস সেভ করুন
+                </button>
+            </form>
+        </div>
+        
+        <!-- মেসেজ ডিসপ্লে -->
+        <div id="message" class="message"></div>
+    </div>
+
+    <script type="module">
+        import { db, ref, onValue, update } from './firebase-config.js';
+        
+        // লগইন চেক
+        const role = localStorage.getItem('userRole');
+        if(!role || role !== 'Admin') {
+            alert('শুধুমাত্র অ্যাডমিন এই পেজ এক্সেস করতে পারেন!');
+            window.location.href = "index.html";
+        }
+        
+        // ১. ড্যাশবোর্ড সেটিংস লোড
+        onValue(ref(db, 'dashboard_settings'), (snapshot) => {
+            const settings = snapshot.val();
+            if(settings) {
+                document.getElementById('dashboardSchoolName').value = settings.school_name || '';
+                document.getElementById('dashboardAddress').value = settings.address || '';
+                document.getElementById('dashboardContact').value = settings.contact || '';
+                document.getElementById('themeColor').value = settings.theme_color || '#3498db';
+                
+                // কালার পিকার সিলেক্ট করুন
+                document.querySelectorAll('.color-option').forEach(option => {
+                    option.classList.remove('selected');
+                    if(option.dataset.color === (settings.theme_color || '#3498db')) {
+                        option.classList.add('selected');
+                    }
+                });
+            }
+        });
+        
+        // ২. কালার পিকার ইভেন্ট
+        document.querySelectorAll('.color-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.color-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                document.getElementById('themeColor').value = this.dataset.color;
+            });
+        });
+        
+        // ৩. ফর্ম সাবমিট হ্যান্ডলার
+        document.getElementById('dashboardSettingsForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const dashboardData = {
+                school_name: document.getElementById('dashboardSchoolName').value,
+                address: document.getElementById('dashboardAddress').value,
+                contact: document.getElementById('dashboardContact').value,
+                theme_color: document.getElementById('themeColor').value,
+                last_updated: new Date().toISOString()
+            };
+            
+            try {
+                await update(ref(db, 'dashboard_settings'), dashboardData);
+                
+                showMessage('ড্যাশবোর্ড সেটিংস সফলভাবে সেভ করা হয়েছে!', 'success');
+                
+                // ২ সেকেন্ড পরে ড্যাশবোর্ডে রিডাইরেক্ট
+                setTimeout(() => {
+                    window.location.href = "index.html";
+                }, 2000);
+                
+            } catch (error) {
+                showMessage('ত্রুটি: ' + error.message, 'error');
+            }
+        });
+        
+        // মেসেজ শো ফাংশন
+        function showMessage(text, type) {
+            const msgDiv = document.getElementById('message');
+            msgDiv.textContent = text;
+            msgDiv.className = `message ${type}`;
+            msgDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

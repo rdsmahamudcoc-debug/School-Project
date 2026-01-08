@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>একাডেমিক সেটিংস</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .tab-btn { padding: 10px 20px; border: none; background: #ddd; cursor: pointer; font-weight: bold; margin-right: 5px; border-radius: 5px 5px 0 0; }
+        .tab-btn.active { background: #3498db; color: white; }
+        .tab-content { display: none; padding: 20px; background: white; border: 1px solid #ddd; border-top: 4px solid #3498db; }
+        .tab-content.active { display: block; }
+
+        /* চেকবক্স গ্রিড ডিজাইন */
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            background: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            background: white;
+            padding: 5px;
+            border: 1px solid #eee;
+            border-radius: 3px;
+        }
+        .checkbox-item:hover { background: #eaf2f8; }
+        .checkbox-item input { transform: scale(1.2); cursor: pointer; }
+
+        /* ব্যাজ ডিজাইন */
+        .badge { padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .badge-compulsory { background: #e8f8f5; color: #1abc9c; }
+        .badge-optional { background: #fef9e7; color: #f39c12; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="academic_settings.html" style="background: #1a252f; border-left: 4px solid #3498db; color: white;"><i class="fas fa-cogs"></i> একাডেমিক সেটিংস</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left"><div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div><h3>একাডেমিক কনফিগারেশন</h3></div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            <div class="wrapper" style="background: transparent; box-shadow: none; padding: 0;">
+                
+                <div>
+                    <button class="tab-btn active" onclick="openTab('classTab')">১. ক্লাস তৈরি (Class)</button>
+                    <button class="tab-btn" onclick="openTab('subjectTab')">২. বিষয় তৈরি (Subject)</button>
+                </div>
+
+                <div id="classTab" class="tab-content active">
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 300px;">
+                            <h4 style="margin-bottom: 10px;">নতুন ক্লাস যোগ করুন</h4>
+                            <form id="classForm" style="background: #f8f9fa; padding: 20px; border-radius: 5px;">
+                                <label>ক্লাসের নাম (যেমন: Class 6)</label>
+                                <input type="text" id="className" required style="width: 100%; padding: 10px; margin: 10px 0;">
+                                <button type="submit" class="submit-btn" style="width: 100%;">ক্লাস সেভ করুন</button>
+                            </form>
+                        </div>
+                        <div style="flex: 1; min-width: 300px;">
+                            <h4>ক্লাস তালিকা</h4>
+                            <ul id="classList" style="list-style: none; padding: 0; margin-top: 10px;"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="subjectTab" class="tab-content">
+                    <h4 style="margin-bottom: 15px; color: #2980b9;">বিষয় যুক্ত করুন</h4>
+                    
+                    <form id="subjectForm" style="background: #fff; padding: 20px; border: 1px solid #eee; border-radius: 5px;">
+                        <div class="form-grid">
+                            <div>
+                                <label>বিষয়ের নাম *</label>
+                                <input type="text" id="subName" placeholder="Ex: Bangla" required>
+                            </div>
+                            <div>
+                                <label>বিষয়ের ধরন *</label>
+                                <select id="subType" required style="width: 100%; padding: 8px;">
+                                    <option value="Compulsory">বাধ্যতামূলক (Compulsory)</option>
+                                    <option value="Optional">ঐচ্ছিক (Optional/4th Subject)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>বিষয় কোড</label>
+                                <input type="number" id="subCode" placeholder="Ex: 101">
+                            </div>
+                            <div>
+                                <label>শিক্ষকের নাম</label>
+                                <input type="text" id="subTeacher" placeholder="Ex: Rahim Sir">
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 15px;">
+                            <label style="font-weight: bold; display: block; margin-bottom: 8px;">কোন কোন ক্লাসে এই বিষয়টি আছে?</label>
+                            
+                            <div id="classCheckContainer" class="checkbox-grid">
+                                <span style="color: #777;">লোড হচ্ছে...</span>
+                            </div>
+                            
+                            <div style="margin-top: 5px; font-size: 12px; color: #666;">
+                                <input type="checkbox" onchange="toggleAll(this)"> সব সিলেক্ট করুন
+                            </div>
+                        </div>
+
+                        <div style="text-align: right; margin-top: 20px;">
+                            <button type="submit" class="submit-btn"><i class="fas fa-save"></i> সেভ করুন</button>
+                        </div>
+                    </form>
+
+                    <div style="margin-top: 30px;">
+                        <h4>সেভ করা বিষয়সমূহ</h4>
+                        <div style="overflow-x: auto;">
+                            <table>
+                                <thead>
+                                    <tr style="background:#eee;">
+                                        <th>বিষয়</th>
+                                        <th>ধরন</th>
+                                        <th>কোড</th>
+                                        <th>ক্লাস</th>
+                                        <th>শিক্ষক</th>
+                                        <th>অ্যাকশন</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="subListBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar(){document.getElementById('sidebar').classList.toggle('active');}
+        window.openTab = (id) => {
+            document.querySelectorAll('.tab-content').forEach(d=>d.style.display='none');
+            document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+            document.getElementById(id).style.display='block';
+            event.currentTarget.classList.add('active');
+        }
+        window.toggleAll = (source) => {
+            checkboxes = document.getElementsByName('classCheck');
+            for(var i=0, n=checkboxes.length;i<n;i++) { checkboxes[i].checked = source.checked; }
+        }
+    </script>
+
+    <script type="module">
+        import { db, ref, push, set, onValue, remove } from './firebase-config.js';
+
+        // ১. ক্লাস ম্যানেজমেন্ট
+        document.getElementById('classForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newRef = push(ref(db, 'classes'));
+            set(newRef, { className: document.getElementById('className').value, id: newRef.key })
+            .then(() => { alert("ক্লাস তৈরি হয়েছে!"); document.getElementById('classForm').reset(); });
+        });
+
+        onValue(ref(db, 'classes'), snap => {
+            const list = document.getElementById('classList');
+            const checkContainer = document.getElementById('classCheckContainer');
+            list.innerHTML = ""; checkContainer.innerHTML = "";
+            
+            if(snap.val()) {
+                Object.values(snap.val()).forEach(c => {
+                    list.innerHTML += `<li style="padding: 8px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
+                        <span>${c.className}</span>
+                        <button onclick="window.del('classes/${c.id}')" style="color:red;border:none;">X</button>
+                    </li>`;
+
+                    checkContainer.innerHTML += `
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="classCheck" value="${c.className}"> ${c.className}
+                        </label>`;
+                });
+            }
+        });
+
+        // ২. সাবজেক্ট ম্যানেজমেন্ট (Type সহ)
+        document.getElementById('subjectForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const sName = document.getElementById('subName').value;
+            const sType = document.getElementById('subType').value;
+            const sCode = document.getElementById('subCode').value;
+            const sTeacher = document.getElementById('subTeacher').value;
+            const checkboxes = document.querySelectorAll('input[name="classCheck"]:checked');
+            
+            if(checkboxes.length === 0) return alert("অন্তত একটি ক্লাস সিলেক্ট করুন!");
+
+            const promises = [];
+            checkboxes.forEach(chk => {
+                const newRef = push(ref(db, 'subjects'));
+                promises.push(set(newRef, {
+                    subjectName: sName,
+                    subjectType: sType, // Compulsory or Optional
+                    subjectCode: sCode,
+                    teacher: sTeacher,
+                    className: chk.value,
+                    id: newRef.key
+                }));
+            });
+
+            await Promise.all(promises);
+            alert("সফলভাবে যুক্ত করা হয়েছে!");
+            document.getElementById('subjectForm').reset();
+        });
+
+        onValue(ref(db, 'subjects'), snap => {
+            const body = document.getElementById('subListBody');
+            body.innerHTML = "";
+            if(snap.val()) {
+                const subs = Object.values(snap.val()).sort((a,b) => a.className.localeCompare(b.className));
+                subs.forEach(s => {
+                    const typeBadge = s.subjectType === 'Optional' 
+                        ? '<span class="badge badge-optional">Optional</span>' 
+                        : '<span class="badge badge-compulsory">Compulsory</span>';
+
+                    body.innerHTML += `
+                        <tr>
+                            <td>${s.subjectName}</td>
+                            <td>${typeBadge}</td>
+                            <td>${s.subjectCode || '-'}</td>
+                            <td><span style="color:#3498db; font-weight:bold;">${s.className}</span></td>
+                            <td>${s.teacher || '-'}</td>
+                            <td><button onclick="window.del('subjects/${s.id}')" style="color:red;border:none;"><i class="fas fa-trash"></i></button></td>
+                        </tr>`;
+                });
+            } else {
+                body.innerHTML = '<tr><td colspan="6" style="text-align:center;">কোনো বিষয় নেই</td></tr>';
+            }
+        });
+
+        window.del = (p) => { if(confirm("মুছে ফেলতে চান?")) remove(ref(db, p)); };
+    </script>
+</body>
+</html>

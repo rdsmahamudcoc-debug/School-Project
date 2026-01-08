@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>পরীক্ষা ব্যবস্থাপনা</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .tab-btn { padding: 10px 20px; border: none; background: #ddd; cursor: pointer; font-weight: bold; }
+        .tab-btn.active { background: #3498db; color: white; }
+        .tab-content { display: none; padding: 20px; border: 1px solid #ddd; background: white; }
+        .tab-content.active { display: block; }
+        .grade-input { width: 60px; padding: 5px; text-align: center; border: 1px solid #ddd; }
+        .template-btn { background: #95a5a6; color: white; border: none; padding: 5px; cursor: pointer; font-size: 11px; margin-right: 5px; }
+        
+        /* ইনপুট গ্রুপ ডিজাইন */
+        .mark-group { background: #f8f9fa; padding: 10px; border-radius: 5px; border: 1px solid #eee; text-align: center; }
+        .mark-group input { width: 80px; padding: 5px; margin-top: 5px; border: 1px solid #ddd; text-align: center; }
+        .mark-group label { font-size: 12px; font-weight: bold; display: block; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="exam_management.html" style="background: #1a252f; border-left: 4px solid #3498db; color: white;">পরীক্ষা (Exam)</a></li>
+            <li><a href="marks_entry.html">মার্কস এন্ট্রি</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left">
+                <div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+                <h3>পরীক্ষা ও পাস মার্ক কনফিগারেশন</h3>
+            </div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            <div class="wrapper" style="box-shadow: none; background: transparent; padding: 0;">
+                
+                <div>
+                    <button class="tab-btn active" onclick="openTab('createExam')">১. নতুন পরীক্ষা</button>
+                    <button class="tab-btn" onclick="openTab('configMarks')">২. মানবণ্টন ও পাস মার্ক</button>
+                    <button class="tab-btn" onclick="openTab('gradingSys')">৩. গ্রেডিং সিস্টেম</button>
+                </div>
+
+                <div id="createExam" class="tab-content active">
+                    <h4 style="margin-bottom: 15px;">নতুন পরীক্ষা যোগ করুন</h4>
+                    <form id="examForm" style="margin-bottom: 30px;">
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="examName" placeholder="Annual Exam 2026" required style="flex: 2; padding: 10px;">
+                            <input type="date" id="examDate" required style="flex: 1; padding: 10px;">
+                            <button type="submit" class="submit-btn" style="margin: 0;">সেভ করুন</button>
+                        </div>
+                    </form>
+                    <h4>পরীক্ষার তালিকা</h4>
+                    <ul id="examList" style="list-style: none; padding: 0;"></ul>
+                </div>
+
+                <div id="configMarks" class="tab-content">
+                    <h4 style="margin-bottom: 10px; color: #e74c3c;">বিষয়ভিত্তিক নম্বর ও পাস মার্ক</h4>
+                    <form id="configForm">
+                        <div class="form-grid">
+                            <div><label>পরীক্ষা</label><select id="confExam" required style="width:100%; padding:8px;"><option value="">লোড হচ্ছে...</option></select></div>
+                            <div><label>ক্লাস</label><select id="confClass" required style="width:100%; padding:8px;"><option value="">লোড হচ্ছে...</option></select></div>
+                            <div><label>বিষয়</label><select id="confSub" required style="width:100%; padding:8px;"><option value="">আগে ক্লাস দিন</option></select></div>
+                        </div>
+
+                        <div style="display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
+                            <div class="mark-group">
+                                <strong style="color: #2980b9;">CQ (সৃজনশীল)</strong>
+                                <div style="display: flex; gap: 5px; margin-top: 5px;">
+                                    <div><label>পূর্ণমান</label><input type="number" id="maxCQ" value="0"></div>
+                                    <div><label style="color:red;">পাস মার্ক</label><input type="number" id="passCQ" value="0"></div>
+                                </div>
+                            </div>
+
+                            <div class="mark-group">
+                                <strong style="color: #d35400;">MCQ (নৈর্ব্যক্তিক)</strong>
+                                <div style="display: flex; gap: 5px; margin-top: 5px;">
+                                    <div><label>পূর্ণমান</label><input type="number" id="maxMCQ" value="0"></div>
+                                    <div><label style="color:red;">পাস মার্ক</label><input type="number" id="passMCQ" value="0"></div>
+                                </div>
+                            </div>
+
+                            <div class="mark-group">
+                                <strong style="color: #27ae60;">Practical</strong>
+                                <div style="display: flex; gap: 5px; margin-top: 5px;">
+                                    <div><label>পূর্ণমান</label><input type="number" id="maxPrac" value="0"></div>
+                                    <div><label style="color:red;">পাস মার্ক</label><input type="number" id="passPrac" value="0"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="text-align: right; margin-top: 15px;">
+                            <button type="submit" class="submit-btn">সেভ কনফিগারেশন</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="gradingSys" class="tab-content">
+                    <h4 style="margin-bottom: 10px; color: #2ecc71;">বিষয়ভিত্তিক গ্রেড রেঞ্জ</h4>
+                    <div class="form-grid" style="margin-bottom: 10px;">
+                        <div><label>পরীক্ষা</label><select id="gradExam" style="width:100%; padding:8px;"><option value="">লোড হচ্ছে...</option></select></div>
+                        <div><label>ক্লাস</label><select id="gradClass" style="width:100%; padding:8px;"><option value="">লোড হচ্ছে...</option></select></div>
+                        <div><label>বিষয়</label><select id="gradSub" style="width:100%; padding:8px;"><option value="">আগে ক্লাস দিন</option></select></div>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <button class="template-btn" onclick="loadTemplate(100)">100 Marks</button>
+                        <button class="template-btn" onclick="loadTemplate(50)">50 Marks</button>
+                        <button class="template-btn" onclick="loadTemplate(25)">25 Marks</button>
+                    </div>
+                    <form id="gradingForm">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead><tr style="background:#eee;"><th>From</th><th>To</th><th>Grade</th><th>Point</th></tr></thead>
+                            <tbody id="gradeTableBody"></tbody>
+                        </table>
+                        <button type="submit" class="submit-btn" style="margin-top:10px;">গ্রেড রুলস সেভ</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar(){document.getElementById('sidebar').classList.toggle('active');}
+        window.openTab = (id) => {
+            document.querySelectorAll('.tab-content').forEach(d => d.style.display='none');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).style.display='block';
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+
+    <script type="module">
+        import { db, ref, push, set, onValue, remove } from './firebase-config.js';
+
+        // Loaders
+        onValue(ref(db, 'exams'), snap => {
+            const l = document.getElementById('examList'); const c = document.getElementById('confExam'); const g = document.getElementById('gradExam');
+            let o = "<option value=''>পরীক্ষা সিলেক্ট করুন</option>"; l.innerHTML="";
+            if(snap.val()) Object.values(snap.val()).forEach(ex => {
+                l.innerHTML += `<li>${ex.examName} <button onclick="window.del('exams/${ex.id}')" style="color:red;border:none;">X</button></li>`;
+                o += `<option value="${ex.examName}">${ex.examName}</option>`;
+            });
+            c.innerHTML = o; g.innerHTML = o;
+        });
+        onValue(ref(db, 'classes'), snap => {
+            let o = "<option value=''>ক্লাস...</option>";
+            if(snap.val()) Object.values(snap.val()).forEach(c => o += `<option>${c.className}</option>`);
+            document.getElementById('confClass').innerHTML = o; document.getElementById('gradClass').innerHTML = o;
+        });
+        
+        const loadSub = (cl, id) => {
+            const el = document.getElementById(id); el.innerHTML = "<option value=''>বিষয়...</option>";
+            onValue(ref(db, 'subjects'), s => {
+                if(s.val()) Object.values(s.val()).forEach(sub => {
+                    if(sub.className === cl) el.innerHTML += `<option>${sub.subjectName}</option>`;
+                });
+            }, {onlyOnce: true});
+        };
+        document.getElementById('confClass').addEventListener('change', function() { loadSub(this.value, 'confSub'); });
+        document.getElementById('gradClass').addEventListener('change', function() { loadSub(this.value, 'gradSub'); });
+
+        // Save Config (With Pass Marks)
+        document.getElementById('configForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const ex=document.getElementById('confExam').value, cl=document.getElementById('confClass').value, sb=document.getElementById('confSub').value;
+            set(ref(db, `exam_config/${ex}/${cl}/${sb}`), {
+                maxCQ: document.getElementById('maxCQ').value, passCQ: document.getElementById('passCQ').value,
+                maxMCQ: document.getElementById('maxMCQ').value, passMCQ: document.getElementById('passMCQ').value,
+                maxPrac: document.getElementById('maxPrac').value, passPrac: document.getElementById('passPrac').value
+            }).then(()=>alert("পাস মার্ক সহ কনফিগারেশন সেভ হয়েছে!"));
+        });
+
+        // Grading Logic
+        // টেমপ্লেট লোড করার ফাংশন (সংশোধিত)
+        window.loadTemplate = (total) => {
+            const tbody = document.getElementById('gradeTableBody');
+            tbody.innerHTML = "";
+            let data = [];
+
+            // ১০০ নম্বরের গ্রেডিং লজিক
+            if (total === 100) {
+                data = [
+                    {min: 80, max: 100, g: 'A+', p: 5.00},
+                    {min: 70, max: 79, g: 'A', p: 4.00},
+                    {min: 60, max: 69, g: 'A-', p: 3.50},
+                    {min: 50, max: 59, g: 'B', p: 3.00},
+                    {min: 40, max: 49, g: 'C', p: 2.00},
+                    {min: 33, max: 39, g: 'D', p: 1.00},
+                    {min: 0, max: 32, g: 'F', p: 0.00}
+                ];
+            } 
+            // ৫০ নম্বরের গ্রেডিং লজিক
+            else if (total === 50) {
+                data = [
+                    {min: 40, max: 50, g: 'A+', p: 5.00},
+                    {min: 35, max: 39, g: 'A', p: 4.00},
+                    {min: 30, max: 34, g: 'A-', p: 3.50},
+                    {min: 25, max: 29, g: 'B', p: 3.00},
+                    {min: 20, max: 24, g: 'C', p: 2.00},
+                    {min: 17, max: 19, g: 'D', p: 1.00},
+                    {min: 0, max: 16, g: 'F', p: 0.00}
+                ];
+            } 
+            // ২৫ নম্বরের গ্রেডিং লজিক
+            else if (total === 25) {
+                data = [
+                    {min: 20, max: 25, g: 'A+', p: 5.00},
+                    {min: 17.5, max: 19, g: 'A', p: 4.00}, // ১৭.৫ বা ১৮ ধরা হয়
+                    {min: 15, max: 17, g: 'A-', p: 3.50},
+                    {min: 12.5, max: 14, g: 'B', p: 3.00},
+                    {min: 10, max: 12, g: 'C', p: 2.00},
+                    {min: 8, max: 9, g: 'D', p: 1.00},
+                    {min: 0, max: 7, g: 'F', p: 0.00}
+                ];
+            }
+
+            // টেবিলে রো বসানো
+            data.forEach(d => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><input type="number" class="grade-input min" value="${d.min}"></td>
+                        <td><input type="number" class="grade-input max" value="${d.max}"></td>
+                        <td><input type="text" class="grade-input letter" value="${d.g}"></td>
+                        <td><input type="number" class="grade-input point" value="${d.p}"></td>
+                    </tr>
+                `;
+            });
+        };
+
+        document.getElementById('gradingForm').addEventListener('submit', (e)=>{
+            e.preventDefault();
+            const ex=document.getElementById('gradExam').value, cl=document.getElementById('gradClass').value, sb=document.getElementById('gradSub').value;
+            const r=[]; document.querySelectorAll('#gradeTableBody tr').forEach(row=>{
+                r.push({min:parseFloat(row.querySelector('.min').value), max:parseFloat(row.querySelector('.max').value), grade:row.querySelector('.letter').value});
+            });
+            set(ref(db, `exam_grades/${ex}/${cl}/${sb}`), r).then(()=>alert("গ্রেড রুলস সেভ!"));
+        });
+
+        document.getElementById('examForm').addEventListener('submit', (e)=>{
+            e.preventDefault();
+            const r=push(ref(db,'exams'));
+            set(r,{examName:document.getElementById('examName').value, date:document.getElementById('examDate').value, id:r.key});
+        });
+        window.del=(p)=>remove(ref(db,p));
+    </script>
+</body>
+</html>

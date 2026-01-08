@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - School ERP</title>
+    <link rel="stylesheet" href="style.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="school.html" style="background:#1a252f; border-left:4px solid #3498db;"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li>
+    <a href="teacher_list.html"><i class="fas fa-chalkboard-teacher"></i> শিক্ষক তালিকা</a>
+</li>
+
+            <li>
+                <button class="dropdown-btn"><span><i class="fas fa-user-graduate"></i> স্টুডেন্ট</span><i class="fas fa-caret-down"></i></button>
+                <div class="dropdown-container">
+                    <a href="admission.html">নতুন ভর্তি (Admission)</a> <a href="student_list.html">স্টুডেন্ট লিস্ট</a>
+                    <a href="id_card.html">আইডি কার্ড</a>
+
+
+                </div>
+            </li>
+            
+            <li><a href="#"><i class="fas fa-cogs"></i> সেটিংস</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left">
+                <div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+                <h3>ড্যাশবোর্ড</h3>
+            </div>
+            <div class="user-info"><span>এডমিন</span><div class="user-avatar"><i class="fas fa-user"></i></div></div>
+        </header>
+
+        <div class="dashboard-cards">
+            <div class="card"><div><h3>১৫০০</h3><p>মোট ছাত্র</p></div><i class="fas fa-users"></i></div>
+            <div class="card" style="border-left-color: #2ecc71;"><div><h3>৪৫</h3><p>শিক্ষক</p></div><i class="fas fa-chalkboard-teacher"></i></div>
+            <div class="card" style="border-left-color: #e74c3c;"><div><h3>৳ ৫০,০০০</h3><p>আয়</p></div><i class="fas fa-wallet"></i></div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        var dropdowns = document.getElementsByClassName("dropdown-btn");
+        for (var i = 0; i < dropdowns.length; i++) {
+            dropdowns[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                content.style.display = content.style.display === "block" ? "none" : "block";
+                this.querySelector(".fa-caret-down").classList.toggle("rotate");
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>স্টুডেন্ট লিস্ট</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .bg-green { background: #e8f8f5; color: #2ecc71; border: 1px solid #2ecc71; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: #fff; margin: 5% auto; padding: 20px; width: 60%; border-radius: 8px; position: relative; }
+        .close-btn { float: right; font-size: 28px; cursor: pointer; }
+        .student-img-circle { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; }
+        .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .section-header { background: #f1f2f6; padding: 5px 10px; margin: 15px 0 10px 0; font-weight: bold; color: #3498db; border-left: 3px solid #3498db; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="add_student.html"><i class="fas fa-plus-circle"></i> নতুন ভর্তি</a></li>
+            <li><a href="student_list.html" style="background: #1a252f; border-left: 4px solid #3498db; color: white;"><i class="fas fa-user-graduate"></i> স্টুডেন্ট লিস্ট</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header><div class="header-left"><div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div><h3>স্টুডেন্ট তালিকা</h3></div></header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            <div class="wrapper">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3>সকল ছাত্র-ছাত্রী</h3>
+                    <input type="text" id="searchInput" placeholder="নাম দিয়ে খুঁজুন..." style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 250px;">
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ছবি</th>
+                                <th>নাম & আইডি</th>
+                                <th>ক্লাস</th>
+                                <th>রোল</th>
+                                <th>ফোন</th>
+                                <th>অ্যাকশন</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody">
+                            <tr><td colspan="6" style="text-align: center;">লোড হচ্ছে...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        function closeModal() { document.getElementById('viewModal').style.display = "none"; }
+    </script>
+
+    <script type="module">
+        import { db, ref, onValue, remove } from './firebase-config.js';
+
+        const tableBody = document.getElementById('studentTableBody');
+        let allStudents = {};
+
+        onValue(ref(db, 'students'), (snapshot) => {
+            tableBody.innerHTML = "";
+            const data = snapshot.val();
+            allStudents = data;
+
+            if (data) {
+                Object.values(data).forEach((student) => {
+                    const row = `
+                        <tr>
+                            <td><img src="${student.photo || 'https://via.placeholder.com/40'}" class="student-img-circle" onerror="this.src='https://via.placeholder.com/40'"></td>
+                            <td><strong>${student.name}</strong><br><small>ID: ${student.id.substring(1, 6)}</small></td>
+                            <td><span class="badge bg-green">${student.className}</span></td>
+                            <td>${student.roll || '-'}</td>
+                            <td>${student.phone}</td>
+                            <td>
+                                <button onclick="window.viewStudent('${student.id}')" style="color:blue; border:none; background:none; cursor:pointer;"><i class="fas fa-eye"></i></button>
+                                <button onclick="window.deleteStudent('${student.id}')" style="color:red; border:none; background:none; cursor:pointer; margin-left:10px;"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                });
+            } else {
+                tableBody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>কোনো ডাটা নেই!</td></tr>";
+            }
+        });
+
+        window.viewStudent = function(id) {
+            const student = allStudents[id];
+            if (student) {
+                document.getElementById('modalBody').innerHTML = `
+                    <div style="text-align: center;">
+                         <img src="${student.photo}" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid #3498db; object-fit: cover;">
+                         <h3>${student.name}</h3>
+                    </div>
+                    <div class="section-header">ব্যক্তিগত তথ্য</div>
+                    <div class="details-grid">
+                        <div><strong>জন্ম তারিখ:</strong> ${student.dob || '-'}</div>
+                        <div><strong>রক্তের গ্রুপ:</strong> ${student.bloodGroup || '-'}</div>
+                        <div><strong>পিতার নাম:</strong> ${student.fatherName}</div>
+                        <div><strong>ফোন:</strong> ${student.phone}</div>
+                    </div>
+                `;
+                document.getElementById('viewModal').style.display = "block";
+            }
+        };
+
+        window.deleteStudent = function(id) {
+            if (confirm("আপনি কি নিশ্চিত?")) {
+                remove(ref(db, 'students/' + id)).then(() => alert("ডিলিট হয়েছে!"));
+            }
+        };
+    </script>
+</body>
+</html>

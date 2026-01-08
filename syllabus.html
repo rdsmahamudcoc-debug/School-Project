@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সিলেবাস</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            
+            <li>
+                <button class="dropdown-btn active"><span><i class="fas fa-book"></i> একাডেমিক</span><i class="fas fa-caret-down rotate"></i></button>
+                <div class="dropdown-container" style="display: block;">
+                    <a href="routine.html">ক্লাস রুটিন</a>
+                    <a href="syllabus.html" style="color: white;">সিলেবাস</a>
+                    <a href="#">বিষয় (Subjects)</a>
+                </div>
+            </li>
+            
+            <li><a href="student_list.html"><i class="fas fa-user-graduate"></i> স্টুডেন্ট</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left">
+                <div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+                <h3>সিলেবাস ও পাঠ্যক্রম</h3>
+            </div>
+            <div class="user-info"><span>এডমিন</span><div class="user-avatar"><i class="fas fa-user"></i></div></div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            
+            <div class="wrapper" style="margin-bottom: 30px;">
+                <h4 style="border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">নতুন সিলেবাস আপলোড</h4>
+                <form>
+                    <div class="form-grid">
+                        <div>
+                            <label>সিলেবাসের শিরোনাম *</label>
+                            <input type="text" placeholder="যেমন: বার্ষিক পরীক্ষার সিলেবাস - ২০২৬" required>
+                        </div>
+                        <div>
+                            <label>ক্লাস নির্বাচন করুন</label>
+                            <select><option>Class 6</option><option>Class 7</option><option>Class 8</option></select>
+                        </div>
+                        <div>
+                            <label>বিষয় (ঐচ্ছিক)</label>
+                            <select><option>সকল বিষয়</option><option>বাংলা</option><option>গণিত</option></select>
+                        </div>
+                        <div>
+                            <label>ফাইল আপলোড (PDF/Image)</label>
+                            <input type="file" style="padding: 7px;">
+                        </div>
+                    </div>
+                    <div style="text-align: right; margin-top: 15px;">
+                        <button type="submit" class="submit-btn"><i class="fas fa-cloud-upload-alt"></i> আপলোড করুন</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="wrapper">
+                <h4>ডাউনলোড সিলেবাস</h4>
+                
+                <div style="margin: 15px 0; display: flex; gap: 10px;">
+                    <select style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option>সকল ক্লাস</option>
+                        <option>Class 6</option>
+                    </select>
+                    <button class="btn btn-view" style="padding: 8px 15px;">ফিল্টার</button>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>শিরোনাম</th>
+                                <th>ক্লাস</th>
+                                <th>বিষয়</th>
+                                <th>আপলোড তারিখ</th>
+                                <th>অ্যাকশন</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>০১</td>
+                                <td style="font-weight: bold; color: #2c3e50;">বার্ষিক পরীক্ষার সিলেবাস ২০২৬</td>
+                                <td>Class 10</td>
+                                <td>সকল বিষয়</td>
+                                <td>১০ জানুয়ারী ২০২৬</td>
+                                <td>
+                                    <button class="btn" style="background: #e74c3c; color: white;"><i class="fas fa-file-pdf"></i> PDF ডাউনলোড</button>
+                                    <button class="btn btn-delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>০২</td>
+                                <td style="font-weight: bold; color: #2c3e50;">অর্ধ-বার্ষিক সিলেবাস (গণিত)</td>
+                                <td>Class 8</td>
+                                <td>গণিত</td>
+                                <td>০৫ জানুয়ারী ২০২৬</td>
+                                <td>
+                                    <button class="btn" style="background: #e74c3c; color: white;"><i class="fas fa-file-pdf"></i> PDF ডাউনলোড</button>
+                                    <button class="btn btn-delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        var dropdowns = document.getElementsByClassName("dropdown-btn");
+        for (var i = 0; i < dropdowns.length; i++) {
+            dropdowns[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                content.style.display = content.style.display === "block" ? "none" : "block";
+                this.querySelector(".fa-caret-down").classList.toggle("rotate");
+            });
+        }
+    </script>
+</body>
+</html>

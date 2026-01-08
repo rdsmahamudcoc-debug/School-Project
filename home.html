@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>স্কুল হোমপেজ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* আগের CSS গুলো ঠিক থাকবে, শুধু ম্যাপের জন্য নিচেরটুকু আপডেট করুন */
+        :root { --primary-color: #2c3e50; --accent-color: #2ecc71; --text-color: #333; --light-bg: #f9f9f9; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #fff; color: var(--text-color); }
+        a { text-decoration: none; color: inherit; cursor: pointer; }
+
+        /* হেডার ও নেভিগেশন */
+        .top-bar { background: var(--primary-color); color: white; padding: 10px 5%; font-size: 14px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        .hero-header { background: #fff; padding: 20px 5%; display: flex; align-items: center; gap: 20px; border-bottom: 3px solid var(--accent-color); }
+        .logo-img { width: 80px; height: 80px; object-fit: contain; }
+        .school-title h1 { font-size: 28px; color: var(--primary-color); margin: 0; }
+        .school-title p { color: #666; font-size: 14px; margin: 5px 0 0; }
+
+        nav { background: var(--primary-color); padding: 0 5%; position: sticky; top: 0; z-index: 1000; }
+        .nav-links { list-style: none; display: flex; flex-wrap: wrap; }
+        .nav-links li a { display: block; padding: 15px 20px; color: white; font-weight: bold; transition: 0.3s; }
+        .nav-links li a:hover, .nav-links li a.active { background: var(--accent-color); }
+
+        /* ব্রেকিং নিউজ */
+        .news-ticker { background: #333; color: white; display: flex; }
+        .news-title { background: var(--accent-color); padding: 10px 20px; font-weight: bold; }
+        .news-content { padding: 10px; flex-grow: 1; overflow: hidden; white-space: nowrap; }
+
+        /* সেকশন লেআউট */
+        .page-section { display: none; padding: 40px 5%; max-width: 1200px; margin: auto; animation: fadeIn 0.5s; }
+        .page-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .section-title { text-align: center; margin-bottom: 30px; color: var(--primary-color); text-transform: uppercase; border-bottom: 2px solid #ddd; display: inline-block; padding-bottom: 5px; }
+        
+        /* কার্ডস ও গ্রিড */
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .speech-card { background: var(--light-bg); padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .speech-img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--accent-color); margin-bottom: 15px; }
+        
+        .notice-board { background: #fff; border: 1px solid #ddd; height: 350px; overflow-y: auto; }
+        .notice-item { padding: 10px; border-bottom: 1px solid #eee; display: flex; gap: 10px; }
+        .date-box { background: var(--primary-color); color: white; padding: 5px 10px; border-radius: 4px; font-size: 12px; height: fit-content; min-width: 85px; text-align: center; }
+        .notice-link { color: var(--primary-color); font-weight: bold; font-size: 13px; }
+
+        .teacher-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .t-card { background: white; border: 1px solid #eee; text-align: center; padding: 20px; border-radius: 8px; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        
+        .result-search-box { background: var(--primary-color); color: white; padding: 40px; text-align: center; border-radius: 8px; margin: 40px 0; }
+        .result-search-box input { padding: 10px; width: 250px; border: none; border-radius: 4px; }
+        .result-search-box button { padding: 10px 20px; background: var(--accent-color); border: none; color: white; cursor: pointer; border-radius: 4px; font-weight: bold; }
+
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .gallery-item img { width: 100%; height: 200px; object-fit: cover; border-radius: 4px; transition: 0.3s; }
+
+        /* ফুটার */
+        footer { background: #222; color: #ccc; padding: 40px 5%; margin-top: 50px; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        .footer-box h4 { color: white; margin-bottom: 20px; border-bottom: 2px solid var(--accent-color); display: inline-block; }
+        .copyright { text-align: center; padding: 20px; background: #111; font-size: 13px; margin-top: 30px; }
+        
+        /* ========= ম্যাপ ফিক্স ========= */
+        .map-container iframe {
+            width: 100% !important;
+            height: 300px !important;
+            border-radius: 8px;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <span><i class="fas fa-phone"></i> <span id="hContact">Loading...</span></span>
+        <span><i class="fas fa-envelope"></i> info@school.com</span>
+        <span><i class="fas fa-map-marker-alt"></i> <span id="hAddress">Loading...</span></span>
+    </div>
+
+    <header class="hero-header">
+        <img src="https://via.placeholder.com/80" alt="Logo" class="logo-img" id="hLogo">
+        <div class="school-title">
+            <h1 id="hSchoolName">স্কুলের নাম লোড হচ্ছে...</h1>
+            <p>EIIN: <span id="hEiin">...</span> | স্থাপিত: ১৯৯০</p>
+        </div>
+    </header>
+
+    <nav>
+        <ul class="nav-links">
+            <li><a onclick="showPage('home')" class="active" id="nav-home">হোম</a></li>
+            <li><a onclick="showPage('teachers')" id="nav-teachers">শিক্ষকবৃন্দ</a></li>
+            <li><a onclick="showPage('students')" id="nav-students">ছাত্র-ছাত্রী</a></li>
+            <li><a onclick="showPage('result')" id="nav-result">ফলাফল</a></li>
+            <li><a onclick="showPage('notices')" id="nav-notices">নোটিশ</a></li>
+            <li><a onclick="showPage('gallery')" id="nav-gallery">গ্যালারি</a></li>
+            <li><a onclick="showPage('contact')" id="nav-contact">যোগাযোগ</a></li>
+        </ul>
+    </nav>
+
+    <div class="news-ticker">
+        <div class="news-title">ব্রেকিং নিউজ</div>
+        <div class="news-content">
+            <marquee id="marqueeText">স্বাগতম আমাদের স্কুল ওয়েবসাইটে...</marquee>
+        </div>
+    </div>
+
+    <section id="page-home" class="page-section active">
+        <div class="grid-2">
+            <div>
+                <center><h3 class="section-title">বানী</h3></center>
+                <div class="speech-card" style="margin-bottom: 20px;">
+                    <img src="https://via.placeholder.com/150" id="hmImg" class="speech-img">
+                    <h4 id="hmName">প্রধান শিক্ষক</h4>
+                    <p class="speech-text" id="hmSpeech">"বানী লোড হচ্ছে..."</p>
+                </div>
+                <div class="speech-card">
+                    <img src="https://via.placeholder.com/150" id="chImg" class="speech-img">
+                    <h4 id="chName">সভাপতি</h4>
+                    <p class="speech-text" id="chSpeech">"বানী লোড হচ্ছে..."</p>
+                </div>
+            </div>
+            <div>
+                <center><h3 class="section-title">সাম্প্রতিক নোটিশ</h3></center>
+                <div class="notice-board" id="homeNoticeList">
+                    <div style="padding:20px; text-align:center;">লোড হচ্ছে...</div>
+                </div>
+                <center><h3 class="section-title" style="margin-top: 30px;">আসন্ন ইভেন্ট</h3></center>
+                <ul id="publicEventList" style="list-style: none; padding: 0;"></ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="page-teachers" class="page-section"><center><h3 class="section-title">শিক্ষকবৃন্দ</h3></center><div class="teacher-grid" id="publicTeacherList"><p style="text-align: center;">লোড হচ্ছে...</p></div></section>
+    
+    <section id="page-students" class="page-section"><center><h3 class="section-title">ছাত্র-ছাত্রী</h3></center><div style="text-align: center; margin-bottom: 20px;"><select id="publicClassSelect" style="padding: 10px; width: 200px;"><option value="">ক্লাস নির্বাচন করুন</option></select><button onclick="loadPublicStudents()" style="padding: 10px 20px; background: var(--primary-color); color: white; border: none; cursor: pointer;">দেখুন</button></div><div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; display: none;" id="publicStudentTable"><thead><tr style="background: #eee; text-align: left;"><th style="padding:10px;">রোল</th><th style="padding:10px;">নাম</th><th style="padding:10px;">সেকশন</th></tr></thead><tbody id="publicStudentBody"></tbody></table></div></section>
+
+    <section id="page-result" class="page-section"><div class="result-search-box"><h2><i class="fas fa-search"></i> ফলাফল খুঁজুন</h2><input type="text" id="searchId" placeholder="Student ID"><button onclick="searchResult()">সার্চ করুন</button><div id="resultOutput" style="margin-top: 20px; background: white; color: black; padding: 10px; display: none; border-radius: 5px;"></div></div></section>
+
+    <section id="page-notices" class="page-section"><center><h3 class="section-title">সকল নোটিশ</h3></center><div class="notice-board" id="fullNoticeList" style="height: auto; max-height: none;"></div></section>
+
+    <section id="page-gallery" class="page-section"><center><h3 class="section-title">ফটো গ্যালারি</h3></center><div class="gallery-grid"><div class="gallery-item"><img src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=500"></div><div class="gallery-item"><img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=500"></div><div class="gallery-item"><img src="https://images.unsplash.com/photo-1577896335477-2858506f970d?w=500"></div></div></section>
+
+    <section id="page-contact" class="page-section">
+        <center><h3 class="section-title">যোগাযোগ</h3></center>
+        <div class="footer-grid" style="color: #333;">
+            <div class="footer-box">
+                <h4>ঠিকানা</h4>
+                <p><i class="fas fa-map-marker-alt"></i> <span id="cAddress">Loading...</span></p>
+                <p><i class="fas fa-phone"></i> <span id="cContact">Loading...</span></p>
+                <p><i class="fas fa-envelope"></i> info@school.com</p>
+            </div>
+            <div class="footer-box map-box">
+                <h4>গুগল ম্যাপ</h4>
+                <div id="contactMapContainer" class="map-container">
+                    <p style="background:#eee; padding:20px; text-align:center;">ম্যাপ লোড হয়নি। এডমিন প্যানেল থেকে Embed Code দিন।</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-box">
+                <h4>ফুটার ম্যাপ</h4>
+                <div id="footerMapContainer" class="map-container"></div>
+            </div>
+            <div class="footer-box">
+                <h4>গুরুত্বপূর্ণ লিংক</h4>
+                <ul style="list-style: none;">
+                    <li><a onclick="showPage('home')">হোম</a></li>
+                    <li><a onclick="showPage('notices')">নোটিশ</a></li>
+                    <li><a onclick="showPage('result')">রেজাল্ট</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">© 2026 স্মার্ট স্কুল ম্যানেজমেন্ট সিস্টেম</div>
+    </footer>
+
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            document.getElementById('nav-' + pageId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+    </script>
+
+    <script type="module">
+        import { db, ref, onValue } from './firebase-config.js';
+
+        onValue(ref(db, 'website_settings/general'), snap => {
+            const d = snap.val();
+            if(d) {
+                document.getElementById('hSchoolName').innerText = d.schoolName || 'স্কুলের নাম';
+                document.getElementById('hEiin').innerText = d.eiin || '---';
+                document.getElementById('hAddress').innerText = d.address || '';
+                document.getElementById('cAddress').innerText = d.address || '';
+                document.getElementById('hContact').innerText = d.contact || '';
+                document.getElementById('cContact').innerText = d.contact || '';
+                if(d.logo) document.getElementById('hLogo').src = d.logo;
+
+                // ============================================
+                // ১. ম্যাপ ফিক্স (innerHTML ব্যবহার করে)
+                // ============================================
+                if(d.mapLink) {
+                    // Contact Page Map
+                    const cMapBox = document.getElementById('contactMapContainer');
+                    if(cMapBox) cMapBox.innerHTML = d.mapLink;
+
+                    // Footer Map
+                    const fMapBox = document.getElementById('footerMapContainer');
+                    if(fMapBox) fMapBox.innerHTML = d.mapLink;
+                }
+            }
+        });
+
+        // বাকি ডাটা লোড লজিক (বানী, নোটিশ, ইত্যাদি)...
+        onValue(ref(db, 'website_settings/speeches'), snap => {
+            const d = snap.val();
+            if(d) {
+                if(d.headmaster) { document.getElementById('hmName').innerText = d.headmaster.name; document.getElementById('hmSpeech').innerText = d.headmaster.speech; if(d.headmaster.img) document.getElementById('hmImg').src = d.headmaster.img; }
+                if(d.chairman) { document.getElementById('chName').innerText = d.chairman.name; document.getElementById('chSpeech').innerText = d.chairman.speech; if(d.chairman.img) document.getElementById('chImg').src = d.chairman.img; }
+            }
+        });
+        onValue(ref(db, 'notices'), snap => {
+            const homeList = document.getElementById('homeNoticeList'); const fullList = document.getElementById('fullNoticeList'); const marquee = document.getElementById('marqueeText');
+            homeList.innerHTML = ""; fullList.innerHTML = ""; let latestNews = "";
+            if(snap.val()) {
+                const notices = Object.values(snap.val()).reverse();
+                notices.forEach((n, index) => {
+                    const html = `<div class="notice-item"><div class="date-box">${n.date}</div><div><div style="font-weight:bold;">${n.title}</div>${n.link ? `<a href="${n.link}" target="_blank" class="notice-link">বিস্তারিত</a>` : ''}</div></div>`;
+                    fullList.innerHTML += html; if(index < 5) homeList.innerHTML += html; latestNews += ` *** ${n.title} `;
+                });
+                marquee.innerText = latestNews;
+            } else { homeList.innerHTML="<p>নোটিশ নেই</p>"; fullList.innerHTML="<p>নোটিশ নেই</p>"; }
+        });
+        onValue(ref(db, 'events'), snap => {
+            const list = document.getElementById('publicEventList'); list.innerHTML = "";
+            if(snap.val()) Object.values(snap.val()).forEach(ev => list.innerHTML += `<li><b>${ev.date}:</b> ${ev.name}</li>`);
+        });
+        onValue(ref(db, 'teachers'), snap => {
+            const grid = document.getElementById('publicTeacherList'); grid.innerHTML = "";
+            if(snap.val()) Object.values(snap.val()).forEach(t => grid.innerHTML += `<div class="t-card"><h3>${t.name}</h3><p>${t.designation}</p><p>${t.subject || ''}</p></div>`);
+        });
+        onValue(ref(db, 'classes'), snap => {
+            const sel = document.getElementById('publicClassSelect');
+            if(snap.val()) Object.values(snap.val()).forEach(c => { const opt = document.createElement('option'); opt.value = c.className; opt.innerText = c.className; sel.appendChild(opt); });
+        });
+        window.loadPublicStudents = () => {
+            const cl = document.getElementById('publicClassSelect').value; if(!cl) return alert("ক্লাস দিন");
+            const tbody = document.getElementById('publicStudentBody'); document.getElementById('publicStudentTable').style.display = 'table'; tbody.innerHTML = '<tr><td>লোড হচ্ছে...</td></tr>';
+            onValue(ref(db, 'students'), snap => {
+                tbody.innerHTML = ""; if(snap.val()) {
+                    const st = Object.values(snap.val()).filter(s => s.className === cl);
+                    if(st.length > 0) st.forEach(s => tbody.innerHTML += `<tr><td>${s.roll}</td><td>${s.name}</td><td>${s.section||'-'}</td></tr>`);
+                    else tbody.innerHTML = '<tr><td>ছাত্র নেই</td></tr>';
+                }
+            }, {onlyOnce: true});
+        };
+        window.searchResult = () => { document.getElementById('resultOutput').style.display='block'; document.getElementById('resultOutput').innerText="রেজাল্ট পাবলিশ হয়নি।"; };
+    </script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admission Form - EduSphere</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: "DM Sans", system-ui, -apple-system;
+      background: #0a0f2a;
+      color: #e5e7eb;
+      margin: 0; padding: 0;
+    }
+    .container {
+      max-width: 700px;
+      margin: 2rem auto;
+      background: #111a3c;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.8);
+    }
+    h1 {
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    label {
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      display: block;
+    }
+    input, select, textarea {
+      padding: 0.5rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid #374151;
+      background: #0f172a;
+      color: #e5e7eb;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s ease;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #4ade80;
+      box-shadow: 0 0 5px #4ade80;
+      background: #111a3c;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    button {
+      background: #4ade80;
+      color: #022c22;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      font-size: 1rem;
+      transition: background 0.3s ease;
+      align-self: flex-start;
+    }
+    button:hover {
+      background: #22c55e;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main">
+    <h1>Admission Form</h1>
+    <form>
+      <label for="fullName">Full Name</label>
+      <input type="text" id="fullName" name="fullName" placeholder="Enter student's full name" required />
+
+      <label for="dob">Date of Birth</label>
+      <input type="date" id="dob" name="dob" required />
+
+      <label for="classSelect">Class to Admit</label>
+      <select id="classSelect" name="classSelect" required>
+        <option value="">Select Class</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+      </select>
+
+      <label for="guardianName">Guardian's Name</label>
+      <input type="text" id="guardianName" name="guardianName" placeholder="Enter guardian's name" required />
+
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" name="phone" placeholder="+8801XXXXXXXXX" required />
+
+      <label for="address">Address</label>
+      <textarea id="address" name="address" placeholder="Enter full address" required></textarea>
+
+      <button type="submit">Submit Admission</button>
+    </form>
+  </div>
+</body>
+</html>

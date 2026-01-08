@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admit Card Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Container styling for horizontal scroll on mobile */
+        .admit-container { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 30px; 
+            margin-top: 20px;
+            width: 100%;
+            overflow-x: auto; /* Mobiler jonno scroll bar */
+            padding-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        .admit-card { 
+            width: 750px; 
+            background: #fff; 
+            border: 4px double #2c3e50; 
+            padding: 25px; 
+            position: relative; 
+            font-family: 'Segoe UI', sans-serif; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+            page-break-after: always; 
+            box-sizing: border-box; 
+            flex-shrink: 0; /* Card jate choto na hoye jay */
+        }
+
+        .card-header { 
+            text-align: center; 
+            border-bottom: 2px solid #2c3e50; 
+            padding-bottom: 10px; 
+            margin-bottom: 20px; 
+        }
+
+        .school-name { font-size: 24px; font-weight: bold; color: #2c3e50; text-transform: uppercase; }
+        .exam-title { 
+            font-size: 18px; 
+            font-weight: bold; 
+            color: #e74c3c; 
+            border: 1px solid #e74c3c; 
+            padding: 2px 15px; 
+            border-radius: 5px; 
+            margin-top: 5px; 
+            display: inline-block; 
+        }
+
+        /* Student Info Section */
+        .student-info { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start; 
+            margin-bottom: 15px; 
+            width: 100%; 
+        }
+
+        .info-left { flex: 1; }
+        .info-right { width: 120px; text-align: right; }
+
+        .photo-box { 
+            width: 110px; 
+            height: 130px; 
+            border: 1px solid #333; 
+            overflow: hidden; 
+            background: #f9f9f9; 
+        }
+        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .info-table { width: 100%; border-collapse: collapse; }
+        .info-table td { padding: 4px 0; font-size: 15px; color: #333; }
+        .info-table b { width: 100px; display: inline-block; color: #000; }
+
+        .routine-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .routine-table th, .routine-table td { border: 1px solid #333; padding: 8px; text-align: center; font-size: 14px; }
+        .routine-table th { background: #f2f2f2; }
+
+        .footer-section { display: flex; justify-content: space-between; margin-top: 50px; }
+        .sign-line { border-top: 1px solid #333; width: 160px; margin-top: 35px; text-align: center; font-size: 13px; font-weight: bold; }
+
+        .instructions { font-size: 11px; margin-top: 20px; border-top: 1px dashed #777; padding-top: 10px; color: #444; }
+
+        @media print {
+            .sidebar, header, .filter-box { display: none !important; }
+            .main-content { margin: 0; width: 100%; padding: 0; }
+            body { background: #fff; }
+            .admit-container { display: block; overflow: visible; }
+            .admit-card { border: 2px solid #000; margin: 0 auto 30px auto; box-shadow: none; width: 100%; }
+        }
+
+        /* Mobile special filter adjustment */
+        @media screen and (max-width: 768px) {
+            .admit-container { align-items: flex-start; }
+            .content-area { padding-left: 10px; padding-right: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> SMART SCHOOL</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="student_list.html"><i class="fas fa-user-graduate"></i> Student List</a></li>
+            <li><a href="id_card.html"><i class="fas fa-id-card"></i> ID Card</a></li>
+            <li><a href="admit_card.html" style="background: #1a252f; border-left: 4px solid #3498db; color: white;"><i class="fas fa-file-alt"></i> Admit Card</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left">
+                <div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+                <h3>Admit Card Generation</h3>
+            </div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            <div class="wrapper filter-box" style="margin-bottom: 30px;">
+                <h4 style="margin-bottom: 15px; color: #3498db;">Filter Options</h4>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <label>Exam Name</label>
+                        <select id="examSelect" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"></select>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <label>Select Class</label>
+                        <select id="classFilter" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="">All Classes</option>
+                            <option value="Class 6">Class 6</option>
+                            <option value="Class 7">Class 7</option>
+                            <option value="Class 8">Class 8</option>
+                            <option value="Class 9">Class 9</option>
+                            <option value="Class 10">Class 10</option>
+                        </select>
+                    </div>
+                    <div style="align-self: flex-end; display: flex; gap: 10px;">
+                        <button id="loadBtn" class="submit-btn" style="margin: 0;"><i class="fas fa-sync-alt"></i> Generate</button>
+                        <button onclick="window.print()" class="submit-btn" style="background: #34495e; margin: 0;"><i class="fas fa-print"></i> Print</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admit-container" id="admitContainer">
+                <p style="color: #777;">Please select class & exam to generate admit cards.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }</script>
+
+    <script type="module">
+        import { db, ref, onValue } from './firebase-config.js';
+
+        // Load Exam List
+        onValue(ref(db, 'exams'), (snapshot) => {
+            const data = snapshot.val();
+            const examSelect = document.getElementById('examSelect');
+            examSelect.innerHTML = '<option value="">Select Exam...</option>';
+            if (data) {
+                Object.values(data).forEach(exam => {
+                    examSelect.innerHTML += `<option value="${exam.examName}">${exam.examName} (${exam.session})</option>`;
+                });
+            }
+        });
+
+        // Admit Card Generation
+        const loadBtn = document.getElementById('loadBtn');
+        loadBtn.addEventListener('click', () => {
+            const selectedClass = document.getElementById('classFilter').value;
+            const examName = document.getElementById('examSelect').value;
+
+            if(!examName) { alert("Please select an exam!"); return; }
+
+            onValue(ref(db, 'students'), (snapshot) => {
+                const data = snapshot.val();
+                const container = document.getElementById('admitContainer');
+                container.innerHTML = '';
+
+                if (data) {
+                    let hasData = false;
+                    Object.values(data).forEach(student => {
+                        if (selectedClass === "" || student.className === selectedClass) {
+                            hasData = true;
+                            container.innerHTML += `
+                                <div class="admit-card">
+                                    <div class="card-header">
+                                        <div class="school-name">SMART HIGH SCHOOL AND COLLEGE</div>
+                                        <div class="exam-title">${examName}</div>
+                                    </div>
+                                    <div class="student-info">
+                                        <div class="info-left">
+                                            <table class="info-table">
+                                                <tr><td><b>Name:</b> ${student.name}</td></tr>
+                                                <tr><td><b>Father:</b> ${student.fatherName}</td></tr>
+                                                <tr><td><b>Student ID:</b> ${student.id.substring(1, 9)}</td></tr>
+                                                <tr><td><b>Class & Roll:</b> ${student.className} - (Roll: ${student.roll || '-'})</td></tr>
+                                            </table>
+                                        </div>
+                                        <div class="info-right">
+                                            <div class="photo-box">
+                                                <img src="${student.photo || 'https://via.placeholder.com/110x130?text=No+Photo'}" 
+                                                     onerror="this.src='https://via.placeholder.com/110x130?text=Error'">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <table class="routine-table">
+                                        <thead><tr><th>Bangla</th><th>English</th><th>Math</th><th>Science</th><th>Religion</th><th>ICT</th></tr></thead>
+                                        <tbody><tr><td style="height:35px;"></td><td></td><td></td><td></td><td></td><td></td></tr></tbody>
+                                    </table>
+                                    <div class="footer-section">
+                                        <div class="sign-line">Class Teacher</div>
+                                        <div class="sign-line">Principal Signature</div>
+                                    </div>
+                                    <div class="instructions">
+                                        <b>Instructions:</b>
+                                        <ul style="margin:0; padding-left:15px;">
+                                            <li>Must enter the exam hall 30 minutes before.</li>
+                                            <li>Admit card is mandatory for exam.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                    if(!hasData) container.innerHTML = '<p style="color:red;">No student found for this class.</p>';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Drive Direct Preview</title>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 40px; background-color: #f0f2f5; }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
+        input { width: 90%; padding: 12px; margin: 15px 0; border: 2px solid #ddd; border-radius: 8px; }
+        button { background-color: #007bff; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
+        button:hover { background-color: #0056b3; }
+        #result { margin-top: 30px; display: none; }
+        img { max-width: 100%; border-radius: 10px; border: 1px solid #ddd; margin-top: 10px; }
+        .link-box { background: #f8f9fa; padding: 10px; border: 1px dashed #bbb; margin-top: 10px; word-break: break-all; font-size: 14px; color: #333; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h3>Google Drive Image Loader</h3>
+    <input type="text" id="driveURL" placeholder="ড্রাইভ লিঙ্ক এখানে পেস্ট করুন">
+    <button onclick="loadImage()">ছবি দেখুন</button>
+
+    <div id="result">
+        <p><strong>ছবিটি নিচে দেখা যাচ্ছে:</strong></p>
+        <img id="previewImg" src="" alt="Loading Image...">
+        
+        <p style="margin-top:15px;"><strong>সরাসরি লিঙ্ক (Direct URL):</strong></p>
+        <div class="link-box" id="directURL"></div>
+    </div>
+</div>
+
+<script>
+    function loadImage() {
+        const input = document.getElementById('driveURL').value;
+        const resultDiv = document.getElementById('result');
+        const imgTag = document.getElementById('previewImg');
+        const urlBox = document.getElementById('directURL');
+
+        // ফাইল আইডি এক্সট্রাক্ট করা
+        const regex = /\/d\/([a-zA-Z0-9_-]+)/;
+        const match = input.match(regex);
+
+        if (match && match[1]) {
+            const fileId = match[1];
+            
+            // গুগল ড্রাইভের ডিরেক্ট ভিউ লিঙ্ক
+            const directLink = `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+
+            // আপডেট করা এবং শো করা
+            imgTag.src = directLink;
+            urlBox.innerText = `https://drive.google.com/uc?export=view&id=${fileId}`;
+            resultDiv.style.display = 'block';
+        } else {
+            alert("সঠিক ড্রাইভ লিঙ্ক দিন! (যেমন: /file/d/ID/view)");
+        }
+    }
+</script>
+
+</body>
+</html>

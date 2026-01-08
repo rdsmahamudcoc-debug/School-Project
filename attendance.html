@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ছাত্র উপস্থিতি</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .attend-radio { transform: scale(1.5); margin: 0 5px; cursor: pointer; }
+        .radio-group { display: flex; gap: 15px; justify-content: center; }
+        .label-p { color: green; font-weight: bold; }
+        .label-a { color: red; font-weight: bold; }
+        .summary-box {
+            display: flex; gap: 20px; justify-content: center; margin-bottom: 20px;
+            background: #fff; padding: 10px; border-radius: 5px; border: 1px solid #ddd;
+        }
+        .sum-item { font-size: 14px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="attendance.html" style="background: #1a252f; border-left: 4px solid #3498db; color: white;"><i class="fas fa-fingerprint"></i> উপস্থিতি</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left"><div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div><h3>দৈনিক উপস্থিতি</h3></div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            <div class="wrapper">
+                
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #ddd;">
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+                        <div>
+                            <label style="font-size: 13px; font-weight: bold;">তারিখ</label><br>
+                            <input type="date" id="attDate" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        <div style="flex-grow: 1;">
+                            <label style="font-size: 13px; font-weight: bold;">ক্লাস নির্বাচন করুন</label><br>
+                            <select id="classSelect" style="padding: 8px; border: 1px solid #ddd; width: 100%; border-radius: 4px;">
+                                <option value="">লোড হচ্ছে...</option>
+                            </select>
+                        </div>
+                        <button id="loadBtn" class="submit-btn" style="margin: 0; height: 38px;">ছাত্র লোড করুন</button>
+                    </div>
+                </div>
+
+                <div style="text-align: right; margin-bottom: 10px;">
+                    <button id="resetBtn" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                        <i class="fas fa-trash-alt"></i> আজকের সব এটেন্ডেন্স মুছুন (Reset)
+                    </button>
+                </div>
+
+                <div id="summarySection" class="summary-box" style="display: none;">
+                    <div class="sum-item" style="color: #34495e;">মোট ছাত্র: <span id="totalCount">0</span></div>
+                    <div class="sum-item" style="color: #27ae60;">উপস্থিত: <span id="presentCount">0</span></div>
+                    <div class="sum-item" style="color: #c0392b;">অনুপস্থিত: <span id="absentCount">0</span></div>
+                </div>
+
+                <form id="attForm" style="display: none;">
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #eee;">
+                                    <th>রোল</th>
+                                    <th>নাম</th>
+                                    <th style="text-align: center;">স্ট্যাটাস</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attBody"></tbody>
+                        </table>
+                    </div>
+                    <div style="text-align: right; margin-top: 20px;">
+                        <button type="submit" class="submit-btn">উপস্থিতি সেভ করুন</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>function toggleSidebar(){document.getElementById('sidebar').classList.toggle('active');}</script>
+    
+    <script type="module">
+        import { db, ref, onValue, set, get, remove } from './firebase-config.js';
+
+        document.getElementById('attDate').valueAsDate = new Date();
+
+        // ১. স্মার্ট ক্লাস লোডার
+        const loadClasses = async () => {
+            const classSelect = document.getElementById('classSelect');
+            classSelect.innerHTML = '<option value="">লোড হচ্ছে...</option>';
+            const [classesSnap, studentsSnap] = await Promise.all([get(ref(db, 'classes')), get(ref(db, 'students'))]);
+            const uniqueClasses = new Set();
+            if (classesSnap.exists()) Object.values(classesSnap.val()).forEach(c => uniqueClasses.add(c.className));
+            if (studentsSnap.exists()) Object.values(studentsSnap.val()).forEach(s => { if(s.className) uniqueClasses.add(s.className); });
+            
+            classSelect.innerHTML = '<option value="">ক্লাস সিলেক্ট করুন</option>';
+            if (uniqueClasses.size > 0) {
+                Array.from(uniqueClasses).sort().forEach(cName => {
+                    const opt = document.createElement('option'); opt.value = cName; opt.textContent = cName; classSelect.appendChild(opt);
+                });
+            } else classSelect.innerHTML = '<option value="">কোনো ক্লাস পাওয়া যায়নি</option>';
+        };
+        loadClasses();
+
+        // ২. ছাত্র লোড
+        document.getElementById('loadBtn').addEventListener('click', async () => {
+            const date = document.getElementById('attDate').value;
+            const cl = document.getElementById('classSelect').value;
+            if(!date || !cl) return alert("তারিখ এবং ক্লাস নির্বাচন করুন!");
+
+            const tBody = document.getElementById('attBody');
+            tBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">লোড হচ্ছে...</td></tr>';
+            document.getElementById('attForm').style.display = 'block';
+            document.getElementById('summarySection').style.display = 'none';
+
+            const [stSnap, attSnap] = await Promise.all([
+                get(ref(db, 'students')),
+                get(ref(db, `attendance/${date}/${cl}`))
+            ]);
+
+            const students = stSnap.val() ? Object.values(stSnap.val()).filter(s => s.className === cl) : [];
+            const prevAtt = attSnap.val() || {}; 
+
+            tBody.innerHTML = "";
+            students.sort((a,b) => (parseInt(a.roll)||999) - (parseInt(b.roll)||999));
+
+            if(students.length === 0) { 
+                tBody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:red;">এই ক্লাসে কোনো ছাত্র নেই</td></tr>'; return; 
+            }
+
+            // সারাংশ আপডেট
+            function updateSummary() {
+                const total = students.length;
+                const present = document.querySelectorAll('input[value="Present"]:checked').length;
+                const absent = total - present;
+                document.getElementById('totalCount').innerText = total;
+                document.getElementById('presentCount').innerText = present;
+                document.getElementById('absentCount').innerText = absent;
+                document.getElementById('summarySection').style.display = 'flex';
+            }
+
+            students.forEach(st => {
+                const status = prevAtt[st.id]?.status || 'Present'; 
+                const pChecked = status === 'Present' ? 'checked' : '';
+                const aChecked = status === 'Absent' ? 'checked' : '';
+
+                tBody.innerHTML += `
+                    <tr data-id="${st.id}" data-name="${st.name}" data-roll="${st.roll}">
+                        <td>${st.roll || '-'}</td>
+                        <td>${st.name}</td>
+                        <td class="radio-group">
+                            <label><input type="radio" name="att_${st.id}" value="Present" class="attend-radio" ${pChecked} onchange="updateSummary()"> <span class="label-p">P</span></label>
+                            <label><input type="radio" name="att_${st.id}" value="Absent" class="attend-radio" ${aChecked} onchange="updateSummary()"> <span class="label-a">A</span></label>
+                        </td>
+                    </tr>
+                `;
+            });
+            window.updateSummary = updateSummary;
+            updateSummary();
+        });
+
+        // ৩. সেভ করা
+        document.getElementById('attForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const date = document.getElementById('attDate').value;
+            const cl = document.getElementById('classSelect').value;
+            const promises = [];
+            document.querySelectorAll('#attBody tr').forEach(row => {
+                const id = row.getAttribute('data-id');
+                const status = row.querySelector(`input[name="att_${id}"]:checked`).value;
+                promises.push(set(ref(db, `attendance/${date}/${cl}/${id}`), {
+                    name: row.getAttribute('data-name'), roll: row.getAttribute('data-roll'), status: status
+                }));
+            });
+            await Promise.all(promises); alert("✅ উপস্থিতি সফলভাবে সেভ হয়েছে!");
+        });
+
+        // ৪. রিসেট বাটন (নতুন ফিচার)
+        document.getElementById('resetBtn').addEventListener('click', async () => {
+            const date = document.getElementById('attDate').value;
+            if(confirm(`আপনি কি ${date} তারিখের সকল এটেন্ডেন্স মুছে ফেলতে চান? এটি ফিরিয়ে আনা যাবে না।`)) {
+                await remove(ref(db, `attendance/${date}`));
+                alert("✅ ডাটা মুছে ফেলা হয়েছে। এখন নতুন করে লোড করুন।");
+                location.reload(); // পেজ রিফ্রেশ
+            }
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>খরচ ব্যবস্থাপনা</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ড্যাশবোর্ড কার্ডের মতো ছোট কার্ড */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 15px; border-radius: 5px; border-left: 4px solid #e74c3c; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .stat-card h3 { margin: 0; font-size: 20px; color: #333; }
+        .stat-card p { margin: 0; font-size: 13px; color: #777; }
+        
+        .cat-badge { padding: 3px 8px; border-radius: 3px; font-size: 12px; color: white; }
+        .cat-Salary { background: #3498db; }
+        .cat-Bill { background: #f39c12; }
+        .cat-Purchase { background: #9b59b6; }
+        .cat-Maintenance { background: #e67e22; }
+        .cat-Other { background: #95a5a6; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li>
+                <button class="dropdown-btn active"><span><i class="fas fa-money-bill-wave"></i> একাউন্টস</span><i class="fas fa-caret-down rotate"></i></button>
+                <div class="dropdown-container" style="display: block;">
+                    <a href="fee.html">ফি কালেকশন</a>
+                    <a href="expense.html" style="color: white;">খরচ (Expense)</a>
+                    <a href="report.html">রিপোর্ট</a>
+                </div>
+            </li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left"><div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div><h3>খরচ ব্যবস্থাপনা</h3></div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="todayExp">0 ৳</h3>
+                    <p>আজকের খরচ</p>
+                </div>
+                <div class="stat-card" style="border-left-color: #c0392b;">
+                    <h3 id="monthExp">0 ৳</h3>
+                    <p>এই মাসের মোট খরচ</p>
+                </div>
+            </div>
+
+            <div class="wrapper" style="margin-bottom: 30px;">
+                <h4 style="margin-bottom: 15px; color: #c0392b;">নতুন খরচ যোগ করুন</h4>
+                <form id="expenseForm">
+                    <div class="form-grid">
+                        <div>
+                            <label>তারিখ</label>
+                            <input type="date" id="expDate" required>
+                        </div>
+                        <div>
+                            <label>খরচের খাত (Category)</label>
+                            <select id="expCat" required>
+                                <option value="Salary">শিক্ষক/স্টাফ বেতন</option>
+                                <option value="Bill">বিদ্যুৎ/ইন্টারনেট বিল</option>
+                                <option value="Purchase">কেনাকাটা (মার্কার/কাগজ)</option>
+                                <option value="Maintenance">মেরামত</option>
+                                <option value="Other">অন্যান্য</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>বিবরণ (Description)</label>
+                            <input type="text" id="expDesc" placeholder="যেমন: ৫ রিম কাগজ কেনা হলো" required>
+                        </div>
+                        <div>
+                            <label>টাকার পরিমাণ</label>
+                            <input type="number" id="expAmount" placeholder="0.00" required>
+                        </div>
+                    </div>
+                    <div style="text-align: right; margin-top: 15px;">
+                        <button type="submit" class="submit-btn" style="background: #c0392b;"><i class="fas fa-save"></i> খরচ সেভ করুন</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="wrapper">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h4>খরচের তালিকা</h4>
+                    <button onclick="window.print()" style="padding: 5px 10px; cursor: pointer;">🖨️ প্রিন্ট লিস্ট</button>
+                </div>
+                
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>তারিখ</th>
+                                <th>খাত (Category)</th>
+                                <th>বিবরণ</th>
+                                <th>টাকা</th>
+                                <th>অ্যাকশন</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expenseTable">
+                            <tr><td colspan="5" style="text-align:center;">লোড হচ্ছে...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>function toggleSidebar(){document.getElementById('sidebar').classList.toggle('active');}</script>
+
+    <script type="module">
+        import { db, ref, push, set, onValue, remove } from './firebase-config.js';
+
+        // আজকের তারিখ সেট করা
+        document.getElementById('expDate').valueAsDate = new Date();
+
+        // ১. খরচ সেভ করা
+        document.getElementById('expenseForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const amount = parseFloat(document.getElementById('expAmount').value);
+            const newRef = push(ref(db, 'expenses'));
+
+            set(newRef, {
+                date: document.getElementById('expDate').value,
+                category: document.getElementById('expCat').value,
+                description: document.getElementById('expDesc').value,
+                amount: amount,
+                id: newRef.key
+            }).then(() => {
+                alert("খরচ সেভ হয়েছে!");
+                document.getElementById('expenseForm').reset();
+                document.getElementById('expDate').valueAsDate = new Date();
+            });
+        });
+
+        // ২. ডাটা লোড এবং ক্যালকুলেশন
+        onValue(ref(db, 'expenses'), (snapshot) => {
+            const data = snapshot.val();
+            const tableBody = document.getElementById('expenseTable');
+            const todayEl = document.getElementById('todayExp');
+            const monthEl = document.getElementById('monthExp');
+
+            // বর্তমান তারিখ বের করা
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0]; // YYYY-MM-DD
+            const currentMonth = now.getMonth() + 1; // 1-12
+
+            let totalToday = 0;
+            let totalMonth = 0;
+
+            tableBody.innerHTML = "";
+
+            if (data) {
+                const expenses = Object.values(data).reverse(); // নতুন খরচ আগে দেখাবে
+
+                expenses.forEach(exp => {
+                    const amount = parseFloat(exp.amount) || 0;
+                    const expDateObj = new Date(exp.date);
+
+                    // আজকের হিসাব
+                    if (exp.date === todayStr) {
+                        totalToday += amount;
+                    }
+
+                    // এই মাসের হিসাব
+                    if ((expDateObj.getMonth() + 1) === currentMonth && expDateObj.getFullYear() === now.getFullYear()) {
+                        totalMonth += amount;
+                    }
+
+                    // টেবিলে বসানো
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td>${exp.date}</td>
+                            <td><span class="cat-badge cat-${exp.category}">${exp.category}</span></td>
+                            <td>${exp.description}</td>
+                            <td style="font-weight:bold; color: #c0392b;">${amount} ৳</td>
+                            <td>
+                                <button onclick="window.del('expenses/${exp.id}')" style="color:red; border:none; cursor:pointer;"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                // সারাংশ আপডেট
+                todayEl.innerText = totalToday + " ৳";
+                monthEl.innerText = totalMonth + " ৳";
+
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">কোনো খরচ নেই</td></tr>';
+                todayEl.innerText = "0 ৳";
+                monthEl.innerText = "0 ৳";
+            }
+        });
+
+        // ডিলিট ফাংশন
+        window.del = (path) => { if(confirm("খরচটি মুছে ফেলতে চান?")) remove(ref(db, path)); };
+
+    </script>
+</body>
+</html>

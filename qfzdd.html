@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <title>Teacher Dashboard - EduSphere</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: "DM Sans", system-ui, -apple-system;
+      background: #0a0f2a;
+      color: #e5e7eb;
+      margin: 0; padding: 0;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 2rem auto;
+      background: #111a3c;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.8);
+    }
+    h1 {
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .welcome {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      color: #9ca3af;
+    }
+    .section {
+      margin-bottom: 2rem;
+    }
+    .section h2 {
+      border-bottom: 1px solid #374151;
+      padding-bottom: 0.4rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      color: #d1d5db;
+    }
+    th, td {
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid #374151;
+      text-align: left;
+    }
+    th {
+      background: #1e293b;
+      font-weight: 600;
+    }
+    .btn {
+      background: #22c55e;
+      color: #022c22;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      transition: background 0.3s ease;
+    }
+    .btn:hover {
+      background: #16a34a;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main">
+    <h1>Teacher Dashboard</h1>
+    <p class="welcome">Welcome, Mr. Rahman</p>
+
+    <section class="section" aria-labelledby="today-classes-title">
+      <h2 id="today-classes-title">Today's Classes</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th>Subject</th>
+            <th>Time</th>
+            <th>Room</th>
+            <th>Attendance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>8 - A</td>
+            <td>Mathematics</td>
+            <td>10:00 - 10:40</td>
+            <td>203</td>
+            <td><button class="btn">Mark Attendance</button></td>
+          </tr>
+          <tr>
+            <td>9 - B</td>
+            <td>Physics</td>
+            <td>11:00 - 11:40</td>
+            <td>402</td>
+            <td><button class="btn">Mark Attendance</button></td>
+          </tr>
+          <tr>
+            <td>7 - C</td>
+            <td>English</td>
+            <td>12:00 - 12:40</td>
+            <td>105</td>
+            <td><button class="btn">Mark Attendance</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" aria-labelledby="homework-title">
+      <h2 id="homework-title">Homework Assignments</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th>Subject</th>
+            <th>Assignment</th>
+            <th>Due Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>8 - A</td>
+            <td>Mathematics</td>
+            <td>Chapter 5 Exercises</td>
+            <td>2026-01-10</td>
+          </tr>
+          <tr>
+            <td>9 - B</td>
+            <td>Physics</td>
+            <td>Lab Report</td>
+            <td>2026-01-12</td>
+          </tr>
+          <tr>
+            <td>7 - C</td>
+            <td>English</td>
+            <td>Essay on Environment</td>
+            <td>2026-01-15</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+</body>
+</html

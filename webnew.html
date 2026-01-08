@@ -1,0 +1,1666 @@
+ 
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <title>Genius Education BD – সেরা স্কুল ম্যানেজমেন্ট সফটওয়্যার</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="সেরা স্কুল ম্যানেজমেন্ট সফটওয়্যার Genius Education BD দিয়ে আপনার স্কুল, কলেজ, মাদ্রাসা ও কিন্ডারগার্টেনকে সম্পূর্ণ ডিজিটালাইজ করুন।" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-main: #050816;
+      --bg-elevated: rgba(7, 15, 40, 0.92);
+      --glass: rgba(8, 20, 60, 0.72);
+      --accent: #facc15;
+      --accent-soft: rgba(250, 204, 21, 0.18);
+      --accent-2: #22d3ee;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --border-subtle: rgba(148, 163, 184, 0.35);
+      --error: #f97373;
+
+      --radius-lg: 22px;
+      --radius-md: 14px;
+      --radius-pill: 999px;
+
+      --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.75);
+      --shadow-glow: 0 0 40px rgba(250, 204, 21, 0.25);
+
+      --container-max: 1120px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      scroll-behavior: smooth;
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-family: "Hind Siliguri", system-ui, -apple-system;
+    }
+
+    body {
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Background Layer: Gradient + Noise + Orbs */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -20%;
+      z-index: -3;
+      background:
+        radial-gradient(circle at 5% 10%, #1d4ed8 0, transparent 55%),
+        radial-gradient(circle at 85% 0%, #f97316 0, transparent 55%),
+        radial-gradient(circle at 0% 85%, #22c55e 0, transparent 55%),
+        radial-gradient(circle at 100% 80%, #22d3ee 0, transparent 55%),
+        radial-gradient(circle at 50% 40%, #4f46e5 0, #020617 55%);
+      opacity: 0.9;
+      filter: saturate(1.2);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -50px;
+      z-index: -2;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+      pointer-events: none;
+    }
+
+    main {
+      min-height: 100vh;
+    }
+
+    .shell {
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 18px 18px 64px;
+    }
+
+    @media (min-width: 768px) {
+      .shell {
+        padding: 24px 24px 80px;
+      }
+    }
+
+    /* Utility */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 14px;
+      border-radius: var(--radius-pill);
+      background: rgba(15, 23, 42, 0.68);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: var(--accent);
+      font-size: 0.78rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #fef9c3 0, #facc15 40%, #b45309 100%);
+      box-shadow: 0 0 14px rgba(250, 204, 21, 0.7);
+    }
+
+    .btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 22px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(15, 23, 42, 0.8);
+      background: radial-gradient(circle at 0 0, rgba(250, 250, 250, 0.06), transparent 55%), linear-gradient(135deg, #facc15, #f97316);
+      color: #111827;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.65), 0 0 0 1px rgba(250, 204, 21, 0.25);
+      transform: translateY(0);
+      transition:
+        transform 180ms ease,
+        box-shadow 180ms ease,
+        background-position 220ms ease,
+        filter 180ms ease;
+      background-size: 160% 160%;
+    }
+
+    .btn:hover {
+      transform: translateY(-1.5px) scale(1.02);
+      box-shadow: 0 14px 36px rgba(15, 23, 42, 0.85), 0 0 26px rgba(250, 204, 21, 0.4);
+      filter: saturate(1.1);
+      background-position: 100% 0;
+    }
+
+    .btn:active {
+      transform: translateY(0.5px) scale(0.99);
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.9);
+    }
+
+    .btn-ghost {
+      background: rgba(15, 23, 42, 0.85);
+      color: var(--text-main);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.8);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(15, 23, 42, 0.95);
+      border-color: var(--accent-2);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.95), 0 0 20px rgba(34, 211, 238, 0.45);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .accent-text {
+      color: var(--accent);
+    }
+
+    .muted {
+      color: var(--text-muted);
+    }
+
+    /* Top Nav */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(16px);
+      background: linear-gradient(to bottom, rgba(5, 8, 22, 0.85), rgba(5, 8, 22, 0.4), transparent);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .nav {
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 14px 18px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    @media (min-width: 768px) {
+      .nav {
+        padding-inline: 24px;
+      }
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 14px;
+      background:
+        conic-gradient(from 160deg, #facc15, #f97316, #22d3ee, #4f46e5, #facc15);
+      position: relative;
+      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.9), 0 10px 25px rgba(15, 23, 42, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-mark::after {
+      content: "GE";
+      font-family: "Space Grotesk", system-ui;
+      font-weight: 700;
+      font-size: 0.75rem;
+      color: #020617;
+      letter-spacing: 0.1em;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .logo-title {
+      font-family: "Space Grotesk", system-ui;
+      font-size: 0.98rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .logo-sub {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    .nav-links {
+      display: none;
+      align-items: center;
+      gap: 20px;
+      font-size: 0.86rem;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      position: relative;
+      padding-bottom: 2px;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width 180ms ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text-main);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-cta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-phone {
+      display: none;
+      font-size: 0.86rem;
+      color: var(--text-muted);
+    }
+
+    .nav-phone strong {
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    @media (min-width: 768px) {
+      .nav-links {
+        display: flex;
+      }
+      .nav-phone {
+        display: inline-flex;
+      }
+    }
+
+    /* Hero */
+    .hero {
+      padding-top: 24px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr);
+      gap: 28px;
+    }
+
+    @media (min-width: 900px) {
+      .hero {
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+        align-items: center;
+        padding-top: 46px;
+      }
+    }
+
+    .hero-left {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .hero-title {
+      font-family: "Space Grotesk", system-ui;
+      font-size: clamp(2.1rem, 3.4vw + 1.4rem, 3.4rem);
+      line-height: 1.04;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .hero-title span.highlight {
+      background: linear-gradient(90deg, #facc15, #f97316, #22d3ee);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 1.03rem;
+      color: var(--text-muted);
+      max-width: 540px;
+      margin-bottom: 18px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      max-width: 460px;
+      margin-bottom: 20px;
+    }
+
+    .hero-chip {
+      font-size: 0.78rem;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.86);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .hero-chip span {
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .hero-note {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .hero-note strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .hero-stat-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 10px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      border: 1px dashed rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .stat-pill strong {
+      color: var(--accent-2);
+      font-weight: 600;
+    }
+
+    /* Hero Right: Glass Dashboard Mock */
+    .hero-right {
+      position: relative;
+      z-index: 1;
+    }
+
+    .dashboard-shell {
+      position: relative;
+      border-radius: 30px;
+      background: radial-gradient(circle at 0 0, rgba(250, 204, 21, 0.15), transparent 60%), rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: var(--shadow-soft);
+      padding: 16px 16px 18px;
+      overflow: hidden;
+      backdrop-filter: blur(22px) saturate(1.4);
+    }
+
+    @media (min-width: 900px) {
+      .dashboard-shell {
+        margin-left: 24px;
+      }
+    }
+
+    .dashboard-orbit {
+      position: absolute;
+      inset: -60%;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.25) 0, transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(250, 204, 21, 0.25) 0, transparent 60%);
+      mix-blend-mode: screen;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .dash-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .dash-title {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .dash-title strong {
+      color: var(--text-main);
+    }
+
+    .dash-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot-green {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 14px rgba(34, 197, 94, 0.8);
+    }
+
+    .dash-body {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 520px) {
+      .dash-body {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .dash-card {
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.75));
+      padding: 10px 11px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.85);
+    }
+
+    .dash-card h3 {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .dash-progress-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 6px;
+      font-size: 0.78rem;
+    }
+
+    .dash-progress-bar {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.85);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .dash-progress-bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #22d3ee, #facc15);
+      width: 76%;
+    }
+
+    .dash-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 6px;
+      font-size: 0.7rem;
+    }
+
+    .dash-metric {
+      padding: 7px 7px;
+      border-radius: 11px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      background: radial-gradient(circle at 0 0, rgba(250, 204, 21, 0.12), transparent 60%), rgba(15, 23, 42, 0.98);
+    }
+
+    .dash-metric span {
+      display: block;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+
+    .dash-metric strong {
+      font-size: 0.84rem;
+      color: var(--accent);
+    }
+
+    .dash-list {
+      display: grid;
+      gap: 6px;
+      font-size: 0.76rem;
+      margin-top: 4px;
+    }
+
+    .dash-list-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 6px 7px;
+      border-radius: 10px;
+      border: 1px solid rgba(51, 65, 85, 0.8);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .dash-list-row strong {
+      color: var(--text-main);
+    }
+
+    .badge-soft {
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid rgba(250, 204, 21, 0.45);
+      font-size: 0.68rem;
+    }
+
+    .badge-soft-blue {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: rgba(56, 189, 248, 0.6);
+      color: #7dd3fc;
+    }
+
+    .dash-floating {
+      position: absolute;
+      right: 4%;
+      bottom: 6%;
+      width: 150px;
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      background: rgba(15, 23, 42, 0.98);
+      padding: 8px 9px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.95);
+      display: grid;
+      gap: 4px;
+      font-size: 0.72rem;
+    }
+
+    @media (max-width: 900px) {
+      .dash-floating {
+        display: none;
+      }
+    }
+
+    .dash-floating h4 {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+    }
+
+    .dash-floating strong {
+      color: var(--accent);
+    }
+
+    .dash-floating-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .mini-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent-2);
+      box-shadow: 0 0 12px rgba(34, 211, 238, 0.9);
+    }
+
+    /* Section: Features */
+    section {
+      margin-top: 56px;
+    }
+
+    @media (min-width: 900px) {
+      section {
+        margin-top: 80px;
+      }
+    }
+
+    .section-head {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 24px;
+      max-width: 640px;
+    }
+
+    .section-kicker {
+      font-size: 0.82rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent-2);
+      font-weight: 600;
+    }
+
+    .section-title {
+      font-family: "Space Grotesk", system-ui;
+      font-size: 1.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 0.98rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    @media (min-width: 720px) {
+      .features-grid {
+        grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr);
+        align-items: flex-start;
+      }
+    }
+
+    .feature-card {
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: radial-gradient(circle at 0 0, rgba(34, 211, 238, 0.14), transparent 55%), rgba(15, 23, 42, 0.96);
+      box-shadow: var(--shadow-soft);
+      padding: 18px 16px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .feature-card {
+        padding: 22px 20px 22px;
+      }
+    }
+
+    .feature-group-title {
+      font-size: 0.98rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 8px;
+      font-size: 0.94rem;
+    }
+
+    .feature-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 7px 8px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid rgba(51, 65, 85, 0.95);
+    }
+
+    .fi-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 7px;
+      background: radial-gradient(circle at 30% 20%, #fef9c3 0, #facc15 35%, #f97316 100%);
+      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.9);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .fi-text strong {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 1px;
+    }
+
+    .fi-text span {
+      display: block;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+    }
+
+    .feature-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .feature-pill {
+      font-size: 0.76rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--text-muted);
+      background: rgba(15, 23, 42, 0.98);
+    }
+
+    .feature-aside {
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: radial-gradient(circle at 100% 0, rgba(250, 204, 21, 0.16), transparent 60%), rgba(15, 23, 42, 0.98);
+      padding: 18px 16px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    @media (min-width: 768px) {
+      .feature-aside {
+        padding: 20px 18px;
+      }
+    }
+
+    .feature-aside h3 {
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin-bottom: 8px;
+      color: var(--accent);
+    }
+
+    .feature-aside p {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .highlight-box {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px dashed rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.98);
+      font-size: 0.86rem;
+      color: var(--text-muted);
+    }
+
+    .highlight-box strong {
+      color: var(--accent-2);
+    }
+
+    /* Section: Pricing / CTA */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 720px) {
+      .pricing-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .pricing-main {
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: radial-gradient(circle at 0 0, rgba(34, 211, 238, 0.2), transparent 60%), rgba(15, 23, 42, 0.97);
+      padding: 20px 16px 20px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .pricing-main h3 {
+      font-size: 1.05rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 10px;
+    }
+
+    .pricing-main p {
+      font-size: 0.94rem;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .pricing-note {
+      font-size: 0.9rem;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .pricing-bullets {
+      display: grid;
+      gap: 6px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .pricing-bullets span::before {
+      content: "✓";
+      color: #4ade80;
+      margin-right: 6px;
+    }
+
+    .pricing-contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .pricing-contact small {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .cta-pane {
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.65);
+      background: radial-gradient(circle at 100% 0, rgba(250, 204, 21, 0.22), transparent 70%), rgba(15, 23, 42, 1);
+      padding: 18px 16px;
+      box-shadow: var(--shadow-soft), var(--shadow-glow);
+      display: grid;
+      gap: 10px;
+    }
+
+    .cta-pane h3 {
+      font-size: 0.95rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .cta-pane p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .cta-mini {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .cta-mini strong {
+      color: var(--accent-2);
+    }
+
+    .cta-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    /* Section: Contact */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 720px) {
+      .contact-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .contact-form {
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.98);
+      padding: 18px 16px 16px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .contact-form h3 {
+      font-size: 1rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .field {
+      display: grid;
+      gap: 4px;
+      font-size: 0.86rem;
+    }
+
+    .field label {
+      color: var(--text-muted);
+    }
+
+    .field span.req {
+      color: var(--accent);
+      margin-left: 3px;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.96);
+      color: var(--text-main);
+      padding: 8px 9px;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.6);
+      background: rgba(15, 23, 42, 0.98);
+    }
+
+    .field small {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    .error-msg {
+      font-size: 0.78rem;
+      color: var(--error);
+      display: none;
+    }
+
+    .field.invalid .error-msg {
+      display: block;
+    }
+
+    .field.invalid input,
+    .field.invalid textarea,
+    .field.invalid select {
+      border-color: var(--error);
+      box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.7);
+    }
+
+    .contact-aside {
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: radial-gradient(circle at 0 0, rgba(34, 211, 238, 0.18), transparent 70%), rgba(15, 23, 42, 1);
+      padding: 18px 16px;
+      box-shadow: var(--shadow-soft);
+      display: grid;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .contact-aside strong {
+      color: var(--accent);
+    }
+
+    .contact-aside-list {
+      display: grid;
+      gap: 6px;
+      font-size: 0.86rem;
+    }
+
+    .contact-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .contact-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 9px;
+      background: radial-gradient(circle at 30% 20%, #fef9c3 0, #facc15 40%, #f97316 100%);
+      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.9);
+      flex-shrink: 0;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid rgba(148, 163, 184, 0.4);
+      margin-top: 40px;
+      padding: 18px 18px 26px;
+      background: radial-gradient(circle at 0 0, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.96));
+    }
+
+    @media (min-width: 768px) {
+      footer {
+        padding-inline: 24px;
+      }
+    }
+
+    .footer-inner {
+      max-width: var(--container-max);
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .footer-inner a {
+      color: var(--accent-2);
+      text-decoration: none;
+    }
+
+    .footer-inner a:hover {
+      text-decoration: underline;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+
+    .reveal.visible {
+      animation: fadeUp 620ms ease forwards;
+    }
+
+    .delay-1 { animation-delay: 120ms; }
+    .delay-2 { animation-delay: 240ms; }
+    .delay-3 { animation-delay: 360ms; }
+    .delay-4 { animation-delay: 480ms; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="nav">
+      <a href="#top" class="logo" aria-label="Genius Education BD">
+        <div class="logo-mark"></div>
+        <div class="logo-text">
+          <span class="logo-title">Genius Education BD</span>
+          <span class="logo-sub">School • College • Madrasa • KG</span>
+        </div>
+      </a>
+
+      <div class="nav-links" aria-label="Primary navigation">
+        <a href="#features">ফিচার</a>
+        <a href="#pricing">খরচ</a>
+        <a href="#contact">ডেমো নিন</a>
+      </div>
+
+      <div class="nav-cta">
+        <span class="nav-phone">কল করুন: <strong>০১XXXXXXXXX</strong></span>
+        <button class="btn btn-ghost" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
+          ডেমো রিকুয়েস্ট
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <div class="shell">
+      <!-- HERO -->
+      <section class="hero">
+        <div class="hero-left reveal delay-1">
+          <div class="hero-tag-row">
+            <span class="tag">
+              <span class="pill-dot"></span>
+              সেরা স্কুল ম্যানেজমেন্ট সফটওয়্যার
+            </span>
+            <span class="badge">
+              বাংলাদেশের জন্য বানানো
+            </span>
+          </div>
+
+          <h1 class="hero-title">
+            <span class="highlight">Genius Education BD</span><br>
+            দিয়ে আপনার শিক্ষা প্রতিষ্ঠানকে <span class="accent-text">ডিজিটালাইজ করুন</span>
+          </h1>
+
+          <p class="hero-subtitle">
+            আর কত ম্যানুয়ালি কাজ করবেন? এবার সফটওয়্যারের মাধ্যমে আপনার
+            স্কুল, কলেজ, মাদ্রাসা বা কিন্ডারগার্টেনের সকল কাজকে করুন সহজ,
+            সুন্দর, সুশৃঙ্খল ও সম্পূর্ণ অটোমেশন — খরচ একদম আপনার সাধ্যের মধ্যে।
+          </p>
+
+          <div class="hero-grid" aria-hidden="true">
+            <div class="hero-chip"><span></span> স্টুডেন্ট প্রোফাইল, এক্সাম, ফলাফল</div>
+            <div class="hero-chip"><span></span> বায়োমেট্রিক ও কার্ড এটেন্ডেন্স</div>
+            <div class="hero-chip"><span></span> ফি ও একাউন্টস ম্যানেজমেন্ট</div>
+            <div class="hero-chip"><span></span> অভিভাবক মোবাইল প্যানেল</div>
+          </div>
+
+          <div class="hero-cta">
+            <button class="btn" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
+              ফ্রি ডেমো নিন
+            </button>
+            <button class="btn btn-ghost" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">
+              সব ফিচার দেখুন
+            </button>
+          </div>
+          <p class="hero-note">
+            <strong>একেবারে স্বল্প খরচে</strong> দেশের সকল শিক্ষা প্রতিষ্ঠানের জন্য এই সেবা দিতে আমরা প্রস্তুত।
+          </p>
+
+          <div class="hero-stat-row">
+            <div class="stat-pill">
+              <strong>সুপার ফাস্ট</strong> ডাটা এন্ট্রি
+            </div>
+            <div class="stat-pill">
+              <strong>মোবাইল</strong> দিয়ে সহজ ব্যবহার
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Dashboard Visual -->
+        <aside class="hero-right reveal delay-2" aria-hidden="true">
+          <div class="dashboard-shell">
+            <div class="dashboard-orbit"></div>
+            <div class="dash-header">
+              <div>
+                <div class="dash-title">
+                  <strong>ড্যাশবোর্ড</strong> • আজকের সারসংক্ষেপ
+                </div>
+                <div class="badge" style="margin-top:4px;">
+                  <span class="dot-green"></span>
+                  Live Sync • Real-time
+                </div>
+              </div>
+              <div class="dash-badges">
+                <span class="badge-soft-blue">Parent App</span>
+                <span class="badge-soft">Multi Branch</span>
+              </div>
+            </div>
+
+            <div class="dash-body">
+              <div class="dash-card">
+                <h3>Attendance Overview</h3>
+                <div class="dash-progress-row">
+                  <span>আজ উপস্থিত</span>
+                  <strong style="font-size:0.82rem;color:var(--accent)">৯২%</strong>
+                </div>
+                <div class="dash-progress-bar">
+                  <span></span>
+                </div>
+                <div class="dash-metrics">
+                  <div class="dash-metric">
+                    <span>স্টুডেন্ট</span>
+                    <strong>১,২০৪</strong>
+                  </div>
+                  <div class="dash-metric">
+                    <span>টিচার</span>
+                    <strong>৫৪</strong>
+                  </div>
+                  <div class="dash-metric">
+                    <span>স্টাফ</span>
+                    <strong>১৮</strong>
+                  </div>
+                </div>
+
+                <div class="dash-list">
+                  <div class="dash-list-row">
+                    <span>বায়োমেট্রিক</span>
+                    <span class="badge-soft-blue">Online</span>
+                  </div>
+                  <div class="dash-list-row">
+                    <span>কার্ড এটেন্ডেন্স</span>
+                    <span class="badge-soft">Gate-1</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dash-card">
+                <h3>Fee &amp; Result</h3>
+                <div class="dash-list">
+                  <div class="dash-list-row">
+                    <strong>আজকের কালেকশন</strong>
+                    <span class="badge-soft">৳ ৪৩,৫০০</span>
+                  </div>
+                  <div class="dash-list-row">
+                    <span>Pending ফি</span>
+                    <span class="badge-soft-blue">৳ ১,৮০,০০০</span>
+                  </div>
+                  <div class="dash-list-row">
+                    <span>Islamic Bank Gateway</span>
+                    <span class="badge-soft-blue">Active</span>
+                  </div>
+                  <div class="dash-list-row">
+                    <span>Exam Result</span>
+                    <span class="badge-soft">Auto Meritlist</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dash-floating">
+              <h4>Parent Panel</h4>
+              <div>
+                <span class="muted">Today • Class 8</span><br>
+                <strong>Attendance: Present</strong>
+              </div>
+              <div class="dash-floating-footer">
+                <div class="badge">
+                  <span class="mini-dot"></span>
+                  Progress Report
+                </div>
+                <span class="muted">via Smartphone</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <!-- FEATURES -->
+      <section id="features" class="reveal delay-2">
+        <div class="section-head">
+          <span class="section-kicker">All-in-One Features</span>
+          <h2 class="section-title">এক সফটওয়্যারে প্রতিষ্ঠানের সব কাজ</h2>
+          <p class="section-desc">
+            Genius Education BD তৈরি হয়েছে একদম বাংলাদেশি শিক্ষা প্রতিষ্ঠানের বাস্তব প্রয়োজন মাথায় রেখে –
+            একাডেমিক থেকে ফাইন্যান্স, স্টুডেন্ট থেকে অভিভাবক – সবার জন্য এক প্ল্যাটফর্ম।
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-group-title">অ্যাকাডেমিক ও স্টুডেন্ট ম্যানেজমেন্ট</div>
+            <div class="feature-list">
+              <div class="feature-item">
+                <div class="fi-icon"></div>
+                <div class="fi-text">
+                  <strong>★ স্টুডেন্ট প্রোফাইল তৈরি</strong>
+                  <span>প্রতিটি শিক্ষার্থীর সম্পূর্ণ তথ্য, গার্ডিয়ান, কন্টাক্ট, পূর্বের রেজাল্ট, ফি হিস্টরি – সব এক জায়গায়।</span>
+                </div>
+              </div>
+
+              <div class="feature-item">
+                <div class="fi-icon"></div>
+                <div class="fi-text">
+                  <strong>★ বায়োমেট্রিক ও কার্ড এটেন্ডেন্স</strong>
+                  <span>ফিঙ্গারপ্রিন্ট বা আইডি কার্ডের মাধ্যমে ইন/আউট – উপস্থিতি অটো আপডেট, রিপোর্ট এক ক্লিকে।</span>
+                </div>
+              </div>
+
+              <div class="feature-item">
+                <div class="fi-icon"></div>
+                <div class="fi-text">
+                  <strong>★ এক্সাম ম্যানেজ, ফলাফল প্রস্তুত</strong>
+                  <span>অটো টেবুলেশন, মার্কশিট, মেরিটলিস্ট – ম্যানুয়াল হিসাব-নিকাশের ঝামেলা শেষ।</span>
+                </div>
+              </div>
+
+              <div class="feature-item">
+                <div class="fi-icon"></div>
+                <div class="fi-text">
+                  <strong>★ ক্লাস রুটিন ম্যানেজমেন্ট</strong>
+                  <span>ক্লাস, টিচার, রুম – সব কনফ্লিক্ট ফ্রি রুটিন প্ল্যান, সাথে প্রিন্ট রেডি কপি।</span>
+                </div>
+              </div>
+
+              <div class="feature-item">
+                <div class="fi-icon"></div>
+                <div class="fi-text">
+                  <strong>★ স্টুডেন্ট / এমপ্লয়ি আইডি ও এডমিট কার্ড জেনারেট</strong>
+                  <span>কাস্টমাইজড ডিজাইনসহ ইনস্ট্যান্ট আইডি কার্ড ও এডমিট কার্ড প্রিন্ট।</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="feature-pills">
+              <span class="feature-pill">অটো মেরিটলিস্ট</span>
+              <span class="feature-pill">অটো টেবুলেশন শীট</span>
+              <span class="feature-pill">মার্কশিট ডিজাইন</span>
+              <span class="feature-pill">দ্রুত ডাটা এন্ট্রি</span>
+            </div>
+          </div>
+
+          <aside class="feature-aside">
+            <h3>ম্যানেজমেন্ট &amp; ফাইন্যান্স</h3>
+            <p>
+              প্রতিষ্ঠান চালানোর সবচেয়ে সময়সাপেক্ষ কাজগুলো – এমপ্লয়ি, ফি, ইনকাম, এক্সপেন্স ও একাউন্টস – সব পাবেন
+              এক প্যানেলে, ক্লিয়ার রিপোর্টসহ।
+            </p>
+
+            <div class="feature-list">
+              <div class="feature-item">
+                <div class="fi-icon"></div>
+                <div class="fi-text">
+                  <strong>★ এমপ্লয়ি ম্যানেজমেন্ট ও লিভ ম্যানেজ</strong>
+                  <span>শিক্ষক ও স্টাফের প্রোফাইল, ডিউটি, লিভ হিস্টরি, স্যালারি – সবকিছু সিস্টেমে সেভ।</span>
+                </div>
+              </div>
+
+              <div class="feature-item">
+                <div class="fi-icon"></div>
+                <div class="fi-text">
+                  <strong>★ ফি, ইনকাম, এক্সপেন্স ও একাউন্টস</strong>
+                  <span>ফি কালেকশন, বকেয়া, ইনকাম-এক্সপেন্স স্টেটমেন্ট, ব্যালেন্স – হিসাব সবসময় ক্লিয়ার।</span>
+                </div>
+              </div>
+
+              <div class="feature-item">
+                <div class="fi-icon"></div>
+                <div class="fi-text">
+                  <strong>★ ইসলামী ব্যাংক পেমেন্ট গেটওয়ে</strong>
+                  <span>অনলাইন পেমেন্ট – গার্ডিয়ানরা বাসায় বসেই ফি পরিশোধ করতে পারবেন।</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="highlight-box">
+              <strong>অভিভাবক প্যানেল:</strong> স্মার্টফোনের মাধ্যমে গার্ডিয়ানরা সন্তানের উপস্থিতি, রেজাল্ট, ফি স্ট্যাটাসসহ
+              বিভিন্ন আপডেট এক ক্লিকে দেখতে পারবেন – SMS / App Notification সাপোর্টসহ।
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- PRICING / CTA -->
+      <section id="pricing" class="reveal delay-3">
+        <div class="section-head">
+          <span class="section-kicker">Affordable For Every Institution</span>
+          <h2 class="section-title">খরচ একদম সাধ্যের মধ্যে</h2>
+          <p class="section-desc">
+            ছোট মাদ্রাসা থেকে বড় কলেজ – সবার জন্য কাস্টম প্যাকেজ। আপনি যতটুকু ব্যবহার করবেন, ততটুকুরই খরচ।
+          </p>
+        </div>
+
+        <div class="pricing-grid">
+          <div class="pricing-main">
+            <h3>প্রাইসিং পলিসি</h3>
+            <p>
+              কোনো হিডেন চার্জ নেই। সফটওয়্যার, সাপোর্ট, আপডেট – সবকিছু একটি সহজ ও ক্লিয়ার সাবস্ক্রিপশনের মাধ্যমে।
+            </p>
+
+            <div class="pricing-note">
+              একেবারে স্বল্প খরচে দেশের সকল শিক্ষা প্রতিষ্ঠানে এই সেবা দিতে আমরা সদা সর্বদা প্রস্তুত।
+            </div>
+
+            <div class="pricing-bullets">
+              <span>ইনস্টলেশন ও সেটআপ সাপোর্ট</span>
+              <span>পুরাতন এক্সিস্টিং ডাটার দ্রুত এন্ট্রি হেল্প</span>
+              <span>টিচার/স্টাফদের ট্রেইনিং</span>
+              <span>ফোন/অনলাইন লাইভ সাপোর্ট</span>
+            </div>
+
+            <div class="pricing-contact">
+              <button class="btn" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
+                বিস্তারিত প্রাইস জানতে যোগাযোগ করুন
+              </button>
+              <small>কল / WhatsApp: <strong style="color:var(--accent)">০১XXXXXXXXX</strong></small>
+            </div>
+          </div>
+
+          <aside class="cta-pane">
+            <h3>Ready to Go Digital?</h3>
+            <p>
+              আপনার স্কুল / কলেজ / মাদ্রাসা / কিন্ডারগার্টেনের জন্য
+              আজই একটি ফ্রি অনলাইন ডেমো নিন। ৩০–৪৫ মিনিটেই বুঝে যাবেন
+              কীভাবে Genius Education BD আপনার সব কাজ সহজ করে দেবে।
+            </p>
+
+            <div class="cta-actions">
+              <button class="btn btn-ghost" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
+                ফ্রি ডেমো বুক করুন
+              </button>
+              <span class="cta-mini">
+                বা সরাসরি কল করুন:
+                <strong>০১XXXXXXXXX</strong>
+              </span>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section id="contact" class="reveal delay-4">
+        <div class="section-head">
+          <span class="section-kicker">Get Started</span>
+          <h2 class="section-title">ডেমো / কলব্যাক রিকুয়েস্ট করুন</h2>
+          <p class="section-desc">
+            নিচের ফর্মটি পূরণ করুন, আমাদের টিম খুব দ্রুত আপনার সাথে যোগাযোগ করবে। চাইলে সরাসরি কল বা মেসেজও করতে পারেন।
+          </p>
+        </div>
+
+        <div class="contact-grid">
+          <form class="contact-form" novalidate>
+            <h3>কনট্যাক্ট ফর্ম</h3>
+            <div class="form-grid">
+              <div class="field" data-field="name">
+                <label for="name">আপনার নাম <span class="req">*</span></label>
+                <input id="name" name="name" type="text" placeholder="উদাহরণ: মোঃ রাহাত হোসেন" required>
+                <p class="error-msg">নাম লিখুন</p>
+              </div>
+
+              <div class="field" data-field="phone">
+                <label for="phone">মোবাইল নাম্বার <span class="req">*</span></label>
+                <input id="phone" name="phone" type="tel" placeholder="উদাহরণ: ০১XXXXXXXXX" required>
+                <p class="error-msg">সঠিক মোবাইল নাম্বার লিখুন</p>
+              </div>
+
+              <div class="field" data-field="inst">
+                <label for="inst">প্রতিষ্ঠানের নাম <span class="req">*</span></label>
+                <input id="inst" name="inst" type="text" placeholder="উদাহরণ: ABC স্কুল এন্ড কলেজ" required>
+                <p class="error-msg">প্রতিষ্ঠানের নাম লিখুন</p>
+              </div>
+
+              <div class="field">
+                <label for="type">প্রতিষ্ঠানের ধরন</label>
+                <select id="type" name="type">
+                  <option value="">নির্বাচন করুন</option>
+                  <option>স্কুল</option>
+                  <option>কলেজ</option>
+                  <option>মাদ্রাসা</option>
+                  <option>কিন্ডারগার্টেন</option>
+                  <option>স্কুল &amp; কলেজ</option>
+                  <option>অন্যান্য</option>
+                </select>
+              </div>
+
+              <div class="field" data-field="message">
+                <label for="message">আপনার প্রয়োজন / ম্যাসেজ</label>
+                <textarea id="message" name="message" rows="3" placeholder="কতজন স্টুডেন্ট, কী কী ফিচার চান – সংক্ষেপে লিখুন..."></textarea>
+                <small>এই ফর্ম সাবমিট করলে আমাদের টিম আপনাকে ফোন / WhatsApp এ যোগাযোগ করবে।</small>
+                <p class="error-msg">ম্যাসেজ লিখুন (কমপক্ষে ১০ অক্ষর)</p>
+              </div>
+
+              <button type="submit" class="btn">
+                সাবমিট করুন
+              </button>
+
+              <p id="form-status" class="muted" style="font-size:0.8rem;margin-top:2px;"></p>
+            </div>
+          </form>
+
+          <aside class="contact-aside">
+            <div>
+              <strong>সরাসরি যোগাযোগ:</strong><br>
+              কল / WhatsApp: ০১XXXXXXXXX<br>
+              ইমেইল: support@geniuseducationbd.com
+            </div>
+
+            <div class="contact-aside-list">
+              <div class="contact-row">
+                <div class="contact-icon"></div>
+                <div>
+                  <strong>ফ্রি কনসালটেশন</strong><br>
+                  <span>আপনার প্রতিষ্ঠানের ধরন অনুযায়ী পুরো সিস্টেম প্ল্যান করে দেই।</span>
+                </div>
+              </div>
+
+              <div class="contact-row">
+                <div class="contact-icon"></div>
+                <div>
+                  <strong>অন-সাইট / অনলাইন ট্রেইনিং</strong><br>
+                  <span>টিচার ও অফিস স্টাফদের জন্য বাংলা ভাষায় হাতে-কলমে ট্রেইনিং।</span>
+                </div>
+              </div>
+
+              <div class="contact-row">
+                <div class="contact-icon"></div>
+                <div>
+                  <strong>কন্টিনিউ সাপোর্ট</strong><br>
+                  <span>হোয়াটসঅ্যাপ গ্রুপ, ফোন ও রিমোট ডেস্কটপের মাধ্যমে নিয়মিত সাপোর্ট।</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div>© <span id="year"></span> Genius Education BD. সর্বস্বত্ব সংরক্ষিত।</div>
+      <div>ডিজিটাল বাংলাদেশে শিক্ষা প্রতিষ্ঠানের নির্ভরযোগ্য সফটওয়্যার সল্যুশন।</div>
+    </div>
+  </footer>
+
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Reveal on scroll
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Simple form validation (front-end only)
+    const form = document.querySelector('.contact-form');
+    const statusEl = document.getElementById('form-status');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      statusEl.textContent = "";
+      let valid = true;
+
+      const fields = {
+        name: form.querySelector('[name="name"]'),
+        phone: form.querySelector('[name="phone"]'),
+        inst: form.querySelector('[name="inst"]'),
+        message: form.querySelector('[name="message"]')
+      };
+
+      Object.keys(fields).forEach(key => {
+        const wrapper = form.querySelector('[data-field="' + key + '"]');
+        if (!wrapper) return;
+        wrapper.classList.remove('invalid');
+      });
+
+      if (!fields.name.value.trim()) {
+        form.querySelector('[data-field="name"]').classList.add('invalid');
+        valid = false;
+      }
+
+      const phone = fields.phone.value.replace(/\D/g, "");
+      if (phone.length < 10) {
+        form.querySelector('[data-field="phone"]').classList.add('invalid');
+        valid = false;
+      }
+
+      if (!fields.inst.value.trim()) {
+        form.querySelector('[data-field="inst"]').classList.add('invalid');
+        valid = false;
+      }
+
+      if (fields.message.value && fields.message.value.trim().length > 0 && fields.message.value.trim().length < 10) {
+        form.querySelector('[data-field="message"]').classList.add('invalid');
+        valid = false;
+      }
+
+      if (!valid) {
+        statusEl.style.color = 'var(--error)';
+        statusEl.textContent = 'দয়া করে প্রয়োজনীয় ঘরগুলো ঠিক করে পূরণ করুন।';
+        return;
+      }
+
+      statusEl.style.color = 'var(--accent)';
+      statusEl.textContent = 'ধন্যবাদ! আপনার তথ্য আমরা পেয়েছি। খুব শিগগিরই আমাদের টিম যোগাযোগ করবে।';
+
+      form.reset();
+    });
+  </script>
+</body>
+</html>
+ 

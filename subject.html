@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>বিষয় তালিকা</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li>
+                <button class="dropdown-btn active"><span><i class="fas fa-book"></i> একাডেমিক</span><i class="fas fa-caret-down rotate"></i></button>
+                <div class="dropdown-container" style="display: block;">
+                    <a href="subject.html" style="color: white;">বিষয় (Subjects)</a>
+                    <a href="marks_entry.html">মার্কস এন্ট্রি</a>
+                </div>
+            </li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left">
+                <div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+                <h3>বিষয় তালিকা (Subject List)</h3>
+            </div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            <div class="wrapper" style="margin-bottom: 30px;">
+                <h4 style="border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">নতুন বিষয় যোগ করুন</h4>
+                <form id="subjectForm">
+                    <div class="form-grid">
+                        <div>
+                            <label>বিষয়ের নাম *</label>
+                            <input type="text" id="subName" placeholder="Ex: Math, Bangla" required>
+                        </div>
+                        <div>
+                            <label>বিষয় কোড</label>
+                            <input type="number" id="subCode" placeholder="Ex: 101">
+                        </div>
+                        <div>
+                            <label>ক্লাস নির্বাচন করুন</label>
+                            <select id="subClass" required><option value="">লোড হচ্ছে...</option></select>
+                        </div>
+                        <div>
+                            <label>শিক্ষকের নাম</label>
+                            <input type="text" id="subTeacher" placeholder="Ex: Rahim Sir">
+                        </div>
+                    </div>
+                    <div style="text-align: right; margin-top: 15px;">
+                        <button type="submit" class="submit-btn"><i class="fas fa-save"></i> সেভ করুন</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="wrapper">
+                <h4>সকল বিষয়ের তালিকা</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>বিষয় (কোড)</th>
+                                <th>ক্লাস</th>
+                                <th>শিক্ষক</th>
+                                <th>অ্যাকশন</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subjectTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>function toggleSidebar(){document.getElementById('sidebar').classList.toggle('active');}</script>
+
+    <script type="module">
+        import { db, ref, push, set, onValue, remove } from './firebase-config.js';
+
+        // ক্লাস লোড
+        onValue(ref(db, 'classes'), (snapshot) => {
+            const data = snapshot.val();
+            const select = document.getElementById('subClass');
+            select.innerHTML = '<option value="">ক্লাস সিলেক্ট করুন</option>';
+            if(data) Object.values(data).forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.className; opt.innerText = c.className;
+                select.appendChild(opt);
+            });
+        });
+
+        // সাবজেক্ট সেভ
+        document.getElementById('subjectForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newRef = push(ref(db, 'subjects'));
+            set(newRef, {
+                subjectName: document.getElementById('subName').value,
+                subjectCode: document.getElementById('subCode').value,
+                className: document.getElementById('subClass').value,
+                teacher: document.getElementById('subTeacher').value,
+                id: newRef.key
+            }).then(() => { alert("সেভ হয়েছে!"); document.getElementById('subjectForm').reset(); });
+        });
+
+        // সাবজেক্ট লিস্ট
+        onValue(ref(db, 'subjects'), (snap) => {
+            const body = document.getElementById('subjectTableBody');
+            body.innerHTML = "";
+            const data = snap.val();
+            if(data) Object.values(data).forEach(s => {
+                body.innerHTML += `
+                    <tr>
+                        <td>${s.subjectName} (${s.subjectCode})</td>
+                        <td>${s.className}</td>
+                        <td>${s.teacher}</td>
+                        <td><button onclick="window.del('${s.id}')" style="color:red;border:none;"><i class="fas fa-trash"></i></button></td>
+                    </tr>`;
+            });
+        });
+        window.del = (id) => { if(confirm("ডিলিট করবেন?")) remove(ref(db, 'subjects/'+id)); };
+    </script>
+</body>
+</html>

@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>নতুন ছাত্র ভর্তি</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* মোবাইল ফ্রেন্ডলি স্টাইল */
+        * {
+            box-sizing: border-box;
+        }
+        
+        .form-section-title { 
+            background: #f1f2f6; 
+            padding: 12px 15px; 
+            border-left: 4px solid #3498db; 
+            margin: 20px 0 15px 0; 
+            font-weight: bold; 
+            color: #2c3e50; 
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .form-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 15px;
+        }
+        input, select, textarea { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 6px; 
+            box-sizing: border-box; 
+            margin-top: 5px;
+            font-size: 16px; /* মোবাইলে জুম প্রতিরোধ */
+        }
+        label { 
+            display: block; 
+            margin-bottom: 5px; 
+            font-weight: 600; 
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        .required::after {
+            content: " *";
+            color: red;
+        }
+        .submit-btn { 
+            background: #3498db; 
+            color: white; 
+            padding: 14px 25px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 16px;
+            transition: background 0.3s ease;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .submit-btn:hover {
+            background: #2980b9;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .photo-preview {
+            max-width: 150px;
+            max-height: 150px;
+            margin-top: 10px;
+            border-radius: 8px;
+            display: none;
+            border: 2px solid #3498db;
+        }
+        .drive-link-note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+            font-size: 15px;
+            border: 1px solid #c3e6cb;
+        }
+        
+        /* মোবাইল নেভিগেশন */
+        .mobile-toggle {
+            display: block;
+            padding: 10px;
+            font-size: 20px;
+            color: #2c3e50;
+        }
+        
+        /* মোবাইল ভিউ জন্য মিডিয়া কুয়েরি */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .form-grid > div {
+                grid-column: span 1 !important;
+            }
+            
+            .content-area {
+                padding: 15px !important;
+                padding-top: 20px !important;
+            }
+            
+            .wrapper {
+                padding: 15px !important;
+                margin: 0 !important;
+                width: 100% !important;
+            }
+            
+            .form-section-title {
+                font-size: 15px;
+                padding: 10px;
+                margin: 15px 0 10px 0;
+            }
+            
+            h3 {
+                font-size: 18px !important;
+                margin-left: 10px;
+            }
+            
+            .header-left {
+                display: flex;
+                align-items: center;
+            }
+            
+            /* বাটন গ্রুপ মোবাইল ভিউ */
+            .button-group {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                gap: 10px;
+                margin-top: 20px;
+            }
+            
+            .submit-btn {
+                padding: 14px 20px;
+                font-size: 15px;
+            }
+            
+            /* ফর্ম সেকশন মোবাইল ভিউ */
+            .photo-preview-container {
+                text-align: center;
+            }
+            
+            .photo-preview {
+                max-width: 120px;
+                margin: 10px auto;
+            }
+            
+            /* তথ্য সেকশন */
+            .info-section {
+                margin-top: 15px;
+                font-size: 13px;
+                padding: 10px;
+                background: #f8f9fa;
+                border-radius: 6px;
+            }
+            
+            /* সাইডবার মোবাইল ভিউ */
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 1000;
+                position: fixed;
+                height: 100vh;
+                overflow-y: auto;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                width: 100%;
+                margin-left: 0;
+            }
+            
+            /* সাকসেস মেসেজ */
+            .success-message {
+                font-size: 14px;
+                padding: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            input, select, textarea {
+                padding: 10px;
+                font-size: 16px; /* iOS-এ জুম প্রতিরোধ */
+            }
+            
+            .form-section-title {
+                font-size: 14px;
+            }
+            
+            label {
+                font-size: 13px;
+            }
+            
+            .submit-btn {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+            
+            .photo-preview {
+                max-width: 100px;
+            }
+        }
+        
+        /* ট্যাবলেট ভিউ */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .form-grid > div:first-child {
+                grid-column: span 2;
+            }
+        }
+        
+        /* ডেস্কটপ ভিউ */
+        @media (min-width: 1025px) {
+            .sidebar {
+                width: 250px;
+            }
+            
+            .main-content {
+                margin-left: 250px;
+                width: calc(100% - 250px);
+            }
+        }
+        
+        /* সাধারণ উন্নতি */
+        .mobile-toggle {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            background: #f8f9fa;
+        }
+        
+        header {
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 100;
+        }
+        
+        .wrapper {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+        
+        /* ফোকাস স্টাইল */
+        input:focus, select:focus, textarea:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        /* স্ক্রলবার স্টাইল */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        /* প্লেসহোল্ডার স্টাইল */
+        ::placeholder {
+            color: #999;
+            font-size: 14px;
+        }
+        
+        /* রিসেট বাটন */
+        .reset-btn {
+            background: #95a5a6;
+            color: white;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+            width: 100%;
+        }
+        
+        .reset-btn:hover {
+            background: #7f8c8d;
+        }
+        
+        /* ফর্ম ফুটার */
+        .form-footer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            gap: 15px;
+        }
+        
+        .required-note {
+            color: #666;
+            font-size: 14px;
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            width: 100%;
+        }
+        
+        /* লোডিং স্টেট */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #3498db;
+        }
+        
+        .loading i {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><i class="fas fa-school"></i> স্মার্ট স্কুল</div>
+        <ul class="menu">
+            <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a></li>
+            <li><a href="student_list.html"><i class="fas fa-user-graduate"></i> স্টুডেন্ট লিস্ট</a></li>
+            <li class="active"><a href="#"><i class="fas fa-user-plus"></i> নতুন ভর্তি</a></li>
+            <li><a href="website_management.html"><i class="fas fa-globe"></i> ওয়েবসাইট</a></li>
+        </ul>
+        <div style="padding: 15px; font-size: 12px; color: #7f8c8d; text-align: center; margin-top: auto;">
+            © 2024 স্মার্ট স্কুল
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="header-left">
+                <div class="mobile-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <h3 style="margin: 0; font-size: 20px; color: #2c3e50;">
+                    <i class="fas fa-user-plus" style="margin-right: 10px; color: #3498db;"></i>
+                    নতুন ছাত্র ভর্তি ফরম
+                </h3>
+            </div>
+            <div class="header-right" style="display: flex; align-items: center;">
+                <div style="font-size: 14px; color: #7f8c8d; padding: 5px 10px; background: #f8f9fa; border-radius: 4px;">
+                    <i class="fas fa-calendar"></i> <span id="currentDate"></span>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-area" style="padding-top: 30px;">
+            <div class="wrapper">
+                <!-- লোডিং স্টেট -->
+                <div class="loading" id="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>সেভ করা হচ্ছে...</p>
+                </div>
+                
+                <!-- সাকসেস মেসেজ -->
+                <div class="success-message" id="successMessage">
+                    <i class="fas fa-check-circle"></i>
+                    <div id="successText">✅ সফলভাবে সেভ হয়েছে! নতুন ছাত্র যোগ করা হয়েছে।</div>
+                </div>
+                
+                <form id="admissionForm">
+                    
+                    <div class="form-section-title">
+                        <i class="fas fa-user-circle" style="margin-right: 8px;"></i>
+                        ১. ব্যক্তিগত তথ্য ও ছবি
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="photo-preview-container" style="grid-column: span 2;">
+                            <label class="required">গুগল ড্রাইভ ফটো লিঙ্ক (Share Link)</label>
+                            <input type="text" id="stPhoto" placeholder="https://drive.google.com/file/d/xxxxxx/view?usp=sharing" required>
+                            <div class="drive-link-note">
+                                <i class="fas fa-info-circle"></i> ড্রাইভের শেয়ার লিঙ্ক এখানে পেস্ট করুন। "Anyone with the link" এ শেয়ার করে নিন।
+                            </div>
+                            <div style="text-align: center;">
+                                <img id="photoPreview" class="photo-preview" alt="Photo Preview">
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="required">ছাত্রের পূর্ণ নাম</label>
+                            <input type="text" id="stName" placeholder="পুরো নাম লিখুন" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>জন্ম তারিখ</label>
+                            <input type="date" id="stDob">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>লিঙ্গ</label>
+                            <select id="stGender">
+                                <option value="">নির্বাচন করুন</option>
+                                <option>Male</option>
+                                <option>Female</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>রক্তের গ্রুপ</label>
+                            <select id="stBlood">
+                                <option value="">নির্বাচন করুন</option>
+                                <option>Unknown</option>
+                                <option>A+</option>
+                                <option>A-</option>
+                                <option>B+</option>
+                                <option>B-</option>
+                                <option>O+</option>
+                                <option>O-</option>
+                                <option>AB+</option>
+                                <option>AB-</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-section-title">
+                        <i class="fas fa-graduation-cap" style="margin-right: 8px;"></i>
+                        ২. একাডেমিক তথ্য
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label class="required">ক্লাস</label>
+                            <select id="stClass" required>
+                                <option value="">নির্বাচন করুন</option>
+                                <option>Class 6</option>
+                                <option>Class 7</option>
+                                <option>Class 8</option>
+                                <option>Class 9</option>
+                                <option>Class 10</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>সেকশন</label>
+                            <select id="stSection">
+                                <option value="">নির্বাচন করুন</option>
+                                <option>A</option>
+                                <option>B</option>
+                                <option>C</option>
+                                <option>D</option>
+                                <option>Science</option>
+                                <option>Arts</option>
+                                <option>Commerce</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>রোল নম্বর</label>
+                            <input type="number" id="stRoll" min="1" placeholder="রোল নম্বর">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>সেশন</label>
+                            <input type="text" id="stSession" value="2026" readonly style="background: #f8f9fa;">
+                        </div>
+                    </div>
+
+                    <div class="form-section-title">
+                        <i class="fas fa-users" style="margin-right: 8px;"></i>
+                        ৩. অভিভাবকের তথ্য
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label class="required">পিতার নাম</label>
+                            <input type="text" id="stFather" placeholder="পিতার নাম" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="required">মাতার নাম</label>
+                            <input type="text" id="stMother" placeholder="মাতার নাম">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="required">অভিভাবকের মোবাইল</label>
+                            <input type="tel" id="stPhone" required pattern="[0-9]{11}" placeholder="01XXXXXXXXX" inputmode="numeric">
+                            <div class="drive-link-note">বাংলাদেশী মোবাইল নম্বর (11 সংখ্যা)</div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>জরুরি যোগাযোগ নম্বর</label>
+                            <input type="tel" id="stEmergencyPhone" placeholder="01XXXXXXXXX" inputmode="numeric">
+                        </div>
+                    </div>
+
+                    <div class="form-section-title">
+                        <i class="fas fa-home" style="margin-right: 8px;"></i>
+                        ৪. ঠিকানা
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label>বর্তমান ঠিকানা</label>
+                            <textarea id="stAddress" rows="3" placeholder="পুরো ঠিকানা লিখুন"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- তথ্য সেকশন -->
+                    <div class="info-section">
+                        <p style="margin: 0; color: #666; font-size: 13px;">
+                            <i class="fas fa-exclamation-triangle" style="color: #f39c12; margin-right: 5px;"></i>
+                            সঠিক তথ্য প্রদান করুন। ভুল তথ্য দেওয়ার দায়দায়িত্ব আপনি নিজে বহন করবেন।
+                        </p>
+                    </div>
+
+                    <!-- ফর্ম ফুটার -->
+                    <div class="form-footer">
+                        <div class="required-note">
+                            <i class="fas fa-info-circle"></i> * চিহ্নিত ফিল্ডগুলো আবশ্যকভাবে পূরণ করতে হবে
+                        </div>
+                        
+                        <div class="button-group">
+                            <button type="submit" class="submit-btn" id="submitBtn">
+                                <i class="fas fa-save"></i> সব তথ্য সেভ করুন
+                            </button>
+                            
+                            <button type="button" class="reset-btn" onclick="resetForm()">
+                                <i class="fas fa-redo"></i> ফর্ম রিসেট করুন
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // বর্তমান তারিখ সেট করুন
+        function setCurrentDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            const dateString = now.toLocaleDateString('bn-BD', options);
+            document.getElementById('currentDate').textContent = dateString;
+        }
+        
+        // Sidebar toggle function
+        function toggleSidebar() { 
+            document.getElementById('sidebar').classList.toggle('active');
+            // মোবাইলে সাইডবার খোলার সময় বডিতে স্ক্রল বন্ধ করুন
+            if (window.innerWidth <= 768) {
+                document.body.style.overflow = document.getElementById('sidebar').classList.contains('active') ? 'hidden' : 'auto';
+            }
+        }
+        
+        // মোবাইলে সাইডবার বাইরে ক্লিক করলে বন্ধ করুন
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const mobileToggle = document.querySelector('.mobile-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !mobileToggle.contains(event.target) && 
+                sidebar.classList.contains('active')) {
+                toggleSidebar();
+            }
+        });
+        
+        // Form reset function
+        function resetForm() {
+            if (confirm("আপনি কি নিশ্চিত যে আপনি ফর্ম রিসেট করতে চান?")) {
+                document.getElementById('admissionForm').reset();
+                document.getElementById('photoPreview').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'none';
+                document.getElementById('stSession').value = new Date().getFullYear();
+                
+                // ফোকাস প্রথম ফিল্ডে নিয়ে যান
+                document.getElementById('stPhoto').focus();
+            }
+        }
+        
+        // Photo preview from Google Drive link
+        document.getElementById('stPhoto').addEventListener('input', function(e) {
+            const url = e.target.value.trim();
+            const preview = document.getElementById('photoPreview');
+            
+            if (url.includes('drive.google.com')) {
+                const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if (match) {
+                    preview.src = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w500`;
+                    preview.style.display = 'block';
+                    preview.onerror = function() {
+                        preview.style.display = 'none';
+                        alert("ছবি লোড করতে সমস্যা হয়েছে। দয়া করে লিংকটি চেক করুন।");
+                    };
+                } else {
+                    preview.style.display = 'none';
+                }
+            } else if (url.startsWith('http')) {
+                // সরাসরি ইমেজ লিংক হলে
+                preview.src = url;
+                preview.style.display = 'block';
+                preview.onerror = function() {
+                    preview.style.display = 'none';
+                };
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+        
+        // Set current session year
+        document.getElementById('stSession').value = new Date().getFullYear();
+        
+        // মোবাইল ভিউ ডিটেক্ট
+        function detectMobileView() {
+            if (window.innerWidth <= 768) {
+                document.body.classList.add('mobile-view');
+            } else {
+                document.body.classList.remove('mobile-view');
+            }
+        }
+        
+        // ভিউপোর্ট সাইজ পরিবর্তন হলে
+        window.addEventListener('resize', detectMobileView);
+        
+        // পেজ লোড হলে
+        document.addEventListener('DOMContentLoaded', function() {
+            setCurrentDate();
+            detectMobileView();
+            
+            // মোবাইলে ইনপুট ফিল্ডের জন্য
+            if ('ontouchstart' in window) {
+                document.querySelectorAll('input, select, textarea').forEach(element => {
+                    element.addEventListener('focus', function() {
+                        // কিছু Android ডিভাইসে জুম প্রতিরোধ
+                        this.style.fontSize = '16px';
+                    });
+                });
+            }
+            
+            // আজকের তারিখ সেট করুন জন্ম তারিখ ফিল্ডে
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('stDob').max = today;
+        });
+    </script>
+
+    <script type="module">
+        import { db, ref, push, set } from './firebase-config.js';
+
+        // ড্রাইভ লিঙ্ক থেকে ফটো আইডি বের করার ফাংশন
+        function convertDriveLink(url) {
+            if (!url || url.trim() === '') {
+                return "https://ui-avatars.com/api/?name=Student&background=3498db&color=fff&size=150&bold=true";
+            }
+            
+            if (url.includes('drive.google.com')) {
+                const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if (match) {
+                    return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w500`;
+                }
+            }
+            
+            return url;
+        }
+
+        // ফর্ম সাবমিট হ্যান্ডলার
+        document.getElementById('admissionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const originalBtnText = submitBtn.innerHTML;
+            
+            // লোডিং স্টেট
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> সেভ হচ্ছে...';
+            submitBtn.disabled = true;
+            
+            document.getElementById('loading').style.display = 'block';
+
+            // ফর্ম ভ্যালিডেশন
+            const phone = document.getElementById('stPhone').value;
+            if (!/^01[0-9]{9}$/.test(phone)) {
+                alert("❌ দয়া করে একটি বৈধ মোবাইল নম্বর লিখুন (11 সংখ্যা, 01 দিয়ে শুরু)");
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
+                document.getElementById('loading').style.display = 'none';
+                return;
+            }
+
+            // সব প্রয়োজনীয় ফিল্ড চেক করুন
+            const requiredFields = ['stPhoto', 'stName', 'stClass', 'stFather', 'stPhone'];
+            for (const fieldId of requiredFields) {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    alert(`❌ দয়া করে ${field.previousElementSibling.textContent} পূরণ করুন`);
+                    field.focus();
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                    document.getElementById('loading').style.display = 'none';
+                    return;
+                }
+            }
+
+            const studentData = {
+                photo: convertDriveLink(document.getElementById('stPhoto').value),
+                name: document.getElementById('stName').value.trim(),
+                dob: document.getElementById('stDob').value,
+                gender: document.getElementById('stGender').value,
+                bloodGroup: document.getElementById('stBlood').value,
+                className: document.getElementById('stClass').value,
+                section: document.getElementById('stSection').value,
+                roll: parseInt(document.getElementById('stRoll').value) || 0,
+                session: document.getElementById('stSession').value,
+                fatherName: document.getElementById('stFather').value.trim(),
+                motherName: document.getElementById('stMother').value.trim(),
+                phone: document.getElementById('stPhone').value.trim(),
+                emergencyPhone: document.getElementById('stEmergencyPhone').value.trim(),
+                address: document.getElementById('stAddress').value.trim(),
+                admissionDate: new Date().toISOString().split('T')[0],
+                admissionTime: new Date().toLocaleTimeString('bn-BD'),
+                status: "active",
+                createdAt: new Date().toISOString(),
+                id: "" // পরে সেট হবে
+            };
+
+            try {
+                const newStudentRef = push(ref(db, 'students'));
+                studentData.id = newStudentRef.key;
+                
+                // Unique Student ID generate
+                const year = new Date().getFullYear();
+                const randomNum = Math.floor(10000 + Math.random() * 90000);
+                studentData.studentId = `STU-${year}-${randomNum}`;
+                studentData.admissionNo = `ADM-${year}-${randomNum}`;
+
+                await set(newStudentRef, studentData);
+                
+                // Success message show
+                document.getElementById('successText').innerHTML = 
+                    `✅ সফলভাবে সেভ হয়েছে!<br>
+                     <strong>Student ID:</strong> ${studentData.studentId}<br>
+                     <strong>Admission No:</strong> ${studentData.admissionNo}`;
+                
+                document.getElementById('successMessage').style.display = 'block';
+                document.getElementById('loading').style.display = 'none';
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                // Success sound (ঐচ্ছিক)
+                try {
+                    const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3');
+                    audio.volume = 0.3;
+                    audio.play().catch(e => console.log("Audio play failed"));
+                } catch (audioError) {
+                    console.log("Audio not supported");
+                }
+                
+                // Reset form after 5 seconds
+                setTimeout(() => {
+                    resetForm();
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                }, 5000);
+                
+            } catch (error) {
+                console.error("Firebase error:", error);
+                alert("❌ ত্রুটি: " + error.message);
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+        
+        // ফর্ম ভ্যালিডেশন ইভেন্ট
+        document.getElementById('stPhone').addEventListener('blur', function() {
+            const phone = this.value;
+            if (phone && !/^01[0-9]{9}$/.test(phone)) {
+                this.style.borderColor = '#e74c3c';
+                this.style.boxShadow = '0 0 0 3px rgba(231, 76, 60, 0.2)';
+            } else {
+                this.style.borderColor = '#ddd';
+                this.style.boxShadow = 'none';
+            }
+        });
+        
+        // Enter key to move to next field
+        document.querySelectorAll('input').forEach((input, index, inputs) => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const nextIndex = index + 1;
+                    if (nextIndex < inputs.length) {
+                        inputs[nextIndex].focus();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

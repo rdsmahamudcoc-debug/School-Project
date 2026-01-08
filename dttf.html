@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <title>Exam Results - EduSphere</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: "DM Sans", system-ui, -apple-system;
+      background: #0a0f2a;
+      color: #e5e7eb;
+      margin: 0; padding: 0;
+    }
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: #111a3c;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.8);
+    }
+    h1 {
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      color: #d1d5db;
+    }
+    th, td {
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid #374151;
+      text-align: left;
+    }
+    th {
+      background: #1e293b;
+      font-weight: 600;
+    }
+    .grade-a { color: #4ade80; font-weight: 700; }
+    .grade-b { color: #fbbf24; font-weight: 700; }
+    .grade-c { color: #f87171; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="container" role="main">
+    <h1>Exam Results</h1>
+    <table aria-label="Exam results table">
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Class</th>
+          <th>Exam</th>
+          <th>Subject</th>
+          <th>Marks</th>
+          <th>Grade</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Sadia Rahman</td>
+          <td>8 - A</td>
+          <td>Midterm 2025</td>
+          <td>Mathematics</td>
+          <td>85</td>
+          <td class="grade-a">A</td>
+        </tr>
+        <tr>
+          <td>Mahin Hasan</td>
+          <td>9 - B</td>
+          <td>Midterm 2025</td>
+          <td>Physics</td>
+          <td>78</td>
+          <td class="grade-b">B+</td>
+        </tr>
+        <tr>
+          <td>Rafiul Karim</td>
+          <td>7 - C</td>
+          <td>Midterm 2025</td>
+          <td>English</td>
+          <td>65</td>
+          <td class="grade-c">C</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html
